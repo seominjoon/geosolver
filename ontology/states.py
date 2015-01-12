@@ -1,4 +1,5 @@
 import networkx as nx
+from geosolver.ontology import shared
 
 __author__ = 'minjoon'
 
@@ -41,6 +42,8 @@ class Symbol:
 
 class Ontology:
     def __init__(self, types, symbols, inheritance_graph, ontology_graph):
+        assert isinstance(types, dict)
+        assert isinstance(symbols, dict)
         assert isinstance(inheritance_graph, nx.DiGraph)
         assert isinstance(ontology_graph, nx.MultiDiGraph)
 
@@ -48,3 +51,16 @@ class Ontology:
         self.symbols = symbols
         self.inheritance_graph = inheritance_graph
         self.ontology_graph = ontology_graph
+
+    def isinstance(self, type0, type1):
+        """
+        Returns True if type0 is instance of type1
+
+        :param Type type0:
+        :param Type type1:
+        :return bool:
+        """
+        return shared.isinstance_(self.inheritance_graph, type0, type1)
+
+    def __repr__(self):
+        return "%s(len(types)=%d, len(symbols)=%d)" % (self.__class__.__name__, len(self.types), len(self.symbols))

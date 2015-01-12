@@ -3,6 +3,7 @@ import networkx as nx
 from geosolver.ontology.sanity_check import sanity_check
 from geosolver.ontology.states import Type, Symbol, Ontology
 from geosolver.ontology import definitions
+from geosolver.ontology.shared import isinstance_
 
 __author__ = 'minjoon'
 
@@ -71,23 +72,10 @@ def _construct_inheritance_graph(types):
     return graph
 
 
-def _isinstance(inheritance_graph, type0, type1):
-    """
-    Returns True if type0 is an instance of type1;
-    i.e. if type1 is reachable by type0 in inheritance graph.
-
-    :param nx.DiGraph inheritance_graph:
-    :param Type type0:
-    :param Type type1:
-    :return bool:
-    """
-    return nx.has_path(inheritance_graph, type0.name, type1.name)
-
-
 def _construct_ontology_graph(inheritance_graph, symbols):
     """
 
-    ":param nx.DiGraph inheritance_graph:
+    :param nx.DiGraph inheritance_graph:
     :param dict symbols:
     :return nx.DiGraph:
     """
@@ -100,7 +88,7 @@ def _construct_ontology_graph(inheritance_graph, symbols):
         assert isinstance(symbol0, Symbol)
         assert isinstance(symbol1, Symbol)
         for idx, arg_type in enumerate(symbol0.arg_types):
-            if _isinstance(inheritance_graph, symbol1.return_type, arg_type):
+            if isinstance_(inheritance_graph, symbol1.return_type, arg_type):
                 '''
                 If symbol1's return type is an instance of arg type, then create an edge.
                 Ex. symbol1 return type is line, and arg type is entity.
@@ -113,5 +101,6 @@ def _construct_ontology_graph(inheritance_graph, symbols):
 
 if __name__ == "__main__":
     o = load_ontology(definitions.types, definitions.symbols)
+    print(o)
     print(o.inheritance_graph.edges())
     print(o.ontology_graph.edges(data=True))
