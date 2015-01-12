@@ -2,14 +2,24 @@ import networkx as nx
 
 __author__ = 'minjoon'
 
+
 class Type:
-    def __init__(self, name, label=None):
+    def __init__(self, name, supertype=None, label=None):
+        assert isinstance(name, str)
+
         self.name = name
         self.id = hash(name)
+        self.supertype = supertype
         if label is None:
             self.label = self.name
         else:
             self.label = label
+
+    def has_supertype(self):
+        return self.supertype is not None
+
+    def __repr__(self):
+        return "%s(name='%s')" % (self.__class__.__name__, self.name)
 
 
 class Symbol:
@@ -25,9 +35,15 @@ class Symbol:
         else:
             self.label = label
 
+    def __repr__(self):
+        return "%s(name='%s', lemma='%s')" % (self.__class__.__name__, self.name, self.lemma)
+
 
 class Ontology:
     def __init__(self, types, symbols, inheritance_graph, ontology_graph):
+        assert isinstance(inheritance_graph, nx.DiGraph)
+        assert isinstance(ontology_graph, nx.MultiDiGraph)
+
         self.types = types
         self.symbols = symbols
         self.inheritance_graph = inheritance_graph
