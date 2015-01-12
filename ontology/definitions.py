@@ -30,11 +30,14 @@ types = [
 
 symbols = [
     # operators
-    {'name': 'add', 'lemma': '+', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'sub', 'lemma': '-', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'mul', 'lemma': '*', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'div', 'lemma': '/', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'pow', 'lemma': '^', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'add', 'lemma': 'add', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'sub', 'lemma': 'subtract', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'mul', 'lemma': 'multiply', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'div', 'lemma': 'divide', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'pow', 'lemma': 'power', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'equal', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'greater', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'less', 'arg_types': ['number', 'number'], 'return_type': 'number'},
 
     # functions mapping to number
     {'name': 'length', 'arg_types': ['line'], 'return_type': 'number'},

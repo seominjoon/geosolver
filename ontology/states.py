@@ -1,10 +1,11 @@
 import networkx as nx
 from geosolver.ontology import shared
+from geosolver.ontology.symbol_proximity_score import symbol_proximity_score
 
 __author__ = 'minjoon'
 
 
-class Type:
+class Type(object):
     def __init__(self, name, supertype=None, label=None):
         assert isinstance(name, str)
 
@@ -23,7 +24,7 @@ class Type:
         return "%s(name='%s')" % (self.__class__.__name__, self.name)
 
 
-class Symbol:
+class Symbol(object):
     def __init__(self, name, lemma, arg_types, return_type, label=None):
         self.name = name
         self.lemma = lemma
@@ -40,7 +41,7 @@ class Symbol:
         return "%s(name='%s', lemma='%s')" % (self.__class__.__name__, self.name, self.lemma)
 
 
-class Ontology:
+class Ontology(object):
     def __init__(self, types, symbols, inheritance_graph, ontology_graph):
         assert isinstance(types, dict)
         assert isinstance(symbols, dict)
@@ -61,6 +62,16 @@ class Ontology:
         :return bool:
         """
         return shared.isinstance_(self.inheritance_graph, type0, type1)
+
+    def symbol_proximity_score(self, from_symbol, to_symbol):
+        """
+        Returns the proximity from from_symbol to to_symbol.
+
+        :param Symbol from_symbol:
+        :param Symbol to_symbol:
+        :return float:
+        """
+        return symbol_proximity_score(self, from_symbol, to_symbol)
 
     def __repr__(self):
         return "%s(len(types)=%d, len(symbols)=%d)" % (self.__class__.__name__, len(self.types), len(self.symbols))

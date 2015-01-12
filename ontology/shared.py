@@ -14,8 +14,8 @@ def isinstance_(inheritance_graph, type0, type1):
     i.e. if type1 is reachable by type0 in inheritance graph.
 
     :param nx.DiGraph inheritance_graph:
-    :param Type type0:
-    :param Type type1:
+    :param geosolver.ontology.states.Type type0:
+    :param geosolver.ontology.states.Type type1:
     :return bool:
     """
-    return nx.has_path(inheritance_graph, type0.name, type1.name)
+    return nx.has_path(inheritance_graph, type1.name, type0.name)

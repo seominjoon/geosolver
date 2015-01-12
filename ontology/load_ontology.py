@@ -2,7 +2,6 @@ import itertools
 import networkx as nx
 from geosolver.ontology.sanity_check import sanity_check
 from geosolver.ontology.states import Type, Symbol, Ontology
-from geosolver.ontology import definitions
 from geosolver.ontology.shared import isinstance_
 
 __author__ = 'minjoon'
@@ -99,8 +98,3 @@ def _construct_ontology_graph(inheritance_graph, symbols):
     return graph
 
 
-if __name__ == "__main__":
-    o = load_ontology(definitions.types, definitions.symbols)
-    print(o)
-    print(o.inheritance_graph.edges())
-    print(o.ontology_graph.edges(data=True))
