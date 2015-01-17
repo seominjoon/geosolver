@@ -2,18 +2,17 @@
 For local running, including testing.
 """
 
-from geosolver.ontology import definitions
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.ontology.load_ontology import load_ontology
 from geosolver.ontology.symbol_proximity_score import symbol_proximity_score
 from geosolver.utils import display_graph
-from geosolver.ontology.states import Type, Symbol, Ontology
+from geosolver.ontology.states import Type, Symbol, BasicOntology
+from geosolver.ontology import basic_ontology
 
 __author__ = 'minjoon'
 
 
 def test_load_ontology():
-    o = load_ontology(definitions.types, definitions.symbols)
+    o = basic_ontology
     print(o)
     print(o.inheritance_graph.edges())
     print(o.ontology_graph.edges(data=True))
@@ -21,7 +20,7 @@ def test_load_ontology():
 
 
 def test_symbol_proximity_score():
-    o = load_ontology(definitions.types, definitions.symbols)
+    o = basic_ontology
     # display_graph(o.inheritance_graph)
     # display_graph(o.ontology_graph)
     s0 = o.symbols['equal']
@@ -31,13 +30,13 @@ def test_symbol_proximity_score():
 
 
 def test_augment_ontology():
-    o = load_ontology(definitions.types, definitions.symbols)
-    s0 = Symbol('5', '5', [], o.types['number'])
-    s1 = Symbol('O', 'O', [], o.types['reference'])
+    o = basic_ontology
+    s0 = Symbol('5', [], o.types['number'])
+    s1 = Symbol('O', [], o.types['reference'])
     oo = augment_ontology(o, [s0, s1])
     s2 = o.symbols['equal']
-    s3 = o.symbols['radius-number']
-    s4 = o.symbols['radius-truth']
+    s3 = o.symbols['radiusOf']
+    s4 = o.symbols['isRadiusOf']
     s5 = o.symbols['circle']
     print(oo.symbol_proximity_score(s2, s5))
 

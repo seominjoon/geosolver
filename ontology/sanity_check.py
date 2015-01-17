@@ -1,6 +1,7 @@
 """
 Sanity check for ontology definitions.
-Ensures several things:
+
+basic_definitions:
 1. each type/symbol has only valid keys, and all mandatory keys, and no duplicate definitions of keys
 2. no two type/symbol has same name
 3. supertype of each type is predefined in types
@@ -11,20 +12,24 @@ import logging
 __author__ = 'minjoon'
 
 
-def sanity_check(types, symbols):
-    if _sanity_check(types, symbols):
+def visual_sanity_check():
+    pass
+
+
+def basic_sanity_check(types, symbols):
+    if _basic_sanity_check(types, symbols):
         logging.info("Syntax verification of ontology definitions completed with no error.")
     else:
         raise Exception("Ontology definitions are invalid; see logging.")
 
 
-def _sanity_check(types, symbols):
+def _basic_sanity_check(types, symbols):
 
     type_mandatory_keys = {'name'}
     type_optional_keys = {'supertype', 'label'}
     type_keys = type_mandatory_keys.union(type_optional_keys)
 
-    symbol_mandatory_keys = {'name', 'arg_types', 'return_type', 'lemma'}
+    symbol_mandatory_keys = {'name', 'arg_types', 'return_type'}
     symbol_optional_keys = ['label']
     symbol_keys = symbol_mandatory_keys.union(symbol_optional_keys)
 

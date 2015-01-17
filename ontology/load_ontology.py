@@ -1,7 +1,7 @@
 import itertools
 import networkx as nx
-from geosolver.ontology.sanity_check import sanity_check
-from geosolver.ontology.states import Type, Symbol, Ontology
+from geosolver.ontology.sanity_check import basic_sanity_check
+from geosolver.ontology.states import Type, Symbol, BasicOntology
 from geosolver.ontology.shared import isinstance_
 
 __author__ = 'minjoon'
@@ -17,7 +17,7 @@ def load_ontology(type_defs, symbol_defs):
     :param dict symbol_defs:
     :return Ontology:
     """
-    sanity_check(type_defs, symbol_defs)
+    basic_sanity_check(type_defs, symbol_defs)
 
     types = {}
     for type_def in type_defs:
@@ -41,12 +41,12 @@ def load_ontology(type_defs, symbol_defs):
             label = symbol_def['label']
         else:
             label = None
-        symbol_ = Symbol(symbol_def['name'], symbol_def['lemma'], arg_types, return_type, label=label)
+        symbol_ = Symbol(symbol_def['name'], arg_types, return_type, label=label)
         symbols[symbol_.name] = symbol_
 
     inheritance_graph = _construct_inheritance_graph(types)
     ontology_graph = _construct_ontology_graph(inheritance_graph, symbols)
-    ontology = Ontology(types, symbols, inheritance_graph, ontology_graph)
+    ontology = BasicOntology(types, symbols, inheritance_graph, ontology_graph)
     return ontology
 
 

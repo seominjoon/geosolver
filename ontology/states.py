@@ -25,9 +25,13 @@ class Type(object):
 
 
 class Symbol(object):
-    def __init__(self, name, lemma, arg_types, return_type, label=None):
+    def __init__(self, name, arg_types, return_type, label=None):
+        assert isinstance(name, str)
+        for type_ in arg_types:
+            assert isinstance(type_, Type)
+        assert isinstance(return_type, Type)
+
         self.name = name
-        self.lemma = lemma
         self.arg_types = arg_types
         self.return_type = return_type
         self.id = hash(self.name)
@@ -41,7 +45,7 @@ class Symbol(object):
         return "%s(name='%s', lemma='%s')" % (self.__class__.__name__, self.name, self.lemma)
 
 
-class Ontology(object):
+class BasicOntology(object):
     def __init__(self, types, symbols, inheritance_graph, ontology_graph):
         assert isinstance(types, dict)
         assert isinstance(symbols, dict)
@@ -75,3 +79,7 @@ class Ontology(object):
 
     def __repr__(self):
         return "%s(len(types)=%d, len(symbols)=%d)" % (self.__class__.__name__, len(self.types), len(self.symbols))
+
+
+class VisualOntology(object):
+    pass
