@@ -2,9 +2,10 @@
 Definitions of ontology
 Contains types and symbols information.
 The fields of a type is: name, label (optional), supertype (optional).
-The fields of a symbol is: name,  arg_types, return_type, lemma (optional), label (optional)
-If lemma is not specified, lemma will be set to name.
-From these, an ontology object (states.Ontology) is constructed.
+The fields of a symbol is: name,  arg_types, return_type, label (optional)
+Every symbol must have at least argument. If it is a constant,
+then it should take 'ground' as an argument.
+From these, an ontology object (states.BasicOntology) is constructed.
 """
 
 __author__ = 'minjoon'
@@ -16,6 +17,7 @@ types = [
     {'name': 'truth'},
     {'name': 'entity'},
     {'name': 'reference'},
+    {'name': 'ground'},
 
     # subtypes
     {'name': 'point', 'supertype': 'entity'},

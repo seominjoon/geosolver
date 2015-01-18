@@ -42,7 +42,7 @@ class Symbol(object):
             self.label = label
 
     def __repr__(self):
-        return "%s(name='%s', lemma='%s')" % (self.__class__.__name__, self.name, self.lemma)
+        return "%s(name='%s')" % (self.__class__.__name__, self.name)
 
 
 class BasicOntology(object):
