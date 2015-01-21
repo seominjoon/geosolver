@@ -38,18 +38,18 @@ def _basic_sanity_check(types, symbols):
         keys = set()
         for key in type_:
             if key not in type_keys:
-                logging.error("Invalid key encountered: '%s' at types:%d" % (key, idx))
+                logging.error("Invalid key encountered: '%s' at type_defs:%d" % (key, idx))
                 return False
             if key in keys:
-                logging.error("Duplicate keys encountered: '%s' at types:%d" % (key, idx))
+                logging.error("Duplicate keys encountered: '%s' at type_defs:%d" % (key, idx))
                 return False
             keys.add(key)
         if not type_mandatory_keys.issubset(keys):
             missing_keys = type_mandatory_keys.difference(keys)
-            logging.error("Some mandatory keys are missing: %r at types:%d" % (missing_keys, idx))
+            logging.error("Some mandatory keys are missing: %r at type_defs:%d" % (missing_keys, idx))
             return False
         if type_['name'] in type_names:
-            logging.error("Non-unique name encountered: '%s' at types:%d" % (type_['name'], idx))
+            logging.error("Non-unique name encountered: '%s' at type_defs:%d" % (type_['name'], idx))
             return False
         if 'supertype' in type_ and type_['supertype'] not in type_names:
             logging.error("Unknown 'supertype': '%s' at type %r" % (type_['supertype'], type_))
@@ -60,25 +60,25 @@ def _basic_sanity_check(types, symbols):
         keys = set()
         for key in symbol_:
             if key not in symbol_keys:
-                logging.error("Invalid key encountered: '%s' at symbols:%d" % (key, idx))
+                logging.error("Invalid key encountered: '%s' at function_defs:%d" % (key, idx))
                 return False
             if key in keys:
-                logging.error("Duplicate keys encountered: '%s' at symbols:%d" % (key, idx))
+                logging.error("Duplicate keys encountered: '%s' at function_defs:%d" % (key, idx))
                 return False
             keys.add(key)
         if not symbol_mandatory_keys.issubset(keys):
             missing_keys = symbol_mandatory_keys.difference(keys)
-            logging.error("Some mandatory keys are missing: %r at symbol %r" % (list(missing_keys), symbol_))
+            logging.error("Some mandatory keys are missing: %r at function %r" % (list(missing_keys), symbol_))
             return False
         if symbol_['name'] in symbol_names:
-            logging.error("Non-unique name encountered: '%s' at symbol %r" % (symbol_['name'], symbol_))
+            logging.error("Non-unique name encountered: '%s' at function %r" % (symbol_['name'], symbol_))
             return False
         for arg_type in symbol_['arg_types']:
             if arg_type not in type_names:
-                logging.error("Unknown arg type: '%s' at symbol %r" % (arg_type, symbol_))
+                logging.error("Unknown arg type: '%s' at function %r" % (arg_type, symbol_))
                 return False
         if symbol_['return_type'] not in type_names:
-            logging.error("Unknown return type: '%s' at symbol %r" % (symbol_['return_type'], symbol_))
+            logging.error("Unknown return type: '%s' at function %r" % (symbol_['return_type'], symbol_))
             return False
 
         symbol_names.add(symbol_['name'])

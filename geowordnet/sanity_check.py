@@ -56,6 +56,6 @@ def _sanity_check(basic_ontology, entries, attributes, pos_types):
     # 4
     lexeme_set = frozenset(lexemes)
     if lexeme_set != symbol_name_set:
-        logging.warning("Some symbols not referred by GeoWordNet: %r" % list(symbol_name_set.difference(lexeme_set)))
+        logging.warning("Some function_defs not referred by GeoWordNet: %r" % list(symbol_name_set.difference(lexeme_set)))
 
     return True

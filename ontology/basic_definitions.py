@@ -11,8 +11,8 @@ From these, an ontology object (states.BasicOntology) is constructed.
 __author__ = 'minjoon'
 
 
-types = [
-    # fundamental types
+type_defs = [
+    # fundamental type_defs
     {'name': 'number'},
     {'name': 'truth'},
     {'name': 'entity'},
@@ -30,7 +30,7 @@ types = [
     {'name': 'quadrilateral', 'supertype': 'polygon'},
 ]
 
-symbols = [
+function_defs = [
     # operators
     {'name': 'add', 'arg_types': ['number', 'number'], 'return_type': 'number'},
     {'name': 'sub', 'arg_types': ['number', 'number'], 'return_type': 'number'},

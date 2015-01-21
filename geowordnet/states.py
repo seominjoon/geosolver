@@ -7,16 +7,16 @@ __author__ = 'minjoon'
 
 
 class Entry(object):
-    def __init__(self, lemma, pos, symbol):
+    def __init__(self, lemma, pos, function):
         self.lemma = lemma
         self.pos = pos
-        self.symbol = symbol
+        self.function = function
 
     def proximity_score(self, word):
         return entry_proximity_score(word, self)
 
     def __repr__(self):
-        return "%s(lemma=%s, pos=%s, symbol=%s)" % (self.__class__.__name__, self.lemma, self.pos, self.symbol.name)
+        return "%s(lemma=%s, pos=%s, function=%s)" % (self.__class__.__name__, self.lemma, self.pos, self.function.name)
 
 
 class GeoWordNet(object):
@@ -34,8 +34,8 @@ class GeoWordNet(object):
     def filter_entries(self, word, threshold):
         return filters.filter_entries(self, word, threshold)
 
-    def filter_symbols(self, word, threshold):
-        return filters.filter_symbols(self, word, threshold)
+    def filter_functions(self, word, threshold):
+        return filters.filter_functions(self, word, threshold)
 
 EntryScorePair = namedtuple('EntryScorePair', 'entry score')
-SymbolScorePair = namedtuple('SymbolScorePair', 'symbol score')
+FunctionScorePair = namedtuple('FunctionScorePair', 'function score')

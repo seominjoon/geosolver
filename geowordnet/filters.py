@@ -1,4 +1,4 @@
-from geosolver.geowordnet.states import SymbolScorePair, EntryScorePair
+from geosolver.geowordnet.states import FunctionScorePair, EntryScorePair
 
 __author__ = 'minjoon'
 
@@ -21,10 +21,10 @@ def filter_entries(geowordnet, word, threshold):
     return pairs
 
 
-def filter_symbols(geowordnet, word, threshold):
+def filter_functions(geowordnet, word, threshold):
     """
-    Filter entries, and obtain the symbols.
-    Return format: {symbol_name: (symbol, score), ... }
+    Filter entries, and obtain the function_defs.
+    Return format: {function_name: (function, score), ... }
 
     :param geowordnet:
     :param word:
@@ -32,16 +32,16 @@ def filter_symbols(geowordnet, word, threshold):
     :return dict:
     """
     entry_score_pairs = filter_entries(geowordnet, word, threshold)
-    symbol_score_pairs = {}
+    function_score_pairs = {}
 
     for entry, score in entry_score_pairs:
-        symbol_name = entry.symbol.name
-        ssp = SymbolScorePair(entry.symbol, score)
-        if symbol_name in symbol_score_pairs:
-            if symbol_score_pairs[symbol_name].score < score:
-                symbol_score_pairs[symbol_name] = ssp
+        function_name = entry.function.name
+        ssp = FunctionScorePair(entry.function, score)
+        if function_name in function_score_pairs:
+            if function_score_pairs[function_name].score < score:
+                function_score_pairs[function_name] = ssp
         else:
-            symbol_score_pairs[symbol_name] = ssp
+            function_score_pairs[function_name] = ssp
 
-    return symbol_score_pairs
+    return function_score_pairs
 

@@ -5,7 +5,7 @@ For local running, including testing.
 from geosolver.ontology.augment_ontology import augment_ontology
 from geosolver.ontology.ontology_proximity_score import ontology_proximity_score
 from geosolver.utils import display_graph
-from geosolver.ontology.states import Type, Symbol, BasicOntology
+from geosolver.ontology.states import Type, Function, BasicOntology
 from geosolver.ontology import basic_ontology
 
 __author__ = 'minjoon'
@@ -31,14 +31,14 @@ def test_symbol_proximity_score():
 
 def test_augment_ontology():
     o = basic_ontology
-    s0 = Symbol('5', [], o.types['number'])
-    s1 = Symbol('O', [], o.types['reference'])
+    s0 = Function('5', [], o.types['number'])
+    s1 = Function('O', [], o.types['reference'])
     oo = augment_ontology(o, [s0, s1])
     s2 = o.symbols['equal']
     s3 = o.symbols['radiusOf']
     s4 = o.symbols['isRadiusOf']
     s5 = o.symbols['circle']
-    print(oo.symbol_proximity_score(s2, s5))
+    print(oo.function_proximity_score(s2, s5))
 
 if __name__ == "__main__":
     # test_load_ontology()

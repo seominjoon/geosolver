@@ -4,17 +4,19 @@ from geosolver.ontology.states import BasicOntology
 __author__ = 'minjoon'
 
 
-def augment_ontology(ontology, symbols):
+def augment_ontology(ontology, functions):
     """
-    Augments the ontology with new symbols.
+    Augments the ontology with new function_defs.
     Returns the augmented ontology.
 
     :param geosolver.ontology.states.Ontology ontology:
-    :param list symbols:
+    :param list function_defs:
     :return geosolver.ontology.states.Ontology:
     """
-    new_symbols = dict(ontology.symbols.items() + [(symbol_.name, symbol_) for symbol_ in symbols])
-    new_ontology_graph = _construct_ontology_graph(ontology.inheritance_graph, new_symbols)
-    new_ontology = BasicOntology(ontology.types, new_symbols, ontology.inheritance_graph, new_ontology_graph)
+    assert isinstance(ontology, BasicOntology)
+
+    new_functions = dict(ontology.functions.items() + [(function.name, function) for function in functions])
+    new_ontology_graph = _construct_ontology_graph(ontology.inheritance_graph, new_functions)
+    new_ontology = BasicOntology(ontology.types, new_functions, ontology.inheritance_graph, new_ontology_graph)
     return new_ontology
 

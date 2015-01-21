@@ -24,7 +24,7 @@ class Type(object):
         return "%s(name='%s')" % (self.__class__.__name__, self.name)
 
 
-class Symbol(object):
+class Function(object):
     def __init__(self, name, arg_types, return_type, label=None):
         assert isinstance(name, str)
         for type_ in arg_types:
@@ -46,14 +46,14 @@ class Symbol(object):
 
 
 class BasicOntology(object):
-    def __init__(self, types, symbols, inheritance_graph, ontology_graph):
+    def __init__(self, types, functions, inheritance_graph, ontology_graph):
         assert isinstance(types, dict)
-        assert isinstance(symbols, dict)
+        assert isinstance(functions, dict)
         assert isinstance(inheritance_graph, nx.DiGraph)
         assert isinstance(ontology_graph, nx.MultiDiGraph)
 
         self.types = types
-        self.symbols = symbols
+        self.functions = functions
         self.inheritance_graph = inheritance_graph
         self.ontology_graph = ontology_graph
 
@@ -67,18 +67,18 @@ class BasicOntology(object):
         """
         return shared.isinstance_(self.inheritance_graph, type0, type1)
 
-    def symbol_proximity_score(self, from_symbol, to_symbol):
+    def function_proximity_score(self, from_function, to_function):
         """
-        Returns the proximity from from_symbol to to_symbol.
+        Returns the proximity from from_function to to_function.
 
-        :param Symbol from_symbol:
-        :param Symbol to_symbol:
+        :param Function from_function:
+        :param Function to_function:
         :return float:
         """
-        return ontology_proximity_score(self, from_symbol, to_symbol)
+        return ontology_proximity_score(self, from_function, to_function)
 
     def __repr__(self):
-        return "%s(len(types)=%d, len(symbols)=%d)" % (self.__class__.__name__, len(self.types), len(self.symbols))
+        return "%s(len(type_defs)=%d, len(function_defs)=%d)" % (self.__class__.__name__, len(self.types), len(self.functions))
 
 
 class VisualOntology(object):

@@ -18,7 +18,7 @@ def test_entry_proximity_score():
 
 
 def test_filters():
-    print(geowordnet.filter_symbols('radius', 0.7))
+    print(geowordnet.filter_functions('radius', 0.7))
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import itertools
 import networkx as nx
 from geosolver.ontology.sanity_check import basic_sanity_check
-from geosolver.ontology.states import Type, Symbol, BasicOntology
+from geosolver.ontology.states import Type, Function, BasicOntology
 from geosolver.ontology.shared import isinstance_
 
 __author__ = 'minjoon'
@@ -9,8 +9,8 @@ __author__ = 'minjoon'
 
 def load_ontology(type_defs, symbol_defs):
     """
-    Load ontology object from type and symbol definitions (raw string dict).
-    First checks the sanity of the definitions, and then induce Type and Symbol objects.
+    Load ontology object from type and function definitions (raw string dict).
+    First checks the sanity of the definitions, and then induce Type and Function objects.
     Lastly, construct inheritance graph for type and ontology graph.
 
     :param dict type_defs:
@@ -41,7 +41,7 @@ def load_ontology(type_defs, symbol_defs):
             label = symbol_def['label']
         else:
             label = None
-        symbol_ = Symbol(symbol_def['name'], arg_types, return_type, label=label)
+        symbol_ = Function(symbol_def['name'], arg_types, return_type, label=label)
         symbols[symbol_.name] = symbol_
 
     inheritance_graph = _construct_inheritance_graph(types)
@@ -57,7 +57,7 @@ def _construct_inheritance_graph(types):
     this information is used for type matching when constructing ontology graph.
     The node is indexed by the name of the type.
 
-    :param dict types:
+    :param dict type_defs:
     :return nx.DiGraph:
     """
     graph = nx.DiGraph()
@@ -71,21 +71,21 @@ def _construct_inheritance_graph(types):
     return graph
 
 
-def _construct_ontology_graph(inheritance_graph, symbols):
+def _construct_ontology_graph(inheritance_graph, functions):
     """
 
     :param nx.DiGraph inheritance_graph:
-    :param dict symbols:
+    :param dict function_defs:
     :return nx.DiGraph:
     """
     graph = nx.MultiDiGraph()
 
-    for symbol0, symbol1 in itertools.product(symbols.values(), repeat=2):
+    for symbol0, symbol1 in itertools.product(functions.values(), repeat=2):
         '''
         Add edge from symbol0 to symbol1 if one of symbol0's arg type matches return type of symbol1
         '''
-        assert isinstance(symbol0, Symbol)
-        assert isinstance(symbol1, Symbol)
+        assert isinstance(symbol0, Function)
+        assert isinstance(symbol1, Function)
         for idx, arg_type in enumerate(symbol0.arg_types):
             if isinstance_(inheritance_graph, symbol1.return_type, arg_type):
                 '''
