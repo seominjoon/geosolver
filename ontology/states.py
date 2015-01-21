@@ -1,6 +1,6 @@
 import networkx as nx
 from geosolver.ontology import shared
-from geosolver.ontology.symbol_proximity_score import symbol_proximity_score
+from geosolver.ontology.ontology_proximity_score import ontology_proximity_score
 
 __author__ = 'minjoon'
 
@@ -75,7 +75,7 @@ class BasicOntology(object):
         :param Symbol to_symbol:
         :return float:
         """
-        return symbol_proximity_score(self, from_symbol, to_symbol)
+        return ontology_proximity_score(self, from_symbol, to_symbol)
 
     def __repr__(self):
         return "%s(len(types)=%d, len(symbols)=%d)" % (self.__class__.__name__, len(self.types), len(self.symbols))

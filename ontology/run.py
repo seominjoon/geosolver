@@ -3,7 +3,7 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.ontology.symbol_proximity_score import symbol_proximity_score
+from geosolver.ontology.ontology_proximity_score import ontology_proximity_score
 from geosolver.utils import display_graph
 from geosolver.ontology.states import Type, Symbol, BasicOntology
 from geosolver.ontology import basic_ontology
@@ -25,7 +25,7 @@ def test_symbol_proximity_score():
     # display_graph(o.ontology_graph)
     s0 = o.symbols['equal']
     s1 = o.symbols['line']
-    score = symbol_proximity_score(o, s0, s1)
+    score = ontology_proximity_score(o, s0, s1)
     print(score)
 
 

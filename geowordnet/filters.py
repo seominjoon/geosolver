@@ -1,4 +1,4 @@
-from collections import namedtuple
+from geosolver.geowordnet.states import SymbolScorePair, EntryScorePair
 
 __author__ = 'minjoon'
 
@@ -13,9 +13,6 @@ def filter_entries(geowordnet, word, threshold):
     :param threshold:
     :return list:
     """
-
-    EntryScorePair = namedtuple('EntryScorePair', 'entry score')
-
     pairs = []
     for entry in geowordnet.entries:
         score = entry.proximity_score(word)
@@ -34,9 +31,6 @@ def filter_symbols(geowordnet, word, threshold):
     :param threshold:
     :return dict:
     """
-
-    SymbolScorePair = namedtuple('SymbolScorePair', 'symbol score')
-
     entry_score_pairs = filter_entries(geowordnet, word, threshold)
     symbol_score_pairs = {}
 

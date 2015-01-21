@@ -4,7 +4,6 @@ Ideally, this will be made into a separate package later.
 """
 import cv2
 import networkx as nx
-import numpy as np
 import tempfile
 
 __author__ = 'minjoon'
@@ -45,5 +44,9 @@ def display_graph(graph, method='image', title="", block=True):
         image = get_graph_image(graph)
         cv2.imshow(title, image)
         if block:
-            cv2.waitKey()
-            cv2.destroyAllWindows()
+            block_display()
+
+
+def block_display():
+    cv2.waitKey()
+    cv2.destroyAllWindows()

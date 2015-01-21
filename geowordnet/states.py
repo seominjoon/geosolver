@@ -1,3 +1,4 @@
+from collections import namedtuple
 from geosolver.geowordnet import filters
 from geosolver.geowordnet.entry_proximity_score import entry_proximity_score
 from geosolver.ontology.states import BasicOntology
@@ -36,3 +37,5 @@ class GeoWordNet(object):
     def filter_symbols(self, word, threshold):
         return filters.filter_symbols(self, word, threshold)
 
+EntryScorePair = namedtuple('EntryScorePair', 'entry score')
+SymbolScorePair = namedtuple('SymbolScorePair', 'symbol score')

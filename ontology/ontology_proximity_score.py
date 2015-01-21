@@ -4,7 +4,7 @@ import numpy as np
 __author__ = 'minjoon'
 
 
-def symbol_proximity_score(ontology, from_symbol, to_symbol):
+def ontology_proximity_score(ontology, from_symbol, to_symbol):
     """
     Given two symbols, returns the proximity of to_symbol from from_symbol.
     For now, returns the inverse of the shortest distance from from_symbol to to_symbol
