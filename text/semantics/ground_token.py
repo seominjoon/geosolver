@@ -10,6 +10,7 @@ def ground_token(ontology_semantics, geowordnet, entry_proximity_score_function,
     Score function takes in word and threshold.
     Usually, entry_score_function is geowordnet.
     It filters all functions whose proximity score is higher than the threshold.
+    Returns a dictionary where key is the function's name, and the value is FuncionScorePair(function, score)
 
     :param entry_score_function:
     :param Token token:

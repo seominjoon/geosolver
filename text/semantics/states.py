@@ -1,7 +1,8 @@
 from geosolver.ontology.states import Function, BasicOntology
-from geosolver.text.lexer.states import Token
+from geosolver.text.lexer.states import AbstractToken
 from geosolver.text.syntax.states import Syntax
 import networkx as nx
+from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
 
@@ -20,12 +21,12 @@ class SemanticNode(object):
         """
         assert isinstance(syntax, Syntax)
         assert isinstance(basic_ontology, BasicOntology)
-        assert isinstance(token, Token)
+        assert isinstance(token, AbstractToken)
         assert isinstance(function, Function)
         self.token = token
         self.function = function
-        self.label = "%s, %s" % (token.word, function.name)
-        self.name = (token.index, function.name)
+        self.label = "%s, %s" % (token.label, function.label)
+        self.name = (token.name, function.name)
         self.id = hash(self.name)
         self.syntax = syntax
         self.basic_ontology = basic_ontology
@@ -41,7 +42,7 @@ class SemanticForest(object):
         assert isinstance(basic_ontology, BasicOntology)
         assert isinstance(forest_graph, nx.DiGraph)
         assert isinstance(nodes, dict)
-        for node in nodes.keys():
+        for node in nodes.values():
             assert isinstance(node, SemanticNode)
 
         self.syntax = syntax
@@ -49,3 +50,11 @@ class SemanticForest(object):
         self.nodes = nodes
         self.edge_scores = edge_scores
         self.forest_graph = forest_graph
+
+    def display_graph(self):
+        """
+        Display the forest graph
+        Edges will be labeled with scores.
+        :return:
+        """
+        display_graph(self.forest_graph)

@@ -70,7 +70,7 @@ def _get_reference_score(word):
     :param word:
     :return:
     """
-    regex1 = re.compile("^([B-Z])|([A-Z][A-Z]+)$")
+    regex1 = re.compile("^([B-Z]|[A-Z][A-Z]+)$")
     regex2 = re.compile("^A$")
     regex3 = re.compile("^[b-z](_[a-z0-9])?$")
     score1 = 1.0

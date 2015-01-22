@@ -20,7 +20,7 @@ def test_entry_proximity_score():
 
 
 def test_function_identifier():
-    print(new_function_identifier(basic_ontology, ontology_semantics, "a"))
+    print(new_function_identifier(basic_ontology, ontology_semantics, "Line"))
 
 
 def test_filters():
