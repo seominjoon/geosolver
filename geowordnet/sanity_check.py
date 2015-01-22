@@ -21,7 +21,7 @@ def sanity_check(ontology, entries, attributes, pos_types):
 
 def _sanity_check(basic_ontology, entries, attributes, pos_types):
     """
-    :param geosolver.ontology.states.Ontology ontology:
+    :param geosolver.basic_ontology.states.Ontology basic_ontology:
     :param list dictionary:
     :return bool:
     """

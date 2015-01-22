@@ -6,12 +6,12 @@ __author__ = 'minjoon'
 
 def augment_ontology(ontology, functions):
     """
-    Augments the ontology with new function_defs.
-    Returns the augmented ontology.
+    Augments the basic_ontology with new function_defs.
+    Returns the augmented basic_ontology.
 
-    :param geosolver.ontology.states.Ontology ontology:
+    :param geosolver.basic_ontology.states.Ontology basic_ontology:
     :param list function_defs:
-    :return geosolver.ontology.states.Ontology:
+    :return geosolver.basic_ontology.states.Ontology:
     """
     assert isinstance(ontology, BasicOntology)
 

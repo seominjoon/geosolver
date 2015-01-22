@@ -6,7 +6,7 @@ def load_geowordnet(basic_ontology, entry_defs):
     """
     Enumerate on entry with multiple lexemes
 
-    :param geosolver.ontology.states.BasicOntology basic_ontology:
+    :param geosolver.basic_ontology.states.BasicOntology basic_ontology:
     :param list entry_defs:
     :return GeoWordNet:
     """

@@ -9,9 +9,9 @@ __author__ = 'minjoon'
 
 def load_ontology(type_defs, symbol_defs):
     """
-    Load ontology object from type and function definitions (raw string dict).
+    Load basic_ontology object from type and function definitions (raw string dict).
     First checks the sanity of the definitions, and then induce Type and Function objects.
-    Lastly, construct inheritance graph for type and ontology graph.
+    Lastly, construct inheritance graph for type and basic_ontology graph.
 
     :param dict type_defs:
     :param dict symbol_defs:
@@ -54,7 +54,7 @@ def _construct_inheritance_graph(types):
     """
     Inheritance graph draws an edge from a supertype to subtype.
     For instance, circle is a subtype of entity, so an edge is drawn from entity to circle.
-    this information is used for type matching when constructing ontology graph.
+    this information is used for type matching when constructing basic_ontology graph.
     The node is indexed by the name of the type.
 
     :param dict type_defs:

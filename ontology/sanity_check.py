@@ -18,7 +18,7 @@ def visual_sanity_check():
 
 def basic_sanity_check(types, symbols):
     if _basic_sanity_check(types, symbols):
-        logging.info("Syntax verification of ontology definitions completed with no error.")
+        logging.info("Syntax verification of basic_ontology definitions completed with no error.")
     else:
         raise Exception("Ontology definitions are invalid; see logging.")
 
