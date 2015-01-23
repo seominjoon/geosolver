@@ -1,6 +1,5 @@
 import networkx as nx
 import itertools
-from geosolver.text.lexer.states import AbstractToken
 from geosolver.text.semantics.states import SemanticForest, SemanticNode
 
 __author__ = 'minjoon'
@@ -15,25 +14,11 @@ def create_semantic_forest(semantic_nodes, syntax_score_function, ontology_score
     syntax = any_node.syntax
     basic_ontology = any_node.basic_ontology
 
-
-    """
-    Create "ground" node and add it to semantic_nodes (creating new dictionary)
-    This kind of node is directly
-    """
-    ground_function = basic_ontology.functions['ground']
-    ground_token = AbstractToken('ground')
-    ground_node = SemanticNode(syntax, basic_ontology, ground_token, ground_function, 1)
-    # Augmentation
-    semantic_nodes = dict(semantic_nodes.items() + [(ground_function.name, ground_node)])
-
     forest_graph = nx.MultiDiGraph()
     edge_scores = {}
-    score_function = lambda fn, tn, idx: semantic_score_function(syntax_score_function, ontology_score_function,
-                                                                     fn, tn, idx)
-
     for from_node, to_node in itertools.permutations(semantic_nodes.values(), 2):
         for arg_idx in range(from_node.function.valence):
-            score = score_function(from_node, to_node, arg_idx)
+            syntax_score = modified_syntax_score_function()
             if score > 0:
                 edge_scores[(from_node.name, to_node.name)] = score
 

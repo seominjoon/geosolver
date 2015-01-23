@@ -17,7 +17,9 @@ def augment_ontology(basic_ontology, functions):
     assert isinstance(functions, dict)
 
     new_functions = dict(basic_ontology.functions.items() + functions.items())
-    new_ontology_graph = _construct_ontology_graph(basic_ontology.inheritance_graph, new_functions)
-    new_ontology = BasicOntology(basic_ontology.types, new_functions, basic_ontology.inheritance_graph, new_ontology_graph)
+    new_ontology_graph = _construct_ontology_graph(
+        basic_ontology.types, basic_ontology.inheritance_graph, new_functions)
+    new_ontology = BasicOntology(
+        basic_ontology.types, new_functions, basic_ontology.inheritance_graph, new_ontology_graph)
     return new_ontology
 

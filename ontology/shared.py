@@ -19,3 +19,5 @@ def isinstance_(inheritance_graph, type0, type1):
     :return bool:
     """
     return nx.has_path(inheritance_graph, type1.name, type0.name)
+
+

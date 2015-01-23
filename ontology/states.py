@@ -1,6 +1,6 @@
 import networkx as nx
 from geosolver.ontology import shared
-from geosolver.ontology.ontology_proximity_score import ontology_proximity_score
+from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
 
@@ -9,8 +9,8 @@ class Type(object):
     def __init__(self, name, supertype=None, label=None):
         assert isinstance(name, str)
 
-        self.name = name
-        self.id = hash(name)
+        self.name = name  # Intra-class identifier
+        self.id = (self.__class__.__name__, name)  # Inter-class identifier
         self.supertype = supertype
         if label is None:
             self.label = self.name
@@ -34,7 +34,7 @@ class Function(object):
         self.name = name
         self.arg_types = arg_types
         self.return_type = return_type
-        self.id = hash(self.name)
+        self.id = (self.__class__.__name__, name)
         self.valence = len(self.arg_types)
         if label is None:
             self.label = name
@@ -57,7 +57,7 @@ class BasicOntology(object):
         assert isinstance(types, dict)
         assert isinstance(functions, dict)
         assert isinstance(inheritance_graph, nx.DiGraph)
-        assert isinstance(ontology_graph, nx.MultiDiGraph)
+        assert isinstance(ontology_graph, nx.DiGraph)
 
         self.types = types
         self.functions = functions
@@ -74,8 +74,21 @@ class BasicOntology(object):
         """
         return shared.isinstance_(self.inheritance_graph, type0, type1)
 
+    def display_ontology_graph(self):
+        display_graph(self.ontology_graph)
+
+    def get_by_id(self, id_):
+        class_name, name = id_
+        if class_name == Type.__name__:
+            return self.types[name]
+        elif class_name == Function.__name__:
+            return self.functions[name]
+        else:
+            raise Exception(class_name)
+
     def __repr__(self):
         return "%s(len(type_defs)=%d, len(function_defs)=%d)" % (self.__class__.__name__, len(self.types), len(self.functions))
+
 
 
 class OntologySemantics(object):

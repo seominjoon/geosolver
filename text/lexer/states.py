@@ -1,13 +1,7 @@
 __author__ = 'minjoon'
 
 
-class AbstractToken(object):
-    def __init__(self, name):
-        self.name = name
-        self.label = name
-
-
-class Token(AbstractToken):
+class Token(object):
     def __init__(self, sentence, index):
         self.sentence = sentence
         self.index = index

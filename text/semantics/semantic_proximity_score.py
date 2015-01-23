@@ -1,5 +1,5 @@
-from geosolver.text.lexer.states import Token, AbstractToken
-from geosolver.text.semantics.states import SemanticNode
+from geosolver.text.lexer.states import Token
+from geosolver.text.semantics.states import SemanticNode, SourceNode, SinkNode
 
 __author__ = 'minjoon'
 
@@ -26,8 +26,8 @@ def semantic_proximity_score(syntax_proximity_score_function, ontology_proximity
     from_function = from_node.function
     to_function = to_node.function
 
-    assert isinstance(from_token, AbstractToken)
-    assert isinstance(to_token, AbstractToken)
+    assert isinstance(from_token, Token)
+    assert isinstance(to_token, Token)
 
     if isinstance(from_token, Token) and isinstance(to_token, Token):
         syntax_score = syntax_proximity_score_function(syntax, from_token, to_token)
@@ -37,3 +37,21 @@ def semantic_proximity_score(syntax_proximity_score_function, ontology_proximity
     return syntax_score * ontology_score
 
 
+def node_syntax_score(syntax, score_function, from_node, to_node):
+    if isinstance(from_node, SourceNode):
+        return 1
+    elif isinstance(to_node, SinkNode):
+        return 1
+    else:
+        assert isinstance(from_node, SemanticNode)
+        assert isinstance(to_node, SemanticNode)
+        return score_function(syntax, from_node, to_node)
+
+
+def node_ontology_score(basic_ontology, score_function, from_node, to_node):
+    if isinstance(from_node, SourceNode):
+        assert isinstance(to_node, SemanticNode)
+        if from_node.type is to_node.function.return_type:
+            return 1
+        else:
+            return 0

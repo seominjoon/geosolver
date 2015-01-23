@@ -35,12 +35,12 @@ def new_function_identifier(basic_ontology, ontology_semantics, word):
         raise Exception("?")
 
     elif number_score > 0:
-        function = Function(word, [basic_ontology.types['ground']], basic_ontology.types['number'])
+        function = Function(word, [], basic_ontology.types['number'])
         pair = FunctionScorePair(function, number_score)
         pairs[word] = pair
 
     elif reference_score > 0:
-        function = Function(word, [basic_ontology.types['ground']], basic_ontology.types['reference'])
+        function = Function(word, [], basic_ontology.types['reference'])
         pair = FunctionScorePair(function, reference_score)
         pairs[word] = pair
 

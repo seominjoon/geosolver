@@ -45,7 +45,7 @@ def load_ontology(type_defs, symbol_defs):
         symbols[symbol_.name] = symbol_
 
     inheritance_graph = _construct_inheritance_graph(types)
-    ontology_graph = _construct_ontology_graph(inheritance_graph, symbols)
+    ontology_graph = _construct_ontology_graph(types, inheritance_graph, symbols)
     ontology = BasicOntology(types, symbols, inheritance_graph, ontology_graph)
     return ontology
 
@@ -71,30 +71,24 @@ def _construct_inheritance_graph(types):
     return graph
 
 
-def _construct_ontology_graph(inheritance_graph, functions):
-    """
+def _construct_ontology_graph(types, inheritance_graph, functions):
+    assert isinstance(types, dict)
+    assert isinstance(functions, dict)
 
-    :param nx.DiGraph inheritance_graph:
-    :param dict function_defs:
-    :return nx.DiGraph:
-    """
-    graph = nx.MultiDiGraph()
+    graph = nx.DiGraph()
 
-    for symbol0, symbol1 in itertools.product(functions.values(), repeat=2):
-        '''
-        Add edge from symbol0 to symbol1 if one of symbol0's arg type matches return type of symbol1
-        '''
-        assert isinstance(symbol0, Function)
-        assert isinstance(symbol1, Function)
-        for idx, arg_type in enumerate(symbol0.arg_types):
-            if isinstance_(inheritance_graph, symbol1.return_type, arg_type):
-                '''
-                If symbol1's return type is an instance of arg type, then create an edge.
-                Ex. symbol1 return type is line, and arg type is entity.
-                '''
-                # key is set to idx, which means the edge is for idx'th argument of symbol0
-                graph.add_edge(symbol0.name, symbol1.name, key=idx, arg_idx=idx, label=idx)
+    for function in functions.values():
+        assert isinstance(function, Function)
+        for type_ in types.values():
+            assert isinstance(type_, Type)
+            # from type edges: if type is supertype of function's return type,
+            # or function's return type is instance of type
+            if isinstance_(inheritance_graph, function.return_type, type_):
+                graph.add_edge(type_.id, function.id)
+
+            # to type edges: if type is instance of function's arg type
+            for arg_idx, arg_type in enumerate(function.arg_types):
+                if isinstance_(inheritance_graph, type_, arg_type):
+                    graph.add_edge(function.id, type_.id, label=arg_idx, arg_idx=arg_idx)
 
     return graph
-
-

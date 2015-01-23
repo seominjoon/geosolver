@@ -1,5 +1,6 @@
-from geosolver.text.lexer.states import AbstractToken
 import networkx as nx
+from geosolver.text.lexer.states import Token
+
 __author__ = 'minjoon'
 
 def syntax_proximity_score(syntax, from_token, to_token):
@@ -23,8 +24,8 @@ def _graph_proximity_score(graph, from_token, to_token):
     :param Token to_token:
     :return float:
     """
-    assert isinstance(from_token, AbstractToken)
-    assert isinstance(to_token, AbstractToken)
+    assert isinstance(from_token, Token)
+    assert isinstance(to_token, Token)
 
     if from_token is to_token:
         cycles = [cycle for cycle in nx.simple_cycles(graph) if from_token.index in cycle]

@@ -17,7 +17,6 @@ type_defs = [
     {'name': 'truth'},
     {'name': 'entity'},
     {'name': 'reference'},
-    {'name': 'ground'},
 
     # subtypes
     {'name': 'point', 'supertype': 'entity'},
@@ -31,9 +30,6 @@ type_defs = [
 ]
 
 function_defs = [
-    # Ground: do not touch!
-    {'name': 'ground', 'arg_types': [], 'return_type': 'ground'},
-
     # operators
     {'name': 'add', 'arg_types': ['number', 'number'], 'return_type': 'number'},
     {'name': 'sub', 'arg_types': ['number', 'number'], 'return_type': 'number'},
