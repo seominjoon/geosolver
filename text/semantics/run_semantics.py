@@ -13,11 +13,11 @@ from geosolver.text.syntax.syntax_proximity_score import syntax_proximity_score
 __author__ = 'minjoon'
 
 def test_create_semantic_forest():
-    string = "Line AB is perpendicular to line CD."
+    string = "Lines AB and CD are perpendicular to EF."
     tokens = string_to_tokens(string)
     syntax = create_syntax(tokens, 3)
 
-    threshold = 0.7
+    threshold = 0.99
     semantic_nodes = create_semantic_nodes(syntax, basic_ontology, ontology_semantics, geowordnet,
                                            entry_proximity_score, new_function_identifier, tokens, threshold)
     semantic_forest = create_semantic_forest(semantic_nodes,

@@ -20,16 +20,16 @@ def test_entry_proximity_score():
 
 
 def test_function_identifier():
-    print(new_function_identifier(basic_ontology, ontology_semantics, "Line"))
+    print(new_function_identifier(basic_ontology, ontology_semantics, "Lines"))
 
 
 def test_filters():
     print(filter_functions(ontology_semantics, geowordnet, entry_proximity_score, new_function_identifier,
-                           '5', 0.7))
+                           'Lines', 0.7))
 
 
 if __name__ == "__main__":
     # test_sanity_check()
     # test_entry_proximity_score()
-    # test_filters()
-    test_function_identifier()
+    test_filters()
+    # test_function_identifier()

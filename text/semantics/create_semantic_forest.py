@@ -26,21 +26,25 @@ def create_semantic_forest(semantic_nodes, syntax_score_function, ontology_score
     # Augmentation
     semantic_nodes = dict(semantic_nodes.items() + [(ground_function.name, ground_node)])
 
-    forest_graph = nx.DiGraph()
+    forest_graph = nx.MultiDiGraph()
     edge_scores = {}
-    score_function = lambda fn, tn: semantic_score_function(syntax_score_function, ontology_score_function, fn, tn)
+    score_function = lambda fn, tn, idx: semantic_score_function(syntax_score_function, ontology_score_function,
+                                                                     fn, tn, idx)
 
     for from_node, to_node in itertools.permutations(semantic_nodes.values(), 2):
-        score = score_function(from_node, to_node)
-        if score > 0:
-            edge_scores[(from_node.name, to_node.name)] = score
+        for arg_idx in range(from_node.function.valence):
+            score = score_function(from_node, to_node, arg_idx)
+            if score > 0:
+                edge_scores[(from_node.name, to_node.name)] = score
 
-            if from_node.name not in forest_graph:
-                forest_graph.add_node(from_node.name, label=from_node.label)
-            if to_node.name not in forest_graph:
-                forest_graph.add_node(to_node.name, label=to_node.label)
+                if from_node.name not in forest_graph:
+                    forest_graph.add_node(from_node.name, label=from_node.label)
+                if to_node.name not in forest_graph:
+                    forest_graph.add_node(to_node.name, label=to_node.label)
 
-            forest_graph.add_edge(from_node.name, to_node.name, label="%.2f" % score, score=score)
+                label = "%d:%.2f" % (arg_idx, score)
+                forest_graph.add_edge(from_node.name, to_node.name,
+                                      key=arg_idx, arg_idx=arg_idx, score=score, label=label)
 
     semantic_forest = SemanticForest(syntax, basic_ontology, semantic_nodes, edge_scores, forest_graph)
     return semantic_forest

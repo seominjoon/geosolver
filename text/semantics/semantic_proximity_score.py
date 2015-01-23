@@ -3,7 +3,8 @@ from geosolver.text.semantics.states import SemanticNode
 
 __author__ = 'minjoon'
 
-def semantic_proximity_score(syntax_proximity_score_function, ontology_proximity_score_function, from_node, to_node):
+def semantic_proximity_score(syntax_proximity_score_function, ontology_proximity_score_function,
+                             from_node, to_node, arg_idx):
     """
     Combines two score functions (syntax and basic_ontology).
     Can be as simple as the multiplication of the two (which is the case now).
@@ -32,7 +33,7 @@ def semantic_proximity_score(syntax_proximity_score_function, ontology_proximity
         syntax_score = syntax_proximity_score_function(syntax, from_token, to_token)
     else:
         syntax_score = 1
-    ontology_score = ontology_proximity_score_function(basic_ontology, from_function, to_function)
+    ontology_score = ontology_proximity_score_function(basic_ontology, from_function, to_function, arg_idx)
     return syntax_score * ontology_score
 
 

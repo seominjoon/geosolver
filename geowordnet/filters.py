@@ -14,6 +14,7 @@ def filter_entries(geowordnet, proximity_score_function, word, threshold):
     :param threshold:
     :return list:
     """
+    word = word.lower()  # case shouldn't matter here
     pairs = []
     for entry in geowordnet.entries:
         score = proximity_score_function(word, entry)
@@ -48,7 +49,7 @@ def filter_functions(ontology_semantics, geowordnet,
         else:
             function_score_pairs[function_name] = fsp
 
-    # From new_function identifier
+    # From new_function identifier; case might matter here.
     for name, fsp in new_function_identifier(geowordnet.basic_ontology, ontology_semantics, word).iteritems():
         function_score_pairs[name] = fsp
 
