@@ -1,6 +1,5 @@
 from collections import namedtuple
 from geosolver.text.syntax.misc import syntax_display_graphs
-from geosolver.text.syntax.syntax_proximity_score import syntax_proximity_score
 
 __author__ = 'minjoon'
 
@@ -19,8 +18,5 @@ class Syntax(object):
         :return:
         """
         syntax_display_graphs(self)
-
-    def proximity_score(self, from_token, to_token):
-        return syntax_proximity_score(self, from_token, to_token)
 
 TreeScorePair = namedtuple("TreeScorePair", "tree score")

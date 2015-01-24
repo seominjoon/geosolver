@@ -3,8 +3,8 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.ontology.get_ontology_graph_paths import get_ontology_graph_paths
-from geosolver.ontology.ontology_proximity_score import ontology_proximity_score
+from geosolver.ontology.get_implied_path_penalty import get_implied_path_penalty
+from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import Function
 from geosolver.ontology import basic_ontology
 from pprint import pprint
@@ -22,30 +22,21 @@ def test_load_ontology():
     print(o.isinstance(t, t))
 
 
-
-def test_function_proximity_score():
-    o = basic_ontology
-    # display_graph(o.inheritance_graph)
-    # display_graph(o.ontology_graph)
-    t0 = o.types['line']
-    f1 = o.types['truth']
-    score = ontology_proximity_score(o, t0, f1)
-    print(score)
-
-
-
 def test_augment_ontology():
     o = basic_ontology
     s0 = Function('5', [], o.types['number'])
-    s1 = Function('O', [], o.types['reference'])
+    s1 = Function('AB', [], o.types['reference'])
     oo = augment_ontology(o, {s0.name: s0, s1.name: s1})
     s2 = o.functions['equal']
     s3 = o.functions['radiusOf']
     s4 = o.functions['isRadiusOf']
     s5 = o.functions['circle']
     t0 = o.types['truth']
-    pprint(get_ontology_graph_paths(oo, t0, s1))
-    print(ontology_proximity_score(oo, t0, s1))
+    number = o.types['number']
+    paths = get_ontology_paths(oo, number, s1)
+    for path in paths:
+        print(path)
+        print(get_implied_path_penalty(oo, path))
 
 if __name__ == "__main__":
     # test_load_ontology()
