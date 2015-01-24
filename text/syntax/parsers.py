@@ -6,7 +6,7 @@ Only provide interface here.
 from geosolver import settings
 import requests
 import networkx as nx
-from geosolver.text.syntax.states import TreeScorePair
+from geosolver.text.syntax.states import SyntaxTree
 
 __author__ = 'minjoon'
 
@@ -27,15 +27,15 @@ class StanfordParser(DependencyParser):
     def __init__(self, server_url):
         self.server_url = server_url
 
-    def parse_tree_score_pairs(self, tokens, k):
+    def parse_syntax_trees(self, tokens, k):
         sentence = tokens[0].sentence
-        params = {'words': ' '.join(sentence), 'k': k, 'paragraph': ' '.join(sentence)}
+        params = {'words': ' '.join(sentence.values()), 'k': k, 'paragraph': ' '.join(sentence.values())}
         r = requests.get(self.server_url, params=params)
         data = r.json()
 
-        tree_score_pairs = []
+        tree_score_pairs = {}
 
-        for tree_data in data:
+        for rank, tree_data in enumerate(data):
             score = tree_data['score']
             tuples = tree_data['tuples']
             graph = nx.DiGraph()
@@ -52,9 +52,9 @@ class StanfordParser(DependencyParser):
                     graph.node[to]['label'] = "%s-%d" % (sentence[to], to)
                     graph.node[to]['token'] = tokens[to]
 
-            tree_score_pairs.append(TreeScorePair(graph, score))
+            tree_score_pairs[rank] = SyntaxTree(graph, rank, score)
 
-        return tuple(tree_score_pairs)
+        return tree_score_pairs
 
 
 stanford_parser = StanfordParser(settings.STANFORD_PARSER_SERVER_URL)

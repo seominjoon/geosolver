@@ -1,6 +1,5 @@
 import networkx as nx
 from geosolver.ontology import shared
-from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
@@ -87,11 +86,20 @@ class BasicOntology(object):
         else:
             raise Exception(class_name)
 
-    def get_ontology_paths(self, from_obj, to_obj):
-        return get_ontology_paths(self, from_obj, to_obj)
-
     def __repr__(self):
         return "%s(len(type_defs)=%d, len(function_defs)=%d)" % (self.__class__.__name__, len(self.types), len(self.functions))
+
+
+class OntologyPath(object):
+    def __init__(self, basic_ontology, nodes):
+        self.basic_ontology = basic_ontology
+        self.nodes = nodes
+
+    def __repr__(self):
+        return "%s([%s])" % (self.__class__.__name__, ", ".join(node.name for node in self.nodes))
+
+    def __len__(self):
+        return len(self.nodes)
 
 
 

@@ -12,6 +12,6 @@ def create_syntax(tokens, k):
     :param tuple tokens:
     :return Syntax:
     """
-    pairs = stanford_parser.parse_tree_score_pairs(tokens, k)
-    syntax = Syntax(tokens, pairs)
+    syntax_trees = stanford_parser.parse_syntax_trees(tokens, k)
+    syntax = Syntax(tokens, syntax_trees)
     return syntax

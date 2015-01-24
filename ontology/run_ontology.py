@@ -3,11 +3,10 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.ontology.get_implied_path_penalty import get_implied_path_penalty
+from geosolver.text.semantics.get_implication_penalty import get_implication_penalty
 from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import Function
 from geosolver.ontology import basic_ontology
-from pprint import pprint
 
 __author__ = 'minjoon'
 
@@ -36,7 +35,7 @@ def test_augment_ontology():
     paths = get_ontology_paths(oo, number, s1)
     for path in paths:
         print(path)
-        print(get_implied_path_penalty(oo, path))
+        print(get_implication_penalty(oo, path))
 
 if __name__ == "__main__":
     # test_load_ontology()

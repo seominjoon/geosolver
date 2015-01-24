@@ -13,6 +13,7 @@ def string_to_tokens(string):
     """
     raw_words = re.split('(\W)', string)
     p = re.compile('\S')
-    sentence = tuple(word for word in raw_words if p.match(word))
-    tokens = tuple(Token(sentence, idx) for idx in range(len(sentence)))
+    words = tuple(word for word in raw_words if p.match(word))
+    sentence = {idx: word for idx, word in enumerate(words)}
+    tokens = {idx: Token(sentence, idx) for idx in sentence}
     return tokens

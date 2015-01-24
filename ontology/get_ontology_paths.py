@@ -1,4 +1,5 @@
 import networkx as nx
+from geosolver.ontology.states import OntologyPath
 
 __author__ = 'minjoon'
 
@@ -28,7 +29,7 @@ def get_ontology_paths(basic_ontology, from_type, to_obj):
     else:
         paths = nx.all_simple_paths(graph, from_type.id, to_obj.id)
 
-    proper_paths = [[basic_ontology.get_by_id(id_) for id_ in path] for path in paths]
+    proper_paths = [OntologyPath(basic_ontology, [basic_ontology.get_by_id(id_) for id_ in path]) for path in paths]
     return proper_paths
 
 

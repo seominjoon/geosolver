@@ -1,11 +1,11 @@
-from geosolver.ontology.states import Type
+from geosolver.ontology.states import Type, OntologyPath
 from geosolver.ontology.states import Function
 from geosolver.ontology.states import BasicOntology
 
 __author__ = 'minjoon'
 
 
-def get_implied_path_penalty(basic_ontology, ontology_path):
+def get_implication_penalty(basic_ontology, ontology_path):
     """
     In general, penalty = number of functions implied. (excluding start and end)
     However, penalty differs to prioritize some implications.
@@ -24,11 +24,12 @@ def get_implied_path_penalty(basic_ontology, ontology_path):
     :return:
     """
     assert isinstance(basic_ontology, BasicOntology)
-    default_penalty = sum(1 for obj in ontology_path[1:-1] if isinstance(obj, Function))
+    assert isinstance(ontology_path, OntologyPath)
+    default_penalty = sum(1 for obj in ontology_path.nodes[1:-1] if isinstance(obj, Function))
     """
     Add different penalty here
     """
-    for subpath in _get_subpaths(ontology_path, 3):
+    for subpath in _get_subpaths(ontology_path.nodes, 3):
         if subpath[0] is basic_ontology.types['number']:
             if subpath[1] is basic_ontology.functions['lengthOf']:
                 if subpath[2] is basic_ontology.types['line']:
@@ -44,7 +45,7 @@ def get_implied_path_penalty(basic_ontology, ontology_path):
                 if basic_ontology.isinstance(subpath[2], basic_ontology.types['entity']):
                     default_penalty -= 1
 
-    for subpath in _get_subpaths(ontology_path, 4):
+    for subpath in _get_subpaths(ontology_path.nodes, 4):
         if subpath[0] is basic_ontology.types['line'] and \
                 subpath[1] is basic_ontology.functions['line'] and \
                 subpath[2] is basic_ontology.types['reference'] and \
