@@ -91,15 +91,18 @@ class BasicOntology(object):
 
 
 class OntologyPath(object):
-    def __init__(self, basic_ontology, nodes):
+    def __init__(self, basic_ontology, path_nodes, key):
         self.basic_ontology = basic_ontology
-        self.nodes = nodes
+        self.path_nodes = path_nodes
+        self.key = key
+        self.id = (path_nodes[0].id, path_nodes[-1].id, key)
 
     def __repr__(self):
-        return "%s([%s])" % (self.__class__.__name__, ", ".join(node.name for node in self.nodes))
+        return "%s(key=%d, path=[%s])" % (self.__class__.__name__, self.key,
+                                          ", ".join(node.name for node in self.path_nodes))
 
     def __len__(self):
-        return len(self.nodes)
+        return len(self.path_nodes)
 
 
 

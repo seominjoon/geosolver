@@ -6,7 +6,6 @@ class Token(object):
         self.sentence = sentence
         self.index = index
         self.word = sentence[index]
-        self.name = self.index
         self.label = "%s-%d" % (self.word, self.index)
 
     def __repr__(self):

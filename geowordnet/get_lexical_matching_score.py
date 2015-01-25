@@ -6,7 +6,7 @@ __author__ = 'minjoon'
 inflect_engine = inflect.engine()
 
 
-def entry_proximity_score(word, entry):
+def get_lexical_matching_score(word, entry):
     """
     Given word and an entry, returns proximity between the word and the entry.
     If the word equals the lemma of the entry, then score is 1.

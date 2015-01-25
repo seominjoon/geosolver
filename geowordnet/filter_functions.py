@@ -1,30 +1,11 @@
+from geosolver.geowordnet.get_lexical_matching_score import get_lexical_matching_score
+from geosolver.geowordnet.new_function_identifier import new_function_identifier
 from geosolver.geowordnet.states import EntryScorePair, FunctionScorePair
 
 __author__ = 'minjoon'
 
 
-
-def filter_entries(geowordnet, proximity_score_function, word, threshold):
-    """
-    Given word, finds entries whose entry proximity score with the word is higher than the threshold.
-    Return format: [(entry, score), ...]
-
-    :param geowordnet:
-    :param word:
-    :param threshold:
-    :return list:
-    """
-    word = word.lower()  # case shouldn't matter here
-    pairs = []
-    for entry in geowordnet.entries:
-        score = proximity_score_function(word, entry)
-        if score > threshold:
-            pairs.append(EntryScorePair(entry, score))
-    return pairs
-
-
-def filter_functions(ontology_semantics, geowordnet,
-                     proximity_score_function, new_function_identifier, word, threshold):
+def filter_functions(ontology_semantics, geowordnet, word, threshold):
     """
     Filter entries, and obtain the function_defs.
     Return format: {function_name: (function, score), ... }
@@ -38,7 +19,7 @@ def filter_functions(ontology_semantics, geowordnet,
     function_score_pairs = {}
 
     # From entries
-    entry_score_pairs = filter_entries(geowordnet, proximity_score_function, word, threshold)
+    entry_score_pairs = _filter_entries(geowordnet, get_lexical_matching_score, word, threshold)
 
     for entry, score in entry_score_pairs:
         function_name = entry.function.name
@@ -54,4 +35,24 @@ def filter_functions(ontology_semantics, geowordnet,
         function_score_pairs[name] = fsp
 
     return function_score_pairs
+
+
+def _filter_entries(geowordnet, get_lexical_matching_score, word, threshold):
+    """
+    Given word, finds entries whose entry proximity score with the word is higher than the threshold.
+    Return format: [(entry, score), ...]
+
+    :param geowordnet:
+    :param word:
+    :param threshold:
+    :return list:
+    """
+    word = word.lower()  # case shouldn't matter here
+    pairs = []
+    for entry in geowordnet.entries:
+        score = get_lexical_matching_score(word, entry)
+        if score > threshold:
+            pairs.append(EntryScorePair(entry, score))
+    return pairs
+
 

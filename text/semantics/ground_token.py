@@ -1,10 +1,9 @@
-from geosolver.geowordnet.filters import filter_functions
+from geosolver.geowordnet.filter_functions import filter_functions
 from geosolver.text.lexer.states import Token
 
 __author__ = 'minjoon'
 
-def ground_token(ontology_semantics, geowordnet, entry_proximity_score_function, new_function_identifier,
-                 token, threshold):
+def ground_token(ontology_semantics, geowordnet, filter_functions, token, threshold):
     """
     Given token, find the best matching function score function.
     Score function takes in word and threshold.
@@ -19,6 +18,5 @@ def ground_token(ontology_semantics, geowordnet, entry_proximity_score_function,
     """
     assert isinstance(token, Token)
 
-    return filter_functions(ontology_semantics, geowordnet, entry_proximity_score_function, new_function_identifier,
-                            token.word, threshold)
+    return filter_functions(ontology_semantics, geowordnet, token.word, threshold)
 

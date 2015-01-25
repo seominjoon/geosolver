@@ -37,10 +37,11 @@ class SyntaxTree(object):
 
 
 class SyntaxPath(object):
-    def __init__(self, syntax, tree_idx, tokens):
+    def __init__(self, syntax, tree_rank, tokens):
         self.syntax = syntax
-        self.tree_idx = tree_idx
+        self.tree_rank = tree_rank
         self.tokens = tokens
+        self.id = (tokens[0].index, tokens[-1].index, tree_rank)
 
     def __len__(self):
         return len(self.tokens)
