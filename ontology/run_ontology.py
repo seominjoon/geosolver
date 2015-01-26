@@ -38,7 +38,7 @@ def test_augment_ontology():
     paths = get_ontology_paths(oo, truth, s1)
     for path in paths.values():
         print(path)
-        print(get_ontology_path_cost(oo, path))
+        print(get_ontology_path_cost(path))
 
 if __name__ == "__main__":
     # test_load_ontology()

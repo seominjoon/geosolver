@@ -5,7 +5,7 @@ from geosolver.ontology.states import BasicOntology
 __author__ = 'minjoon'
 
 
-def get_ontology_path_cost(basic_ontology, ontology_path):
+def get_ontology_path_cost(ontology_path):
     """
     In general, penalty = number of functions implied. (excluding start and end)
     However, penalty differs to prioritize some implications.
@@ -19,11 +19,9 @@ def get_ontology_path_cost(basic_ontology, ontology_path):
     (number) -> [angleOf:angle ->] (angle): -0.5
     (truth) -> [exists ->] (entity): -1
 
-    :param basic_ontology:
     :param ontology_path:
     :return:
     """
-    assert isinstance(basic_ontology, BasicOntology)
     assert isinstance(ontology_path, OntologyPath)
     cost = 0
     for idx, node in enumerate(ontology_path.path_nodes[:-1]):
@@ -38,8 +36,11 @@ def get_ontology_path_cost(basic_ontology, ontology_path):
             cost += 1
         elif node.name in ['?number', '?truth', 'lengthOf', 'angleOf:arc', 'angleOf:angle']:
             cost += 1
-        else:
+        elif idx > 0:
             cost += 100
+        elif ontology_path.path_nodes[idx+1].name == 'reference':
+            cost += 100
+
 
     return cost
 

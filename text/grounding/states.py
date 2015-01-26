@@ -42,6 +42,7 @@ class GroundedSyntax(Syntax):
         self.syntax_trees = syntax.syntax_trees
         self.grounded_tokens = grounded_tokens
         self.grounded_syntax_trees = grounded_syntax_trees
+        self.all_tokens = dict(self.tokens.items() + self.grounded_tokens.items())
 
     def display_graphs(self):
         display_graphs(grounded_syntax_tree.graph for grounded_syntax_tree in self.grounded_syntax_trees.values())
