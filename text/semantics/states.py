@@ -38,3 +38,11 @@ class TypeRelation(object):
         self.ontology_path = ontology_path
         self.key = (from_type.name, to_grounded_token.key)
         self.basic_ontology = to_grounded_token.basic_ontology
+
+
+class SemanticTree(object):
+    def __init__(self, semantic_forest, tree_graph, grounded_syntax_cost, ontology_cost):
+        self.semantic_forest = semantic_forest
+        self.tree_graph = tree_graph
+        self.grounded_syntax_cost = grounded_syntax_cost
+        self.ontology_cost = ontology_cost

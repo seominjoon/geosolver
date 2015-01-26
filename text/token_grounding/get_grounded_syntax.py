@@ -1,5 +1,5 @@
-from geosolver.text.grounding.get_grounded_syntax_tree import get_grounded_syntax_tree
-from geosolver.text.grounding.states import GroundedSyntax
+from geosolver.text.token_grounding.get_grounded_syntax_tree import get_grounded_syntax_tree
+from geosolver.text.token_grounding.states import GroundedSyntax
 
 __author__ = 'minjoon'
 

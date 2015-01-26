@@ -1,4 +1,4 @@
-from geosolver.text.grounding.states import GroundedSyntaxPath
+from geosolver.text.token_grounding.states import GroundedSyntaxPath
 from geosolver.text.lexer.states import Token
 import networkx as nx
 

@@ -1,6 +1,6 @@
 import itertools
 import networkx as nx
-from geosolver.text.grounding.states import GroundedSyntaxTree
+from geosolver.text.token_grounding.states import GroundedSyntaxTree
 from geosolver.text.syntax.states import SyntaxTree
 
 __author__ = 'minjoon'

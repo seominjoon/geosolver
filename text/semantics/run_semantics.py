@@ -1,8 +1,8 @@
 from pprint import pprint
 from geosolver.geowordnet import geowordnet
 from geosolver.ontology import basic_ontology, ontology_semantics
-from geosolver.text.grounding.get_grounded_syntax import get_grounded_syntax
-from geosolver.text.grounding.get_grounded_tokens import get_grounded_tokens
+from geosolver.text.token_grounding.get_grounded_syntax import get_grounded_syntax
+from geosolver.text.token_grounding.get_grounded_tokens import get_grounded_tokens
 from geosolver.text.lexer.string_to_tokens import string_to_tokens
 from geosolver.text.semantics.get_semantic_forest import get_semantic_forest
 from geosolver.text.syntax.create_syntax import create_syntax

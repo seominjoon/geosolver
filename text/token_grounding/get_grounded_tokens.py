@@ -1,7 +1,7 @@
 from collections import namedtuple
 from geosolver.geowordnet.filter_functions import filter_functions
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.text.grounding.states import GroundedToken
+from geosolver.text.token_grounding.states import GroundedToken
 
 __author__ = 'minjoon'
 
