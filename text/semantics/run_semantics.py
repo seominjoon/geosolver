@@ -15,8 +15,8 @@ def test_create_semantic_forest():
     syntax = create_syntax(tokens, 1)
     threshold = 0.99
     grounded_tokens = get_grounded_tokens(syntax, ontology_semantics, geowordnet, threshold)
-    grounded_syntax = get_grounded_syntax(syntax, basic_ontology, grounded_tokens)
-    semantic_forest = get_semantic_forest(grounded_syntax, 3, 2)
+    grounded_syntax = get_grounded_syntax(grounded_tokens)
+    semantic_forest = get_semantic_forest(grounded_syntax, 3, 3)
     semantic_forest.display_graph()
 
 

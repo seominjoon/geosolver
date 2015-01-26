@@ -4,7 +4,11 @@ from geosolver.text.grounding.states import GroundedSyntax
 __author__ = 'minjoon'
 
 
-def get_grounded_syntax(syntax, basic_ontology, grounded_tokens):
+def get_grounded_syntax(grounded_tokens):
+    assert len(grounded_tokens) > 0
+    any_grounded_token = grounded_tokens.values()[0]
+    syntax = any_grounded_token.syntax
+    basic_ontology = any_grounded_token.basic_ontology
     grounded_syntax_trees = {}
     all_tokens = dict(grounded_tokens.items() + syntax.tokens.items())
     for syntax_tree in syntax.syntax_trees.values():

@@ -24,23 +24,59 @@ def get_ontology_path_cost(ontology_path):
     """
     assert isinstance(ontology_path, OntologyPath)
     cost = 0
+    basic_ontology = ontology_path.basic_ontology
+
+
     for idx, node in enumerate(ontology_path.path_nodes[:-1]):
         if not isinstance(node, Function):
             continue
         nn_node = ontology_path.path_nodes[idx+2]
-        if node.name == 'point' and len(nn_node.name) == 1:
-            cost += 1
-        elif node.name == 'line' and len(nn_node.name) > 1:
-            cost += 1
-        elif node.name == 'quadrilateral' and len(nn_node.name) == 4:
-            cost += 1
-        elif node.name in ['?number', '?truth', 'lengthOf', 'angleOf:arc', 'angleOf:angle']:
-            cost += 1
-        elif idx > 0:
-            cost += 100
-        elif ontology_path.path_nodes[idx+1].name == 'reference':
-            cost += 100
-
+        if idx == 0:
+            if basic_ontology.isinstance(node.return_type, basic_ontology.types['entity']):
+                if node.name == 'point':
+                    if len(nn_node.name) == 1:
+                        cost += 1
+                    else:
+                        cost += 100
+                elif node.name == 'line':
+                    if len(nn_node.name) > 1:
+                        cost += 1
+                    else:
+                        cost += 100
+                elif node.name == 'quadrilateral':
+                    if len(nn_node.name) == 4:
+                        cost += 1
+                    else:
+                        cost += 100
+                elif node.name == 'triangle':
+                    if len(nn_node.name) == 3:
+                        cost += 1
+                    else:
+                        cost += 100
+                elif node.name == 'circle':
+                    if len(nn_node.name) == 1:
+                        cost += 1
+                    else:
+                        cost += 100
+                elif node.name == 'arc':
+                    if len(nn_node.name) == 2:
+                        cost += 1
+                    else:
+                        cost += 100
+                elif node.name == 'angle':
+                    if len(nn_node.name) in [1,3]:
+                        cost += 1
+                    else:
+                        cost += 100
+                else:
+                    cost += 1
+            else:
+                cost += 1
+        else:
+            if node.name in ['?number', '?truth', 'lengthOf', 'angleOf:arc', 'angleOf:angle']:
+                cost += 2
+            else:
+                cost += 100
 
     return cost
 
