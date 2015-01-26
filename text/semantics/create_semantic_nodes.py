@@ -1,8 +1,10 @@
 from collections import namedtuple
+
 from geosolver.geowordnet.filter_functions import filter_functions
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.text.semantics.ground_token import ground_token
+from geosolver.text.grounding import ground_token
 from geosolver.text.semantics.states import SemanticNode
+
 
 __author__ = 'minjoon'
 

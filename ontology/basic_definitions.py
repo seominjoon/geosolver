@@ -27,6 +27,10 @@ type_defs = [
     {'name': 'circle', 'supertype': 'entity'},
     {'name': 'triangle', 'supertype': 'polygon'},
     {'name': 'quadrilateral', 'supertype': 'polygon'},
+
+    # unknown
+    {'name': '?number'},
+    {'name': '?truth'},
 ]
 
 function_defs = [
@@ -36,9 +40,9 @@ function_defs = [
     {'name': 'mul', 'arg_types': ['number', 'number'], 'return_type': 'number'},
     {'name': 'div', 'arg_types': ['number', 'number'], 'return_type': 'number'},
     {'name': 'pow', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'equal', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'greater', 'arg_types': ['number', 'number'], 'return_type': 'number'},
-    {'name': 'less', 'arg_types': ['number', 'number'], 'return_type': 'number'},
+    {'name': 'equal', 'arg_types': ['number', 'number'], 'return_type': 'truth'},
+    {'name': 'greater', 'arg_types': ['number', 'number'], 'return_type': 'truth'},
+    {'name': 'less', 'arg_types': ['number', 'number'], 'return_type': 'truth'},
 
     # functions mapping to number
     {'name': 'lengthOf', 'arg_types': ['line'], 'return_type': 'number'},
@@ -52,6 +56,7 @@ function_defs = [
     {'name': 'circumferenceOf', 'arg_types': ['circle'], 'return_type': 'number'},
 
     # functions mapping to entities
+    {'name': 'point', 'arg_types': ['reference'], 'return_type': 'point'},
     {'name': 'line', 'arg_types': ['reference'], 'return_type': 'line'},
     {'name': 'arc', 'arg_types': ['reference'], 'return_type': 'arc'},
     {'name': 'angle', 'arg_types': ['reference'], 'return_type': 'angle'},
@@ -60,7 +65,6 @@ function_defs = [
     {'name': 'quadrilateral', 'arg_types': ['reference'], 'return_type': 'quadrilateral'},
 
     # functions mapping to truth value (predicates)
-    {'name': 'exists', 'arg_types': ['entity'], 'return_type': 'truth'},
     {'name': 'intersects', 'arg_types': ['entity', 'entity'], 'return_type': 'truth'},
     {'name': 'isOn', 'arg_types': ['point', 'entity'], 'return_type': 'truth'},
     {'name': 'isMidpointOf', 'arg_types': ['point', 'line'], 'return_type': 'truth'},
@@ -84,4 +88,8 @@ function_defs = [
     {'name': 'isChordOf', 'arg_types': ['line', 'circle'], 'return_type': 'truth'},
     {'name': 'isTangentOf', 'arg_types': ['line', 'circle'], 'return_type': 'truth'},
     {'name': 'isSecantOf', 'arg_types': ['line', 'circle'], 'return_type': 'truth'},
+
+    # unknown
+    {'name': '?number', 'arg_types': ['number'], 'return_type': '?number'},
+    {'name': '?truth', 'arg_types': ['truth'], 'return_type': '?truth'},
 ]

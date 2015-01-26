@@ -47,6 +47,13 @@ def display_graph(graph, method='image', title="", block=True):
             block_display()
 
 
+def display_graphs(graphs, method='image', block=True):
+    for graph in graphs:
+        display_graph(graph, method=method, block=False)
+    if block:
+        block_display()
+
+
 def block_display():
     cv2.waitKey()
     cv2.destroyAllWindows()

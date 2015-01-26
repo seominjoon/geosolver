@@ -7,7 +7,7 @@ __author__ = 'minjoon'
 
 
 def syntax_display_graphs(syntax):
-    for graph, score in syntax.syntax_graph_score_pairs:
-        display_graph(graph, title="%f" % score, block=False)
+    for syntax_tree in syntax.syntax_trees.values():
+        display_graph(syntax_tree.graph, title="%f" % syntax_tree.score, block=False)
     block_display()
 

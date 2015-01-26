@@ -54,6 +54,7 @@ entries = [
     {'lemma': 'circumference', 'pos': 'noun', 'lexemes': ['circumferenceOf']},
 
     # functions mapping to entities
+    {'lemma': 'point', 'pos': 'noun', 'lexemes': ['point']},
     {'lemma': 'line', 'pos': 'noun', 'lexemes': ['line']},
     {'lemma': 'arc', 'pos': 'noun', 'lexemes': ['arc']},
     {'lemma': 'circle', 'pos': 'noun', 'lexemes': ['circle']},
@@ -61,7 +62,6 @@ entries = [
     {'lemma': 'quadrilateral', 'pos': 'noun', 'lexemes': ['quadrilateral']},
 
     # functions mapping to truth values (predicates)
-    {'lemma': 'exist', 'pos': 'verb', 'lexemes': ['exists']},
     {'lemma': 'intersect', 'pos': 'verb', 'lexemes': ['intersects']},
     {'lemma': 'on', 'pos': 'preposition', 'lexemes': ['isOn']},
     {'lemma': 'midpoint', 'pos': 'noun', 'lexemes': ['isMidpointOf']},
@@ -82,6 +82,11 @@ entries = [
     {'lemma': 'chord', 'pos': 'noun', 'lexemes': ['isChordOf']},
     {'lemma': 'tangent', 'pos': 'noun', 'lexemes': ['isTangentOf']},
     {'lemma': 'secant', 'pos': 'noun', 'lexemes': ['isSecantOf']},
+
+    # unknown mapping
+    {'lemma': 'what', 'pos': 'noun', 'lexemes': ['?number']},
+    {'lemma': 'find', 'pos': 'verb', 'lexemes': ['?number']},
+    {'lemma': 'which', 'pos': 'noun', 'lexemes': ['?number', '?truth']},
 ]
 
 # enumerate different forms

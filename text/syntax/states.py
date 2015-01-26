@@ -46,3 +46,7 @@ class SyntaxPath(object):
     def __len__(self):
         return len(self.tokens)
 
+    def __repr__(self):
+        return "%s(rank=%d, tokens=[%s])" % (self.__class__.__name__,
+                                             self.tree_rank, ', '.join(token.word for token in self.tokens))
+

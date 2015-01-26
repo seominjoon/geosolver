@@ -20,6 +20,9 @@ class Type(object):
     def has_supertype(self):
         return self.supertype is not None
 
+    def __eq__(self, other):
+        return self.id == other.id
+
     def __repr__(self):
         return "%s(name='%s')" % (self.__class__.__name__, self.name)
 
@@ -40,6 +43,9 @@ class Function(object):
             self.label = name
         else:
             self.label = label
+
+    def __eq__(self, other):
+        return self.id == other.id
 
     def __repr__(self):
         return "%s(name='%s', return_type='%s')" % (self.__class__.__name__, self.name, self.return_type.name)

@@ -84,11 +84,13 @@ def _construct_ontology_graph(types, inheritance_graph, functions):
             # from type edges: if type is supertype of function's return type,
             # or function's return type is instance of type
             if isinstance_(inheritance_graph, function.return_type, type_):
+            # if function.return_type == type_:
                 graph.add_edge(type_.id, function.id)
 
             # to type edges: if type is instance of function's arg type
             for arg_idx, arg_type in enumerate(function.arg_types):
-                if isinstance_(inheritance_graph, type_, arg_type):
+                # if isinstance_(inheritance_graph, type_, arg_type):
+                if type_ == arg_type:
                     graph.add_edge(function.id, type_.id, label=arg_idx, arg_idx=arg_idx)
 
     return graph

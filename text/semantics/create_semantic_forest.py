@@ -1,9 +1,9 @@
 import networkx as nx
 import itertools
+from geosolver.text.semantics.get_semantic_relation_cost import get_semantic_relation_cost
 from geosolver.text.semantics.get_semantic_relations import get_semantic_relations
-from geosolver.text.semantics.get_ontology_implication_cost import get_ontology_implication_cost
+from geosolver.text.semantics.get_ontology_path_cost import get_ontology_path_cost
 from geosolver.text.semantics.get_source_relations import get_source_relations
-from geosolver.text.semantics.get_syntax_distance_cost import get_syntax_distance_cost
 from geosolver.text.semantics.states import SemanticForest, SemanticNode, SourceNode
 
 __author__ = 'minjoon'
@@ -28,7 +28,7 @@ def create_semantic_forest(semantic_nodes, syntax_threshold, ontology_threshold)
             source_relations = get_source_relations(source_node, semantic_node)
             for source_relation in source_relations.values():
                 syntax_cost = 0
-                ontology_cost = get_ontology_implication_cost(basic_ontology, source_relation.ontology_path)
+                ontology_cost = get_ontology_path_cost(basic_ontology, source_relation.ontology_path)
                 if ontology_cost <= ontology_threshold:
                     forest_graph.add_edge(source_node.id, semantic_node.id, key=source_relation.key,
                                           ontology_cost=ontology_cost, syntax_cost=syntax_cost,
@@ -41,8 +41,7 @@ def create_semantic_forest(semantic_nodes, syntax_threshold, ontology_threshold)
         for arg_idx in range(from_node.function.valence):
             semantic_relations = get_semantic_relations(from_node, to_node, arg_idx)
             for semantic_relation in semantic_relations.values():
-                syntax_cost = get_syntax_distance_cost(syntax, semantic_relation.syntax_path)
-                ontology_cost = get_ontology_implication_cost(basic_ontology, semantic_relation.ontology_path)
+                syntax_cost, ontology_cost = get_semantic_relation_cost(semantic_relation)
                 if syntax_cost <= syntax_threshold and ontology_cost <= ontology_threshold:
                     forest_graph.add_edge(from_node.id, to_node.id, key=semantic_relation.key,
                                           ontology_cost=ontology_cost, syntax_cost=syntax_cost,

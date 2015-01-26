@@ -8,13 +8,14 @@ from geosolver.text.syntax.create_syntax import create_syntax
 __author__ = 'minjoon'
 
 def test_create_semantic_forest():
-    string = "Circle O has a radius of 5."
+    string = "The length of line DB could be "
     tokens = string_to_tokens(string)
-    syntax = create_syntax(tokens, 3)
+    syntax = create_syntax(tokens, 10)
+    # syntax.display_graphs()
 
     threshold = 0.99
     semantic_nodes = create_semantic_nodes(syntax, basic_ontology, ontology_semantics, geowordnet, tokens, threshold)
-    semantic_forest = create_semantic_forest(semantic_nodes, 3.0, 1.0)
+    semantic_forest = create_semantic_forest(semantic_nodes, 5.0, 5)
     semantic_forest.display_graph()
 
 

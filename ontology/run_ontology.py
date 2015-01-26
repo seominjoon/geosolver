@@ -3,7 +3,7 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.text.semantics.get_ontology_implication_cost import get_ontology_implication_cost
+from geosolver.text.semantics.get_ontology_path_cost import get_ontology_path_cost
 from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import Function
 from geosolver.ontology import basic_ontology
@@ -34,10 +34,11 @@ def test_augment_ontology():
     number = o.types['number']
     perp = oo.functions['isPerpendicularTo']
     line = o.types['line']
-    paths = get_ontology_paths(oo, line, s1)
+    cf = o.functions['circle']
+    paths = get_ontology_paths(oo, truth, s1)
     for path in paths.values():
         print(path)
-        print(get_ontology_implication_cost(oo, path))
+        print(get_ontology_path_cost(oo, path))
 
 if __name__ == "__main__":
     # test_load_ontology()
