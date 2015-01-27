@@ -3,7 +3,7 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.text.semantics.get_ontology_path_cost import get_ontology_path_cost
+from geosolver.text.semantics.costs import get_ontology_path_cost
 from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import Function
 from geosolver.ontology import basic_ontology

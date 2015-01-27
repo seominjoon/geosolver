@@ -54,4 +54,6 @@ class GroundedSyntaxPath(SyntaxPath):
         self.syntax = grounded_syntax.syntax
         self.tree_rank = tree_rank
         self.tokens = tokens
+        self.id = (tokens[0].key, tokens[-1].key, tree_rank)
+        self.basic_ontology = grounded_syntax.basic_ontology
 

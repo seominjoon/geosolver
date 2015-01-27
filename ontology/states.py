@@ -10,7 +10,8 @@ class Type(object):
         assert isinstance(name, str)
 
         self.name = name  # Intra-class identifier
-        self.id = (self.__class__.__name__, name)  # Inter-class identifier
+        self.key = name
+        self.id = (self.__class__, name)  # Inter-class identifier
         self.supertype = supertype
         if label is None:
             self.label = self.name
@@ -35,9 +36,10 @@ class Function(object):
         assert isinstance(return_type, Type)
 
         self.name = name
+        self.key = name
         self.arg_types = arg_types
         self.return_type = return_type
-        self.id = (self.__class__.__name__, name)
+        self.id = (self.__class__, name)
         self.valence = len(self.arg_types)
         if label is None:
             self.label = name
@@ -85,9 +87,9 @@ class BasicOntology(object):
 
     def get_by_id(self, id_):
         class_name, name = id_
-        if class_name == Type.__name__:
+        if class_name == Type:
             return self.types[name]
-        elif class_name == Function.__name__:
+        elif class_name == Function:
             return self.functions[name]
         else:
             raise Exception(class_name)

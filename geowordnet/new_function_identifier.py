@@ -72,7 +72,7 @@ def _get_reference_score(word):
     """
     regex1 = re.compile("^([B-Z]|[A-Z][A-Z]+)$")
     regex2 = re.compile("^A$")
-    regex3 = re.compile("^[b-z](_[a-z0-9])?$")
+    regex3 = re.compile("^[b-z](_get_nodes[a-z0-9])?$")
     score1 = 1.0
     score2 = 0.5
     score3 = 1.0

@@ -1,7 +1,7 @@
 from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import OntologyPath
 from geosolver.text.token_grounding.get_grounded_syntax_paths import get_grounded_syntax_paths
-from geosolver.text.semantics.get_grounded_syntax_path_cost import get_grounded_syntax_path_cost
+from geosolver.text.semantics.costs.get_grounded_syntax_path_cost import get_grounded_syntax_path_cost
 from geosolver.text.semantics.states import SemanticRelation
 
 __author__ = 'minjoon'

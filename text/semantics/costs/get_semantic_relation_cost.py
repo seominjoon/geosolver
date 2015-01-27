@@ -1,7 +1,9 @@
 from collections import namedtuple
-from geosolver.text.semantics.get_ontology_path_cost import get_ontology_path_cost
-from geosolver.text.semantics.get_grounded_syntax_path_cost import get_grounded_syntax_path_cost
+
+from geosolver.text.semantics.costs.get_grounded_syntax_path_cost import get_grounded_syntax_path_cost
+from geosolver.text.semantics.costs.get_ontology_path_cost import get_ontology_path_cost
 from geosolver.text.semantics.states import SemanticRelation
+
 
 __author__ = 'minjoon'
 
