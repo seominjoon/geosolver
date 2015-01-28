@@ -54,7 +54,15 @@ class Function(object):
 
 
 class Formula(object):
-    pass
+    def __init__(self, basic_ontology, function, children):
+        assert isinstance(basic_ontology, BasicOntology)
+        assert isinstance(function, Function)
+        self.basic_ontology = basic_ontology
+        self.function = function
+        self.children = children
+
+    def __repr__(self):
+        "%s(%s)" % (self.function.name, ", ".join(repr(child) for child in self.children))
 
 
 class BasicOntology(object):

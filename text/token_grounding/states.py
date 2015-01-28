@@ -49,11 +49,12 @@ class GroundedSyntax(Syntax):
 
 
 class GroundedSyntaxPath(SyntaxPath):
-    def __init__(self, grounded_syntax, tree_rank, tokens):
+    def __init__(self, grounded_syntax, tree_rank, tokens, cost):
         self.grounded_syntax = grounded_syntax
         self.syntax = grounded_syntax.syntax
         self.tree_rank = tree_rank
         self.tokens = tokens
+        self.cost = cost
         self.id = (tokens[0].key, tokens[-1].key, tree_rank)
         self.basic_ontology = grounded_syntax.basic_ontology
 

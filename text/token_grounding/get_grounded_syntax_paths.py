@@ -12,18 +12,15 @@ def get_grounded_syntax_paths(grounded_syntax, from_token, to_token):
         paths = []
         neutralized_graph = nx.Graph(grounded_syntax_tree.graph)
         if from_token == to_token:
-            cycles = [cycle for cycle in nx.simple_cycles(grounded_syntax_tree.graph)
-                      if from_token.key in cycle]
-            for cycle in cycles:
-                paths.append(cycle)
+            continue
         else:
             if not nx.has_path(neutralized_graph, from_token.key, to_token.key):
                 continue
-            paths = nx.all_simple_paths(neutralized_graph, from_token.key, to_token.key)
-        token_paths = [_ground_path(grounded_syntax, path) for path in paths]
-        syntax_paths = [GroundedSyntaxPath(grounded_syntax, rank, token_path) for token_path in token_paths]
-        for idx, syntax_path in enumerate(syntax_paths):
-            all_token_paths[(rank, idx)] = syntax_path
+            path = nx.shortest_path(neutralized_graph, from_token.key, to_token.key, weight='weight')
+            cost = nx.shortest_path_length(neutralized_graph, from_token.key, to_token.key, weight='weight')
+        token_path = _ground_path(grounded_syntax, path)
+        syntax_path = GroundedSyntaxPath(grounded_syntax, rank, token_path, cost)
+        all_token_paths[rank] = syntax_path
 
     return all_token_paths
 

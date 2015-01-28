@@ -15,8 +15,7 @@ def get_semantic_trees(semantic_forest, head):
     head_key = head.id
     nodes = _get_nodes(semantic_forest, head_key)
     trees = [_node_to_tree(semantic_forest, node) for node in nodes]
-    sorted_trees = sorted(trees, key=lambda tree: tree.ontology_cost + tree.grounded_syntax_cost)
-    tree_dict = {idx: tree for idx, tree in enumerate(sorted_trees)}
+    tree_dict = {idx: tree for idx, tree in enumerate(trees)}
     return tree_dict
 
 
@@ -58,7 +57,7 @@ def _get_nodes(semantic_forest, head_key):
 
 def _node_to_tree(semantic_forest, node):
     graph = nx.MultiDiGraph()
-    _fill_graph(semantic_forest, graph, node)
+    _fill_graph(semantic_forest, graph, node, (0, ))
     ontology_cost = 0
     syntax_cost = 0
     for u, v, data in graph.edges(data=True):
@@ -67,14 +66,15 @@ def _node_to_tree(semantic_forest, node):
     tree = SemanticTree(semantic_forest, graph, syntax_cost, ontology_cost)
     return tree
 
-def _fill_graph(semantic_forest, graph, node):
+def _fill_graph(semantic_forest, graph, node, index):
     head = semantic_forest.graph_nodes[node.head_key]
-    graph.add_node(node.head_key, label=head.label)
+    graph.add_node(index, label=head.label, key=node.head_key)
     for idx, child in enumerate(node.children):
-        _fill_graph(semantic_forest, graph, child)
+        new_index = index+(idx,)
+        _fill_graph(semantic_forest, graph, child, new_index)
         sc = node.syntax_scores[idx]
         oc = node.ontology_scores[idx]
-        graph.add_edge(node.head_key, child.head_key, label="%.1f, %.1f" % (sc, oc),
+        graph.add_edge(index, new_index, label="%.1f, %.1f" % (sc, oc),
                        syntax_cost=sc, ontology_cost=oc, key=idx)
 
 

@@ -16,7 +16,8 @@ def get_lexical_matching_score(word, entry):
     :param str word:
     :return float:
     """
-    if inflect_engine.compare(word, entry.lemma):
+    result = inflect_engine.compare(word, entry.lemma)
+    if result:
         return 1
     else:
         distance = nltk.metrics.edit_distance(word, entry.lemma)

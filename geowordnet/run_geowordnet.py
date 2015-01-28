@@ -1,3 +1,4 @@
+import inflect
 from geosolver.geowordnet.get_lexical_matching_score import get_lexical_matching_score
 from geosolver.geowordnet.filter_functions import filter_functions
 from geosolver.geowordnet.new_function_identifier import new_function_identifier
@@ -16,7 +17,7 @@ def test_sanity_check():
 def test_get_lexical_matching_score():
     entry = geowordnet.entries[0]
     print(entry)
-    print(get_lexical_matching_score('add', entry))
+    print(get_lexical_matching_score('adds', entry))
 
 
 def test_new_function_identifier():
@@ -24,12 +25,11 @@ def test_new_function_identifier():
 
 
 def test_filters():
-    print(filter_functions(ontology_semantics, geowordnet, get_lexical_matching_score, new_function_identifier,
-                           'Lines', 0.7))
+    print(filter_functions(ontology_semantics, geowordnet, 'bisects', 0.7))
 
 
 if __name__ == "__main__":
     # test_sanity_check()
     # test_get_lexical_matching_score()
-    # test_filters()
-    test_new_function_identifier()
+    test_filters()
+    # test_new_function_identifier()

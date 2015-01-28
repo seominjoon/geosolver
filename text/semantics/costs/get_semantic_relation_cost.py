@@ -21,6 +21,17 @@ def get_semantic_relation_cost(semantic_relation):
     SyntaxOntologyCostPair = namedtuple("SyntaxOntologyCostPair", "syntax_cost ontology_cost")
     syntax_cost = get_grounded_syntax_path_cost(semantic_relation.grounded_syntax_path)
     ontology_cost = get_ontology_path_cost(semantic_relation.ontology_path)
+
+    from_token = semantic_relation.from_grounded_token
+    to_token = semantic_relation.to_grounded_token
+    entity =basic_ontology.types['entity']
+    if from_token.function.return_type.name == 'reference' and basic_ontology.isinstance(to_token.function.return_type, entity):
+        if len(semantic_relation.grounded_syntax_path) > 2:
+            syntax_cost += 100
+    if to_token.function.return_type.name == 'reference' and basic_ontology.isinstance(from_token.function.return_type, entity):
+        if len(semantic_relation.grounded_syntax_path) > 2:
+            syntax_cost += 100
+
     socp = SyntaxOntologyCostPair(syntax_cost, ontology_cost)
     return socp
 

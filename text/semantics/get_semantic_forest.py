@@ -13,6 +13,8 @@ __author__ = 'minjoon'
 
 def get_semantic_forest(grounded_syntax, syntax_threshold, ontology_threshold):
 
+    default_syntax_cost = 0
+
     basic_ontology = grounded_syntax.basic_ontology
     grounded_tokens = grounded_syntax.grounded_tokens
     id_types = {type_.id: type_ for type_ in basic_ontology.types.values()}
@@ -24,7 +26,7 @@ def get_semantic_forest(grounded_syntax, syntax_threshold, ontology_threshold):
         for grounded_token in grounded_tokens.values():
             type_relations = get_type_relations(type_, grounded_token)
             for key, type_relation in type_relations.iteritems():
-                syntax_cost = 0
+                syntax_cost = default_syntax_cost
                 ontology_cost = get_ontology_path_cost(type_relation.ontology_path)
                 if ontology_cost <= ontology_threshold:
                     forest_graph.add_edge(type_.id, grounded_token.key, key=key,

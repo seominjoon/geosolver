@@ -43,11 +43,25 @@ class TypeRelation(object):
 
 
 class SemanticTree(object):
-    def __init__(self, semantic_forest, tree_graph, grounded_syntax_cost, ontology_cost):
+    def __init__(self, semantic_forest, tree_graph, cost, formula):
+        assert isinstance(semantic_forest, SemanticForest)
         self.semantic_forest = semantic_forest
+        self.grounded_syntax = semantic_forest.grounded_syntax
+        self.basic_ontology = semantic_forest.basic_ontology
         self.tree_graph = tree_graph
-        self.grounded_syntax_cost = grounded_syntax_cost
-        self.ontology_cost = ontology_cost
+        # self.return_type = formula.return_type
+        self.cost = cost
+        self.formula = formula
 
     def display_graph(self):
         display_graph(self.tree_graph)
+
+
+class SemanticWeight(object):
+    def __init__(self, semantic_forest, node_weights, edge_weights):
+        assert isinstance(semantic_forest, SemanticForest)
+        assert isinstance(node_weights, dict)
+        assert isinstance(edge_weights, dict)
+        self.semantic_forest = semantic_forest
+        self.node_weights = node_weights
+        self.edge_weights = edge_weights
