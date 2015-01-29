@@ -4,6 +4,27 @@ from geosolver.ontology.states import Truth
 
 __author__ = 'minjoon'
 
+def and_(truth0, truth1):
+    """
+    TO BEIMPLEMENTED
+    :param truth0:
+    :param truth1:
+    :return:
+    """
+    isinstance(truth0, Truth)
+    isinstance(truth1, Truth)
+    truth0.expression + truth1.expression
+
+def or_(truth0, truth1):
+    """
+    TO BE IMPLEMENTED
+    :param truth0:
+    :param truth1:
+    :return:
+    """
+    truth0.expression * truth1.expression
+    pass
+
 
 def add(number0, number1):
     return number0 + number1
@@ -91,7 +112,7 @@ def circumferenceOf(circle):
 
 def intersects(entity0, entity1):
     """
-    TO BE IMPLEMENTED
+    TO BE IMPLEMENTED (LAST PRIORRITY)
     :param entity0:
     :param entity1:
     :return:
