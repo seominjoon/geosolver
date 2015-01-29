@@ -3,10 +3,13 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
+from geosolver.ontology.function_definitions import lengthOf
+from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.text.semantics.costs.get_ontology_path_cost import get_ontology_path_cost
 from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import Function
 from geosolver.ontology import basic_ontology
+import sympy
 
 __author__ = 'minjoon'
 
@@ -24,7 +27,6 @@ def test_load_ontology():
 def test_get_ontology_path_cost():
     """
     Needs to be moved to semantics package.
-    :return:
     """
     o = basic_ontology
     s0 = Function('5', [], o.types['number'])
@@ -44,7 +46,13 @@ def test_get_ontology_path_cost():
         print(path)
         print(get_ontology_path_cost(path))
 
+def test_instantiator():
+    A = instantiators['point'](*sympy.symbols('Ax Ay'))
+    B = instantiators['point'](*sympy.symbols('Bx By'))
+    line = instantiators['line'](A, B)
+    print(lengthOf(line))
 
 if __name__ == "__main__":
-    test_load_ontology()
+    # test_load_ontology()
     # test_augment_ontology()
+    test_instantiator()

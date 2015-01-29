@@ -1,5 +1,7 @@
+from collections import namedtuple
 import networkx as nx
 from geosolver.ontology import shared
+from geosolver.ontology.instantiator_definitions import instantiator_defs
 from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
@@ -132,4 +134,21 @@ class OntologySemantics(object):
     """
     def __init__(self):
         pass
+
+
+class Truth(object):
+    """
+    Expression, when evaluated, indicates the truth-ness,
+    being certain if 0 or less and uncertain if positive.
+    Sigma is the rough prediction of the variance of the expression.
+
+    For instance, we might assign 100% probability for expression <= 0,
+    and 0% (or 50%; it doesn't really matter) probability for expression >= sigma.
+    We can linearly interpolate in the middle.
+
+    For concrete example, see 'equal' function in function_definitions.
+    """
+    def __init__(self, expression, sigma):
+        self.expression = expression
+        self.sigma = sigma
 
