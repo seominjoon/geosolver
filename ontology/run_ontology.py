@@ -3,7 +3,7 @@ For local running, including testing.
 """
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.text.semantics.costs import get_ontology_path_cost
+from geosolver.text.semantics.costs.get_ontology_path_cost import get_ontology_path_cost
 from geosolver.ontology.get_ontology_paths import get_ontology_paths
 from geosolver.ontology.states import Function
 from geosolver.ontology import basic_ontology
@@ -21,7 +21,11 @@ def test_load_ontology():
     print(o.isinstance(t, t))
 
 
-def test_augment_ontology():
+def test_get_ontology_path_cost():
+    """
+    Needs to be moved to semantics package.
+    :return:
+    """
     o = basic_ontology
     s0 = Function('5', [], o.types['number'])
     s1 = Function('AB', [], o.types['reference'])
@@ -40,7 +44,7 @@ def test_augment_ontology():
         print(path)
         print(get_ontology_path_cost(path))
 
+
 if __name__ == "__main__":
-    # test_load_ontology()
-    # test_function_proximity_score()
-    test_augment_ontology()
+    test_load_ontology()
+    # test_augment_ontology()

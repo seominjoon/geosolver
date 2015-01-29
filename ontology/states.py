@@ -124,11 +124,12 @@ class OntologyPath(object):
         return len(self.path_nodes)
 
 
-
 class OntologySemantics(object):
     """
     Contains sematnic information of the ontolgy.
     For instance, evaluation of constant function such as "5",
     or what a formula means algebraically.
     """
-    pass
+    def __init__(self):
+        pass
+

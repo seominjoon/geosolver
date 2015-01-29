@@ -53,7 +53,7 @@ def get_ontology_path_cost(ontology_path):
                 if len(nn_node.name) not in [1,3]:
                     cost += 100
         if idx > 0:
-            if node.name in ['?number', '?truth', 'lengthOf', 'angleOf:arc', 'angleOf:angle',
+            if node.name in ['?number', '?truth', 'lengthOf', 'angleOf_arc', 'angleOf_angle',
                              'line', 'quadrilateral']:
                 cost += 1
             else:

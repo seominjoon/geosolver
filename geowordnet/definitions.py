@@ -45,11 +45,11 @@ entries = [
 
     # functions mapping to number
     {'lemma': 'length', 'pos': 'noun', 'lexemes': ['lengthOf']},
-    {'lemma': 'angle', 'pos': 'noun', 'lexemes': ['angleOf:angle', 'angleOf:arc', 'angle']},
+    {'lemma': 'angle', 'pos': 'noun', 'lexemes': ['angleOf_angle', 'angleOf_arc', 'angle']},
     {'lemma': 'radius', 'pos': 'noun', 'lexemes': ['isRadiusOf', 'radiusOf'],
      'forms': {'noun:plural': 'radii', 'adj': 'radial'}},
     {'lemma': 'diameter', 'pos': 'noun', 'lexemes': ['isDiameterOf', 'diameterOf']},
-    {'lemma': 'area', 'pos': 'noun', 'lexemes': ['areaOf:polygon', 'areaOf:circle']},
+    {'lemma': 'area', 'pos': 'noun', 'lexemes': ['areaOf_polygon', 'areaOf_circle']},
     {'lemma': 'perimeter', 'pos': 'noun', 'lexemes': ['perimeterOf']},
     {'lemma': 'circumference', 'pos': 'noun', 'lexemes': ['circumferenceOf']},
 
@@ -67,7 +67,7 @@ entries = [
     {'lemma': 'midpoint', 'pos': 'noun', 'lexemes': ['isMidpointOf']},
     {'lemma': 'parallel', 'pos': 'adj', 'lexemes': ['isParallelWith']},
     {'lemma': 'perpendicular', 'pos': 'adj', 'lexemes': ['isPerpendicularTo']},
-    {'lemma': 'bisect', 'pos': 'verb', 'lexemes': ['bisects:line', 'bisects:angle'],
+    {'lemma': 'bisect', 'pos': 'verb', 'lexemes': ['bisects_line', 'bisects_angle'],
      'forms': {'noun': 'bisector'}},
     {'lemma': 'right', 'pos': 'adj', 'lexemes': ['isRightAngle', 'isRightTriangle']},
     {'lemma': 'hypotenuse', 'pos': 'noun', 'lexemes': ['isHypotenuseOf']},

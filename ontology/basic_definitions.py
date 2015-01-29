@@ -46,12 +46,12 @@ function_defs = [
 
     # functions mapping to number
     {'name': 'lengthOf', 'arg_types': ['line'], 'return_type': 'number'},
-    {'name': 'angleOf:angle', 'arg_types': ['angle'], 'return_type': 'number'},
-    {'name': 'angleOf:arc', 'arg_types': ['arc'], 'return_type': 'number'},
+    {'name': 'angleOf_angle', 'arg_types': ['angle'], 'return_type': 'number'},
+    {'name': 'angleOf_arc', 'arg_types': ['arc'], 'return_type': 'number'},
     {'name': 'radiusOf', 'arg_types': ['circle'], 'return_type': 'number'},
     {'name': 'diameterOf', 'arg_types': ['circle'], 'return_type': 'number'},
-    {'name': 'areaOf:polygon', 'arg_types': ['polygon'], 'return_type': 'number'},
-    {'name': 'areaOf:circle', 'arg_types': ['circle'], 'return_type': 'number'},
+    {'name': 'areaOf_polygon', 'arg_types': ['polygon'], 'return_type': 'number'},
+    {'name': 'areaOf_circle', 'arg_types': ['circle'], 'return_type': 'number'},
     {'name': 'perimeterOf', 'arg_types': ['polygon'], 'return_type': 'number'},
     {'name': 'circumferenceOf', 'arg_types': ['circle'], 'return_type': 'number'},
 
@@ -70,8 +70,8 @@ function_defs = [
     {'name': 'isMidpointOf', 'arg_types': ['point', 'line'], 'return_type': 'truth'},
     {'name': 'isParallelWith', 'arg_types': ['line', 'line'], 'return_type': 'truth'},
     {'name': 'isPerpendicularTo', 'arg_types': ['line', 'line'], 'return_type': 'truth'},
-    {'name': 'bisects:line', 'arg_types': ['line', 'line'], 'return_type': 'truth'},
-    {'name': 'bisects:angle', 'arg_types': ['line', 'angle'], 'return_type': 'truth'},
+    {'name': 'bisects_line', 'arg_types': ['line', 'line'], 'return_type': 'truth'},
+    {'name': 'bisects_angle', 'arg_types': ['line', 'angle'], 'return_type': 'truth'},
     {'name': 'isRightAngle', 'arg_types': ['angle'], 'return_type': 'truth'},
     {'name': 'isHypotenuseOf', 'arg_types': ['line', 'triangle'], 'return_type': 'truth'},
     {'name': 'isMedianOf', 'arg_types': ['line', 'triangle'], 'return_type': 'truth'},

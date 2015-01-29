@@ -11,7 +11,7 @@ from geosolver.text.syntax.create_syntax import create_syntax
 
 __author__ = 'minjoon'
 
-def test_create_semantic_forest():
+def test_get_semantic_trees():
     string = "Given: tangent AD, diameter CD, secant AC in circle O shown at the right."
     tokens = string_to_tokens(string)
     print("Tokens initalized.")
@@ -39,4 +39,4 @@ def test_create_semantic_forest():
         semantic_tree.display_graph()
 
 if __name__ == "__main__":
-    test_create_semantic_forest()
+    test_get_semantic_trees()
