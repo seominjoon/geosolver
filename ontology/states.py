@@ -62,7 +62,10 @@ class Formula(object):
         self.children = children
 
     def __repr__(self):
-        "%s(%s)" % (self.function.name, ", ".join(repr(child) for child in self.children))
+        if self.function.valence == 0:
+            return self.function.name
+        else:
+            return "%s(%s)" % (self.function.name, ", ".join(repr(child) for child in self.children))
 
 
 class BasicOntology(object):

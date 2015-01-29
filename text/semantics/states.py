@@ -43,15 +43,14 @@ class TypeRelation(object):
 
 
 class SemanticTree(object):
-    def __init__(self, semantic_forest, tree_graph, cost, formula):
+    def __init__(self, semantic_forest, tree_graph, formula):
         assert isinstance(semantic_forest, SemanticForest)
         self.semantic_forest = semantic_forest
         self.grounded_syntax = semantic_forest.grounded_syntax
         self.basic_ontology = semantic_forest.basic_ontology
         self.tree_graph = tree_graph
-        # self.return_type = formula.return_type
-        self.cost = cost
         self.formula = formula
+        self.return_type = formula.function.return_type
 
     def display_graph(self):
         display_graph(self.tree_graph)

@@ -18,4 +18,13 @@ def get_semantic_tree_cost(semantic_tree):
             else:
                 visited.add(node.key)
 
-    return consistency_cost + 2*semantic_tree.ontology_cost + semantic_tree.grounded_syntax_cost
+    ontology_cost = 0
+    syntax_cost = 0
+    for u, v, data in semantic_tree.tree_graph.edges(data=True):
+        edge_key = data['key']
+        from_node = semantic_tree.tree_graph.node[u]['key']
+        to_node = semantic_tree.tree_graph.node[v]['key']
+        ontology_cost += semantic_forest.forest_graph[from_node][to_node][edge_key]['ontology_cost']
+        syntax_cost += semantic_forest.forest_graph[from_node][to_node][edge_key]['syntax_cost']
+
+    return 2*ontology_cost + syntax_cost

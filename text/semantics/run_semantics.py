@@ -12,7 +12,7 @@ from geosolver.text.syntax.create_syntax import create_syntax
 __author__ = 'minjoon'
 
 def test_create_semantic_forest():
-    string = "In circle O, secant SD intersects the circle at C and secant SB intersects the circle at A."
+    string = "Given: tangent AD, diameter CD, secant AC in circle O shown at the right."
     tokens = string_to_tokens(string)
     print("Tokens initalized.")
     syntax = create_syntax(tokens, 1)
@@ -24,17 +24,18 @@ def test_create_semantic_forest():
         raise Exception()
     grounded_syntax = get_grounded_syntax(grounded_tokens)
     print("Grounded syntax initialized.")
-    semantic_forest = get_semantic_forest(grounded_syntax, 4, 4)
+    semantic_forest = get_semantic_forest(grounded_syntax, 8, 4)
     print("Forest initialized.")
     truth = grounded_syntax.basic_ontology.types['truth']
     qnumber = grounded_syntax.basic_ontology.types['?number']
     semantic_trees = get_semantic_trees(semantic_forest, truth)
-    sorted_semantic_trees = sorted(semantic_trees.values(), key=lambda tree: get_semantic_tree_cost(tree))
 
-    grounded_syntax.display_graphs()
-    semantic_forest.display_graph()
+    # grounded_syntax.display_graphs()
+    # semantic_forest.display_graph()
     print(len(semantic_trees))
-    for semantic_tree in sorted_semantic_trees:
+    for semantic_tree in semantic_trees.values():
+        print(get_semantic_tree_cost(semantic_tree))
+        print(semantic_tree.formula)
         semantic_tree.display_graph()
 
 if __name__ == "__main__":
