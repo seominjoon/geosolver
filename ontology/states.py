@@ -84,6 +84,8 @@ class BasicOntology(object):
         self.functions = functions
         self.inheritance_graph = inheritance_graph
         self.ontology_graph = ontology_graph
+        self.types_by_id = {type_.id: type_ for type_ in self.types.values()}
+        self.functions_by_id = {function.id: function for function in self.functions.values()}
 
     def isinstance(self, type0, type1):
         """

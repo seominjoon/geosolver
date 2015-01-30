@@ -1,3 +1,4 @@
+from geosolver.ontology.states import Function
 from geosolver.text.lexer.states import Token
 from geosolver.text.syntax.states import SyntaxTree, Syntax, SyntaxPath
 from geosolver.utils import display_graph, display_graphs
@@ -42,7 +43,7 @@ class GroundedSyntax(Syntax):
         self.syntax_trees = syntax.syntax_trees
         self.grounded_tokens = grounded_tokens
         self.grounded_syntax_trees = grounded_syntax_trees
-        self.all_tokens = dict(self.tokens.items() + self.grounded_tokens.items())
+        self.all_tokens = dict(self.tokens.items() + grounded_tokens.items())
 
     def display_graphs(self):
         display_graphs(grounded_syntax_tree.graph for grounded_syntax_tree in self.grounded_syntax_trees.values())
@@ -57,4 +58,6 @@ class GroundedSyntaxPath(SyntaxPath):
         self.cost = cost
         self.id = (tokens[0].key, tokens[-1].key, tree_rank)
         self.basic_ontology = grounded_syntax.basic_ontology
+
+
 

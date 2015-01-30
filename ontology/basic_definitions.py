@@ -12,7 +12,7 @@ __author__ = 'minjoon'
 
 
 type_defs = [
-    # fundamental type_defs
+    # fundamental type definitions
     {'name': 'number'},
     {'name': 'truth'},
     {'name': 'entity'},
@@ -29,8 +29,8 @@ type_defs = [
     {'name': 'quadrilateral', 'supertype': 'polygon'},
 
     # unknown
-    {'name': '?number'},
-    {'name': '?truth'},
+    {'name': 'uNumber'},
+    {'name': 'uTruth'},
 ]
 
 function_defs = [
@@ -90,6 +90,6 @@ function_defs = [
     {'name': 'isSecantOf', 'arg_types': ['line', 'circle'], 'return_type': 'truth'},
 
     # unknown
-    {'name': '?number', 'arg_types': ['number'], 'return_type': '?number'},
-    {'name': '?truth', 'arg_types': ['truth'], 'return_type': '?truth'},
+    {'name': 'uNumber', 'arg_types': ['number'], 'return_type': 'uNumber'},
+    {'name': 'uTruth', 'arg_types': ['truth'], 'return_type': 'uTruth'},
 ]

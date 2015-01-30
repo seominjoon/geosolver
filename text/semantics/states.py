@@ -1,3 +1,4 @@
+from geosolver.ontology.states import Function
 from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
@@ -55,7 +56,7 @@ class SemanticTree(object):
     def display_graph(self):
         display_graph(self.tree_graph)
 
-
+"""
 class SemanticWeight(object):
     def __init__(self, semantic_forest, node_weights, edge_weights):
         assert isinstance(semantic_forest, SemanticForest)
@@ -64,3 +65,22 @@ class SemanticWeight(object):
         self.semantic_forest = semantic_forest
         self.node_weights = node_weights
         self.edge_weights = edge_weights
+"""
+
+class ImpliedInstance(object):
+    def __init__(self, parent_grounded_token, arg_idx, type_):
+        self.parent_grounded_token = parent_grounded_token
+        self.arg_idx = arg_idx
+        self.type = type_
+        self.key = (parent_grounded_token.key, arg_idx, type_.key)
+        self.label = type_.name
+
+
+class ImpliedParentFunction(object):
+    def __init__(self, function, child_ground_tokens):
+        assert isinstance(function, Function)
+        assert len(child_ground_tokens) == function.valence
+        self.function = function
+        self.child_ground_tokens = child_ground_tokens
+        self.key = (function.key, ) + tuple(token.key for token in child_ground_tokens)
+
