@@ -11,10 +11,13 @@ def tree_graph_to_formula(semantic_forest, tree_graph, node_key):
         u = tree_graph.node[from_index]['key']
         v = tree_graph.node[to_index]['key']
         data = semantic_forest.forest_graph[u][v][data['key']]
-        arg_idx = data['arg_idx']
-        ontology_path = data['ontology_path']
         v_formula = tree_graph_to_formula(semantic_forest, tree_graph, v)
-        path_formula = _helper(semantic_forest, ontology_path, v_formula)
+        arg_idx = data['arg_idx']
+        if 'ontology_path' in data:
+            ontology_path = data['ontology_path']
+            path_formula = _helper(semantic_forest, ontology_path, v_formula)
+        else:
+            path_formula = v_formula
         children[arg_idx] = path_formula
     formula = Formula(basic_ontology, function, children)
     return formula

@@ -84,9 +84,9 @@ entries = [
     {'lemma': 'secant', 'pos': 'noun', 'lexemes': ['isSecantOf']},
 
     # unknown mapping
-    {'lemma': 'what', 'pos': 'noun', 'lexemes': ['?number']},
-    {'lemma': 'find', 'pos': 'verb', 'lexemes': ['?number']},
-    {'lemma': 'which', 'pos': 'noun', 'lexemes': ['?number', '?truth']},
+    {'lemma': 'what', 'pos': 'noun', 'lexemes': ['uNumber']},
+    {'lemma': 'find', 'pos': 'verb', 'lexemes': ['uNumber']},
+    {'lemma': 'which', 'pos': 'noun', 'lexemes': ['uNumber', 'uTruth']},
 ]
 
 # enumerate different forms

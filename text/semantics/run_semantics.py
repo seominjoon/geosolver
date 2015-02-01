@@ -12,26 +12,22 @@ from geosolver.text.syntax.create_syntax import create_syntax
 __author__ = 'minjoon'
 
 def test_get_semantic_trees():
-    string = "Given: tangent AD, diameter CD, secant AC in circle O shown at the right."
+    string = "Circle O has a radius of 5."
     tokens = string_to_tokens(string)
     print("Tokens initalized.")
     syntax = create_syntax(tokens, 1)
     print("Syntax initialized.")
     threshold = 0.99
-    grounded_tokens = get_grounded_tokens(syntax, ontology_semantics, geowordnet, threshold)
-    print("Groudned tokens initialized.")
-    if len(grounded_tokens) == 0:
-        raise Exception()
-    grounded_syntax = get_grounded_syntax(grounded_tokens)
+    grounded_syntax = get_grounded_syntax(syntax, ontology_semantics, geowordnet, threshold)
     print("Grounded syntax initialized.")
-    semantic_forest = get_semantic_forest(grounded_syntax, 8, 4)
+    semantic_forest = get_semantic_forest(grounded_syntax, 3, 3)
     print("Forest initialized.")
     truth = grounded_syntax.basic_ontology.types['truth']
-    qnumber = grounded_syntax.basic_ontology.types['?number']
+    qnumber = grounded_syntax.basic_ontology.types['uNumber']
     semantic_trees = get_semantic_trees(semantic_forest, truth)
 
-    # grounded_syntax.display_graphs()
-    # semantic_forest.display_graph()
+    grounded_syntax.display_graphs()
+    semantic_forest.display_graph()
     print(len(semantic_trees))
     for semantic_tree in semantic_trees.values():
         print(get_semantic_tree_cost(semantic_tree))

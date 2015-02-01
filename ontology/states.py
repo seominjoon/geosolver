@@ -32,7 +32,6 @@ class Type(object):
 
 class Function(object):
     def __init__(self, name, arg_types, return_type, label=None):
-        assert isinstance(name, str)
         for type_ in arg_types:
             assert isinstance(type_, Type)
         assert isinstance(return_type, Type)
@@ -48,11 +47,13 @@ class Function(object):
         else:
             self.label = label
 
+        assert isinstance(self.label, str)
+
     def __eq__(self, other):
         return self.id == other.id
 
     def __repr__(self):
-        return "%s(name='%s', return_type='%s')" % (self.__class__.__name__, self.name, self.return_type.name)
+        return "%s('%s', return_type='%s')" % (self.__class__.__name__, self.label, self.return_type.name)
 
 
 class Formula(object):
@@ -65,7 +66,7 @@ class Formula(object):
 
     def __repr__(self):
         if self.function.valence == 0:
-            return self.function.name
+            return self.function.label
         else:
             return "%s(%s)" % (self.function.name, ", ".join(repr(child) for child in self.children))
 

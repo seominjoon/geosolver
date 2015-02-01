@@ -30,7 +30,7 @@ def test_get_ontology_path_cost():
     """
     o = basic_ontology
     s0 = Function('5', [], o.types['number'])
-    s1 = Function('AB', [], o.types['reference'])
+    s1 = Function('O', [], o.types['reference'])
     oo = augment_ontology(o, {s0.name: s0, s1.name: s1})
     s2 = o.functions['equal']
     s3 = o.functions['radiusOf']
@@ -40,8 +40,8 @@ def test_get_ontology_path_cost():
     number = o.types['number']
     perp = oo.functions['isPerpendicularTo']
     line = o.types['line']
-    cf = o.functions['circle']
-    paths = get_ontology_paths(oo, truth, s1)
+    ref = o.types['reference']
+    paths = get_ontology_paths(oo, ref, s1)
     for path in paths.values():
         print(path)
         print(get_ontology_path_cost(path))
@@ -55,4 +55,5 @@ def test_instantiator():
 if __name__ == "__main__":
     # test_load_ontology()
     # test_augment_ontology()
-    test_instantiator()
+    # test_instantiator()
+    test_get_ontology_path_cost()

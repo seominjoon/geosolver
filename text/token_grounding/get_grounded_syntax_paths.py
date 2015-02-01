@@ -5,6 +5,13 @@ import networkx as nx
 __author__ = 'minjoon'
 
 def get_grounded_syntax_paths(grounded_syntax, from_token, to_token):
+    """
+
+    :param grounded_syntax:
+    :param from_token:
+    :param to_token:
+    :return dict:
+    """
     assert isinstance(from_token, Token)
     assert isinstance(to_token, Token)
     all_token_paths = {}

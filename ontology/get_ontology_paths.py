@@ -20,10 +20,12 @@ def get_ontology_paths(basic_ontology, from_type, to_obj):
         if function is not to_obj and function.valence > 1:
             graph.remove_node(function.id)
 
+    """
     if from_type is to_obj:
         paths = [cycle for cycle in nx.simple_cycles(basic_ontology.ontology_graph) if from_type.id in cycle]
+    """
 
-    elif not nx.has_path(graph, from_type.id, to_obj.id):
+    if not nx.has_path(graph, from_type.id, to_obj.id):
         paths = []
 
     else:

@@ -1,12 +1,15 @@
 import itertools
 
 import networkx as nx
+from geosolver.ontology.states import Function
+from geosolver.text.semantics.costs.get_implied_instance_cost import get_implied_instance_cost
+from geosolver.text.semantics.costs.get_implied_parent_function_cost import get_implied_parent_function_cost
 
 from geosolver.text.semantics.costs.get_ontology_path_cost import get_ontology_path_cost
 from geosolver.text.semantics.costs.get_semantic_relation_cost import get_semantic_relation_cost
 from geosolver.text.semantics.get_semantic_relations import get_semantic_relations
 from geosolver.text.semantics.get_type_relations import get_type_relations
-from geosolver.text.semantics.states import SemanticForest, ImpliedInstance, ImpliedParentFunction
+from geosolver.text.semantics.states import SemanticForest, ImpliedInstance, ImpliedSourceFunction
 
 __author__ = 'minjoon'
 
@@ -16,14 +19,15 @@ def get_semantic_forest(grounded_syntax, syntax_threshold, ontology_threshold):
     basic_ontology = grounded_syntax.basic_ontology
     grounded_tokens = grounded_syntax.grounded_tokens
 
+    implied_instances = _get_implied_instances(grounded_syntax)
+    implied_parent_functions = _get_implied_parent_functions(grounded_syntax, basic_ontology.functions['equal'])
+
     # Populating forest graph
     forest_graph = nx.MultiDiGraph()
     forest_graph = _add_types(grounded_syntax, forest_graph)
     forest_graph = _add_grounded_tokens(grounded_syntax, forest_graph)
-    forest_graph = _add_type_relations(grounded_syntax, forest_graph, ontology_threshold)
+    forest_graph = _add_type_relations(grounded_syntax, forest_graph, implied_parent_functions, ontology_threshold)
     forest_graph = _add_semantic_relations(grounded_syntax, forest_graph, syntax_threshold, ontology_threshold)
-    implied_instances = _get_implied_instances(grounded_syntax)
-    implied_parent_functions = _get_implied_parent_functions(grounded_syntax, basic_ontology.types['equal'])
     forest_graph = _add_implied_instances(forest_graph, implied_instances)
     forest_graph = _add_implied_parent_functions(forest_graph, implied_parent_functions)
     forest_graph = _add_implied_instance_relations(forest_graph, implied_instances)
@@ -43,19 +47,19 @@ def _add_types(grounded_syntax, forest_graph):
     return forest_graph
 
 
-def _add_type_relations(grounded_syntax, forest_graph, ontology_threshold):
+def _add_type_relations(grounded_syntax, forest_graph, implied_parent_functions, ontology_threshold):
     basic_ontology = grounded_syntax.basic_ontology
     grounded_tokens = grounded_syntax.grounded_tokens
     forest_graph = forest_graph.copy()
 
     for type_ in basic_ontology.types.values():
-        for grounded_token in grounded_tokens.values():
-            type_relations = get_type_relations(type_, grounded_token)
+        for function_container in grounded_tokens.values() + implied_parent_functions.values():
+            type_relations = get_type_relations(type_, function_container)
             for key, type_relation in type_relations.iteritems():
                 syntax_cost = 0
                 ontology_cost = get_ontology_path_cost(type_relation.ontology_path)
                 if ontology_cost <= ontology_threshold:
-                    forest_graph.add_edge(type_.id, grounded_token.key, key=key,
+                    forest_graph.add_edge(type_.id, function_container.key, key=key,
                                           ontology_cost=ontology_cost, syntax_cost=syntax_cost,
                                           ontology_path=type_relation.ontology_path,
                                           label="%.1f" % ontology_cost)
@@ -106,27 +110,24 @@ def _add_implied_instance_relations(forest_graph, implied_instances):
     forest_graph = forest_graph.copy()
     for implied_instance in implied_instances.values():
         # Needs to initialize these vallues
-        syntax_cost = 0
-        ontology_cost = 0
-
-        parent_grounded_token = implied_instance.parent_ground_token
+        implication_cost = get_implied_instance_cost(implied_instance)
+        parent_grounded_token = implied_instance.parent_grounded_token
         forest_graph.add_edge(parent_grounded_token.key, implied_instance.key,
                               arg_idx=implied_instance.arg_idx,
-                              ontology_cost=ontology_cost, syntax_cost=syntax_cost,
-                              label="%.1f, %d:%.1f" % (syntax_cost, 0, ontology_cost))
+                              implication_cost=implication_cost, ontology_cost=0, syntax_cost=0,
+                              label="%d:%.1f" % (0, implication_cost))
     return forest_graph
 
 
 def _add_implied_parent_function_relations(forest_graph, implied_parent_functions):
     forest_graph = forest_graph.copy()
     for implied_parent_function in implied_parent_functions.values():
-        syntax_cost = 0  # calculate by averaging distances between children.
-        ontology_cost = 0
-        for arg_idx, child_ground_token in enumerate(implied_parent_function.child_ground_tokens):
-            forest_graph.add_edge(implied_parent_function.key, child_ground_token.key,
+        implication_cost = get_implied_parent_function_cost(implied_parent_function)
+        for arg_idx, child_grounded_token in enumerate(implied_parent_function.child_grounded_tokens):
+            forest_graph.add_edge(implied_parent_function.key, child_grounded_token.key,
                                   arg_idx=arg_idx,
-                                  ontology_cost=ontology_cost, syntax_cost=syntax_cost,
-                                  label="%.1f, %d:%.1f" % (syntax_cost, arg_idx, ontology_cost))
+                                  implication_cost=implication_cost, ontology_cost=0, syntax_cost=0,
+                                  label="%d:%.1f" % (arg_idx, implication_cost))
     return forest_graph
 
 
@@ -142,8 +143,11 @@ def _get_implied_instances(grounded_syntax):
     for grounded_token in grounded_tokens.values():
         function = grounded_token.function
         for arg_idx, type_ in enumerate(function.arg_types):
-            implied_instance = ImpliedInstance(grounded_token, arg_idx, type_)
+            new_function = Function((grounded_token.key, arg_idx), [], type_,
+                                    label="%s-%d:%d" % (function.name, grounded_token.index, arg_idx))
+            implied_instance = ImpliedInstance(grounded_syntax, grounded_token, arg_idx, new_function)
             implied_instances[implied_instance.key] = implied_instance
+            assert implied_instance.key == new_function.name
     return implied_instances
 
 
@@ -160,7 +164,7 @@ def _get_implied_parent_functions(grounded_syntax, function):
 
     for arg_tokens in itertools.permutations(grounded_tokens.values(), function.valence):
         if _match(function, arg_tokens):
-            implied_parent_function = ImpliedParentFunction(function, arg_tokens)
+            implied_parent_function = ImpliedSourceFunction(grounded_syntax, function, arg_tokens)
             implied_parent_functions[implied_parent_function.key] = implied_parent_function
     return implied_parent_functions
 
