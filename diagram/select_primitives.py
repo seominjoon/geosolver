@@ -11,7 +11,7 @@ __author__ = 'minjoon'
 def select_primitives(primitive_parse):
     assert isinstance(primitive_parse, PrimitiveParse)
     pixels_dict = _get_pixels_dict(primitive_parse,
-                                   params.PRIMITIVE_SELECTION_LINE_EPS, params.PRIMITIVE_SELECTION_CIRCLE_EPS)
+                                   params.LINE_EPS, params.CIRCLE_EPS)
     selected_primitives = {}
     remaining_primitives = primitive_parse.primitives.copy()
     reward = 0

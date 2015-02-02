@@ -30,7 +30,7 @@ def _get_image_segments(image, kernel, block_size, c):
 
     image_segments = {}
     for idx, slice_ in enumerate(slices):
-        offset = instantiators['point'](slice_[1].start, slice[0].start)
+        offset = instantiators['point'](slice_[1].start, slice_[0].start)
         sliced_image = image[slice_]
         boolean_array = labeled[slice_] == (idx+1)
         pixels = set((x, y) for x, y in np.transpose(np.nonzero(np.transpose(boolean_array))))

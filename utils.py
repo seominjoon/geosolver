@@ -2,10 +2,12 @@
 Contains general purpose util functions.
 Ideally, this will be made into a separate package later.
 """
+import os
 import cv2
 import networkx as nx
 import tempfile
 import numpy as np
+from PIL import Image
 
 __author__ = 'minjoon'
 
@@ -58,6 +60,24 @@ def display_graphs(graphs, method='image', block=True):
 def block_display():
     cv2.waitKey()
     cv2.destroyAllWindows()
+
+
+def open_image(filepath, grayscale=True):
+    basepath, ext = os.path.splitext(filepath)
+    if ext != ".png":
+        newpath = basepath + ".png"
+        fp = Image.open(filepath)
+        fp.save(newpath)
+        filepath = newpath
+    if grayscale:
+        image = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+    else:
+        image = cv2.imread(filepath, cv2.IMREAD_COLOR)
+    return image
+
+
+def round_vector(vector):
+    return tuple(int(round(x)) for x in vector)
 
 
 def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distances):

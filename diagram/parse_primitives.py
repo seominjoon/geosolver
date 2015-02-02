@@ -5,7 +5,7 @@ from geosolver.diagram.states import ImageSegmentParse, PrimitiveParse
 from geosolver.ontology.utils import dot_distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import hough_line_parameters as line_params
-from geosolver.parameters import hough_line_parameters as circle_params
+from geosolver.parameters import hough_circle_parameters as circle_params
 from geosolver.utils import dimension_wise_non_maximum_suppression
 
 
@@ -44,7 +44,7 @@ def _get_lines(image_segment, params):
 
 def _get_circles(image_segment, params):
 
-    temp = cv2.HoughCircles(image_segment.segmented_image, params.method, params.dp, params.minDist,
+    temp = cv2.HoughCircles(image_segment.segmented_image, cv2.HOUGH_GRADIENT, params.dp, params.minDist,
                             param1=params.param1, param2=params.param2,
                             minRadius=params.minRadius, maxRadius=params.maxRadius)
     if temp is None:

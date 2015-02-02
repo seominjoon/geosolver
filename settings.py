@@ -7,3 +7,4 @@ __author__ = 'minjoon'
 
 
 STANFORD_PARSER_SERVER_URL = "http://54.191.196.60:9000/dep"
+GEOSERVER_URL = "http://localhost:8000"
