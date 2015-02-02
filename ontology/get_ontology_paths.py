@@ -13,6 +13,10 @@ def get_ontology_paths(basic_ontology, from_type, to_obj):
     :param to_obj:
     :return:
     """
+    assert from_type.name in basic_ontology.types
+    assert to_obj.name in basic_ontology.functions
+
+
     graph = basic_ontology.ontology_graph.copy()
     assert isinstance(graph, nx.DiGraph)
 

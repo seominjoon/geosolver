@@ -5,6 +5,7 @@ Ideally, this will be made into a separate package later.
 import cv2
 import networkx as nx
 import tempfile
+import numpy as np
 
 __author__ = 'minjoon'
 
@@ -57,3 +58,34 @@ def display_graphs(graphs, method='image', block=True):
 def block_display():
     cv2.waitKey()
     cv2.destroyAllWindows()
+
+
+def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distances):
+    """
+    Performs dimension-wise non maximum suppression.
+    vectors is a list of n-dimensional vectors (lists), and
+    radii is an n-dimensional vector indicating the radius for each dimension.
+    dimension_wise_distances is a function returning distance vector between two vectors.
+    Ex. Euclidean dimension-wise distance between (1,2) and (4,1) is (3,1).
+
+    :param vectors:
+    :param radii:
+    :return:
+    """
+    out_vectors = []
+    if len(vectors) == 0:
+        return out_vectors
+    assert len(vectors[0]) == len(radii)
+
+    for vector in vectors:
+        cond = True
+        for vector2 in out_vectors:
+            distance_vector = dimension_wise_distances(vector, vector2)
+            if all(x <= radii[i] for x, i in enumerate(distance_vector)):
+                cond = False
+                break
+
+        if cond:
+            out_vectors.append(vector)
+
+    return out_vectors
