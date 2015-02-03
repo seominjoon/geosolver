@@ -101,7 +101,7 @@ def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distan
         cond = True
         for vector2 in out_vectors:
             distance_vector = dimension_wise_distances(vector, vector2)
-            if all(x <= radii[i] for x, i in enumerate(distance_vector)):
+            if all(x <= radii[i] for i, x in enumerate(distance_vector)):
                 cond = False
                 break
 

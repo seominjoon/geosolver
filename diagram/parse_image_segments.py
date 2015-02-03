@@ -35,8 +35,10 @@ def _get_image_segments(image, kernel, block_size, c):
         boolean_array = labeled[slice_] == (idx+1)
         pixels = set((x, y) for x, y in np.transpose(np.nonzero(np.transpose(boolean_array))))
         segmented_image = 255-(255-sliced_image) * boolean_array
+        binarized_segmented_image = cv2.adaptiveThreshold(segmented_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                                          cv2.THRESH_BINARY_INV, block_size, c)
 
-        image_segment = ImageSegment(segmented_image, sliced_image, pixels, offset, idx)
+        image_segment = ImageSegment(segmented_image, sliced_image, binarized_segmented_image, pixels, offset, idx)
         image_segments[idx] = image_segment
 
     return image_segments

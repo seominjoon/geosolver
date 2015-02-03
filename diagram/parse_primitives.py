@@ -24,13 +24,14 @@ def parse_primitives(image_segment_parse):
 
 def _get_lines(image_segment, params):
     lines = []
-    temp = cv2.HoughLines(image_segment.segmented_image, params.rho, params.theta, params.threshold)
+    temp = cv2.HoughLines(image_segment.binarized_segmented_image, params.rho, params.theta, params.threshold)
     if temp is None:
         return lines
 
-    rho_theta_pairs = temp[0]
+    rho_theta_pairs = [temp[idx][0] for idx in range(len(temp))]
     if len(rho_theta_pairs) > params.max_num:
         rho_theta_pairs = rho_theta_pairs[:params.max_num]
+
 
     nms_rho_theta_pairs = dimension_wise_non_maximum_suppression(rho_theta_pairs, (params.nms_rho, params.nms_theta),
                                                                  _dimension_wise_distances_between_rho_theta_pairs)
@@ -102,7 +103,7 @@ def _get_pixels_near_rho_theta_pair(pixels, rho_theta_pair, eps):
 def _distance_between_rho_theta_pair_and_point(rho_theta_pair, point):
     rho, theta = rho_theta_pair
     x, y = point
-    return np.abs(rho - x*np.cos(theta) + y*np.sin(theta))
+    return abs(rho - x*np.cos(theta) - y*np.sin(theta))
 
 
 def _rho_theta_pair_unit_vector(rho_theta_pair):

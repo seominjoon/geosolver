@@ -6,9 +6,10 @@ __author__ = 'minjoon'
 
 
 class ImageSegment(object):
-    def __init__(self, segmented_image, sliced_image, pixels, offset, key):
+    def __init__(self, segmented_image, sliced_image, binarized_segmented_image, pixels, offset, key):
         self.sliced_image = sliced_image
         self.segmented_image = segmented_image
+        self.binarized_segmented_image = binarized_segmented_image
         self.pixels = pixels
         self.offset = offset
         self.shape = segmented_image.shape
