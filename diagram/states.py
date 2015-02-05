@@ -43,6 +43,7 @@ class ImageSegmentParse(object):
 
 class PrimitiveParse(object):
     def __init__(self, image_segment_parse, lines, circles):
+        assert isinstance(image_segment_parse, ImageSegmentParse)
         self.image_segment_parse = image_segment_parse
         self.lines = lines
         self.circles = circles
@@ -72,8 +73,15 @@ class PrimitiveParse(object):
             display_image(image)
 
 
-
 class DiagramParse(object):
     def __init__(self, primitive_parse, intersection_points):
+        assert isinstance(primitive_parse, PrimitiveParse)
         self.primitive_parse = primitive_parse
         self.intersection_points = intersection_points
+
+    def display_points(self, block=True):
+        image = cv2.cvtColor(self.primitive_parse.image_segment_parse.original_image, cv2.COLOR_GRAY2BGR)
+        offset = self.primitive_parse.image_segment_parse.diagram_image_segment.offset
+        for point in self.intersection_points.values():
+            draw_point(image, point, offset=offset, color=(255, 0, 0), radius=2, thickness=2)
+        display_image(image, block=block)

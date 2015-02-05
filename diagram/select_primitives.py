@@ -1,14 +1,14 @@
 import logging
-import cv2
-from geosolver.diagram.states import PrimitiveParse
-from geosolver.diagram.utils import draw_point, draw_line
-from geosolver.ontology.utils import line_length, circumference, \
-    distance_between_circle_and_point, midpoint, line_unit_vector, line_normal_vector, \
-    dimension_wise_distance_between_points, distance_between_points_squared, distance_between_line_and_point
-from geosolver.ontology.instantiator_definitions import instantiators
+
 import numpy as np
+
+from geosolver.diagram.states import PrimitiveParse
+from geosolver.diagram.computational_geometry import line_length, circumference, \
+    distance_between_circle_and_point, midpoint, line_unit_vector, line_normal_vector, \
+    distance_between_points_squared, distance_between_line_and_point
+from geosolver.ontology.instantiator_definitions import instantiators
 import geosolver.parameters as params
-from geosolver.utils import display_image
+
 
 __author__ = 'minjoon'
 
@@ -93,7 +93,7 @@ def _evaluate_reward(partial_primitives, pixels_dict):
          _coherence(partial_primitives),
          _end_pixel_num(partial_primitives, pixels_dict),
          ]
-    w = [1, -0.15, -0.1, 10, -0.1]
+    w = [1, -0.1, -0.00, 00, -0.0]
     return np.dot(x, w)
 
 

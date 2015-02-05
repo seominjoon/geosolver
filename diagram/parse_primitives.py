@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 from geosolver.diagram.states import ImageSegmentParse, PrimitiveParse
-from geosolver.ontology.utils import dot_distance_between_points
+from geosolver.diagram.computational_geometry import dot_distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import hough_line_parameters as line_params
 from geosolver.parameters import hough_circle_parameters as circle_params
