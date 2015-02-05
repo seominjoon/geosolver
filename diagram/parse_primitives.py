@@ -36,7 +36,7 @@ def _get_lines(image_segment, params):
     nms_rho_theta_pairs = dimension_wise_non_maximum_suppression(rho_theta_pairs, (params.nms_rho, params.nms_theta),
                                                                  _dimension_wise_distances_between_rho_theta_pairs)
 
-    for rho_theta_pair in nms_rho_theta_pairs:
+    for rho_theta_pair in rho_theta_pairs:
         curr_lines = _segment_line(image_segment, rho_theta_pair, params)
         lines.extend(curr_lines)
 
