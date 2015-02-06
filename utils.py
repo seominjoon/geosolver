@@ -76,6 +76,12 @@ def open_image(filepath, grayscale=True):
     return image
 
 
+def display_image(image, title="", block=True):
+    cv2.imshow(title, image)
+    if block:
+        block_display()
+
+
 def round_vector(vector):
     return tuple(int(round(x)) for x in vector)
 

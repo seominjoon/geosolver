@@ -1,6 +1,6 @@
 import cv2
-from geosolver.diagram.utils import draw_line, draw_circle
-from geosolver.utils import block_display
+from geosolver.diagram.utils import draw_line, draw_circle, draw_point
+from geosolver.utils import display_image
 
 __author__ = 'minjoon'
 
@@ -17,9 +17,13 @@ class ImageSegment(object):
         self.area = segmented_image.shape[0] * segmented_image.shape[1]
 
     def display_segmented_image(self, block=True):
-        cv2.imshow("", self.segmented_image)
-        if block:
-            block_display()
+        display_image(self.segmented_image, block=block)
+
+    def display_pixels(self, block=True):
+        image = cv2.cvtColor(self.segmented_image, cv2.COLOR_GRAY2BGR)
+        for pixel in self.pixels:
+            draw_point(image, pixel)
+        display_image(image, block=block)
 
 
 class ImageSegmentParse(object):
@@ -39,6 +43,7 @@ class ImageSegmentParse(object):
 
 class PrimitiveParse(object):
     def __init__(self, image_segment_parse, lines, circles):
+        assert isinstance(image_segment_parse, ImageSegmentParse)
         self.image_segment_parse = image_segment_parse
         self.lines = lines
         self.circles = circles
@@ -52,12 +57,31 @@ class PrimitiveParse(object):
             draw_line(image, line, offset=offset)
         for circle in self.circles.values():
             draw_circle(image, circle, offset=offset)
-        cv2.imshow("", image)
-        if block:
-            block_display()
+        display_image(image, block=block)
+
+    def display_each_primitive(self):
+        offset = self.image_segment_parse.diagram_image_segment.offset
+        for line in self.lines.values():
+            image = cv2.cvtColor(self.image_segment_parse.original_image,
+                                 cv2.COLOR_GRAY2BGR)
+            draw_line(image, line, offset=offset)
+            display_image(image)
+        for circle in self.circles.values():
+            image = cv2.cvtColor(self.image_segment_parse.original_image,
+                                 cv2.COLOR_GRAY2BGR)
+            draw_circle(image, circle, offset=offset)
+            display_image(image)
 
 
 class DiagramParse(object):
     def __init__(self, primitive_parse, intersection_points):
+        assert isinstance(primitive_parse, PrimitiveParse)
         self.primitive_parse = primitive_parse
         self.intersection_points = intersection_points
+
+    def display_points(self, block=True):
+        image = cv2.cvtColor(self.primitive_parse.image_segment_parse.original_image, cv2.COLOR_GRAY2BGR)
+        offset = self.primitive_parse.image_segment_parse.diagram_image_segment.offset
+        for point in self.intersection_points.values():
+            draw_point(image, point, offset=offset, color=(255, 0, 0), radius=2, thickness=2)
+        display_image(image, block=block)

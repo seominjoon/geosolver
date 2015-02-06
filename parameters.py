@@ -3,6 +3,10 @@ import numpy as np
 
 __author__ = 'minjoon'
 
+"""
+eps is used to segment the line.
+It shouldn't be too big; otherwise, off-line will be matched.
+"""
 HoughLineParameters = namedtuple("HoughLineParameters",
                                  "rho theta threshold max_gap min_length nms_rho nms_theta max_num eps")
 
@@ -29,6 +33,10 @@ hough_circle_parameters = HoughCircleParameters(dp=1,
                                                 min_length=20,
                                                 max_num=15)
 
-LINE_EPS = 2
-CIRCLE_EPS = 3
-PRIMITIVE_SELECTION_MIN_GAIN = 10
+# These eps determine pixel coverage of each primitive.
+LINE_EPS = 3
+CIRCLE_EPS = 4
+PRIMITIVE_SELECTION_MIN_GAIN = 0
+
+INTERSECTION_EPS = 3
+KMEANS_RADIUS_THRESHOLD = 6

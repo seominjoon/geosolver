@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from geosolver.diagram.states import ImageSegment, ImageSegmentParse
 from geosolver.ontology.instantiator_definitions import instantiators
+from geosolver.utils import block_display
 
 __author__ = 'minjoon'
 
@@ -11,9 +12,9 @@ def parse_image_segments(image):
     kernel = np.ones((3,3), np.uint8)
     block_size = 13
     c = 20
-    min_area = 60
-    min_height = 5
-    min_width = 5
+    min_area = 20
+    min_height = 3
+    min_width = 3
 
     image_segments = _get_image_segments(image, kernel, block_size, c)
     diagram_segment, label_segments = _get_diagram_and_label_segments(image_segments, min_area, min_height, min_width)
@@ -33,8 +34,8 @@ def _get_image_segments(image, kernel, block_size, c):
         offset = instantiators['point'](slice_[1].start, slice_[0].start)
         sliced_image = image[slice_]
         boolean_array = labeled[slice_] == (idx+1)
-        pixels = set((x, y) for x, y in np.transpose(np.nonzero(np.transpose(boolean_array))))
-        segmented_image = 255-(255-sliced_image) * boolean_array
+        segmented_image = 255- (255-sliced_image) * boolean_array
+        pixels = set(instantiators['point'](x, y) for x, y in np.transpose(np.nonzero(np.transpose(boolean_array))))
         binarized_segmented_image = cv2.adaptiveThreshold(segmented_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                                           cv2.THRESH_BINARY_INV, block_size, c)
 

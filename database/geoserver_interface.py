@@ -14,7 +14,7 @@ class GeoserverInterface(object):
         self.server_url = server_url
 
     def download_questions(self, key="all"):
-        sub_url = "/questions/download/%r" % key
+        sub_url = "/questions/download/%s" % str(key)
         request_url = urlparse.urljoin(self.server_url, sub_url)
         r = requests.get(request_url)
         data = json.loads(r.text, object_hook=_decode_dict)
