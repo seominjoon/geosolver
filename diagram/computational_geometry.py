@@ -73,6 +73,26 @@ def distance_between_line_and_point(line, point):
 def distance_between_circle_and_point(circle, point):
     return abs(circle.radius - distance_between_points(circle.center, point))
 
+
+def distance_between_arc_and_point(arc, point):
+    angle_a = cartesian_angle(arc.circle.center, arc.a)
+    angle_b = cartesian_angle(arc.circle.center, arc.b)
+    angle_p = cartesian_angle(arc.circle.center, point)
+    db = signed_distance_between_cartesian_angles(angle_a, angle_b)
+    dp = signed_distance_between_cartesian_angles(angle_a, angle_p)
+    if dp <= db:
+        return distance_between_circle_and_point(arc.circle, point)
+    else:
+        return min(distance_between_points(arc.a, point), distance_between_points(arc.b, point))
+
+
+def arc_length(arc):
+    angle_a = cartesian_angle(arc.circle.center, arc.a)
+    angle_b = cartesian_angle(arc.circle.center, arc.b)
+    angle = signed_distance_between_cartesian_angles(angle_a, angle_b)
+    return angle*arc.circle.radius
+
+
 def intersections_between_lines(line0, line1, eps):
     line0a = np.array(line0)
     line1a = np.array(line1)
@@ -154,3 +174,24 @@ def angle_in_radian(angle, smaller=True):
 def angle_in_degree(angle, smaller=True):
     return 180*angle_in_radian(angle, smaller=smaller)/np.pi
 
+
+def cartesian_angle(center, point):
+    vector = point.x-center.x, point.y-center.y
+    if vector[0] == 0:
+        angle = np.pi/2
+        if vector[1] < 0:
+            angle = -np.pi/2
+    else:
+        angle = np.arctan(float(vector[1])/vector[0])
+    if vector[0] < 0:
+        angle += np.pi
+    if angle < 0:
+        angle += 2*np.pi
+    return angle
+
+
+def signed_distance_between_cartesian_angles(a0, a1):
+    distance = a1 - a0
+    if distance < 0:
+        distance += 2*np.pi
+    return distance

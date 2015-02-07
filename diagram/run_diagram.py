@@ -1,4 +1,7 @@
+import itertools
 from geosolver.database.geoserver_interface import geoserver_interface
+from geosolver.diagram.computational_geometry import distance_between_points
+from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.parse_diagram import parse_diagram
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives, _distance_between_rho_theta_pair_and_point
@@ -59,9 +62,37 @@ def test_distance_between_rho_theta_pair_and_point():
     point = instantiators['point'](-1, -1)
     print(_distance_between_rho_theta_pair_and_point(rho_theta_pair, point))
 
+
+def test_instance_exists():
+    questions = geoserver_interface.download_questions(1).values()
+    parses = []
+    for question in questions[:10]:
+        print(question.key)
+        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+        primitive_parse = parse_primitives(image_segment_parse)
+        # primitive_parse.display_each_primitive()
+        selected = select_primitives(primitive_parse)
+        selected.display_primitives()
+        diagram_parse = parse_diagram(selected)
+        diagram_parse.display_points()
+
+        for p0, p1, p2 in itertools.permutations(diagram_parse.intersection_points.values(), 3):
+            radius1 = distance_between_points(p0, p1)
+            radius2 = distance_between_points(p0, p2)
+            if abs(radius1-radius2)/(radius1+radius2) < 0.1:
+                radius = (radius1+radius2)/2.0
+                circle = instantiators['circle'](p0, radius)
+                arc = instantiators['arc'](circle, p1, p2)
+                if instance_exists(diagram_parse, arc):
+                    diagram_parse.display_instance(arc)
+
+        parses.append(diagram_parse)
+
+
 if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
     # test_distance_between_rho_theta_pair_and_point()
     # test_select_primitives()
-    test_parse_diagram()
+    # test_parse_diagram()
+    test_instance_exists()

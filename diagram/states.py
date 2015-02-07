@@ -1,6 +1,8 @@
 import cv2
-from geosolver.diagram.utils import draw_line, draw_circle, draw_point
+
+from geosolver.diagram.draw_on_image import draw_line, draw_circle, draw_point, draw_instance
 from geosolver.utils import display_image
+
 
 __author__ = 'minjoon'
 
@@ -80,8 +82,29 @@ class DiagramParse(object):
         self.intersection_points = intersection_points
 
     def display_points(self, block=True):
-        image = cv2.cvtColor(self.primitive_parse.image_segment_parse.original_image, cv2.COLOR_GRAY2BGR)
-        offset = self.primitive_parse.image_segment_parse.diagram_image_segment.offset
+        image = self.get_colored_original_image()
+        offset = self.get_diagram_offset()
         for point in self.intersection_points.values():
             draw_point(image, point, offset=offset, color=(255, 0, 0), radius=2, thickness=2)
         display_image(image, block=block)
+
+    def display_instance(self, instance, block=True):
+        image = self.get_colored_original_image()
+        draw_instance(image, instance, offset=self.get_diagram_offset())
+        display_image(image, block=block)
+
+    def get_colored_original_image(self):
+        return cv2.cvtColor(self.primitive_parse.image_segment_parse.original_image, cv2.COLOR_GRAY2BGR)
+
+    def get_diagram_offset(self):
+        return self.primitive_parse.image_segment_parse.diagram_image_segment.offset
+
+
+class GraphParse(object):
+    # TODO :
+    def __init__(self, diagram_parse, line_graph, circle_dict, arc_graph):
+        assert isinstance(diagram_parse, DiagramParse)
+        self.diagram_parse = diagram_parse
+        self.line_graph = line_graph  # Undirected graph
+        self.circle_dict = circle_dict
+        self.arc_graph = arc_graph  # Directed graph
