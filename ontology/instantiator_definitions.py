@@ -22,6 +22,7 @@ instantiator_defs = {
 }
 
 
+
 """
 Initialize instantiators based on type_defs
 """
@@ -30,3 +31,14 @@ for key, value in instantiator_defs.iteritems():
     args, _ = zip(*value)
     nt = namedtuple(key, ' '.join(args))
     instantiators[key] = nt
+
+
+def polygon(*args):
+    if len(args) == 3:
+        return instantiators['triangle'](*args)
+    elif len(args) == 4:
+        return instantiators['quadrilateral'](*args)
+    else:
+        raise Exception()
+
+# instantiators['polygon'] = polygon

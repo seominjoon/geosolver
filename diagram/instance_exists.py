@@ -11,6 +11,7 @@ from geosolver.diagram.computational_geometry import line_length, line_unit_vect
     circumference
 from geosolver.diagram.states import DiagramParse
 from geosolver.ontology.instantiator_definitions import instantiators
+from geosolver.parameters import LINE_EPS
 
 __author__ = 'minjoon'
 
@@ -23,8 +24,8 @@ def instance_exists(diagram_parse, instance):
 
 
 def _line_exists(diagram_parse, line):
-    eps = 3
-    multiplier = 2
+    eps = LINE_EPS
+    multiplier = 1
     assert isinstance(diagram_parse, DiagramParse)
     pixels = diagram_parse.primitive_parse.image_segment_parse.diagram_image_segment.pixels
     near_pixels = set(pixel for pixel in pixels if distance_between_line_and_point(line, pixel) <= eps)
@@ -36,7 +37,7 @@ def _line_exists(diagram_parse, line):
 
 def _arc_exists(diagram_parse, arc):
     eps = 4
-    multiplier = 2
+    multiplier = 1
     assert isinstance(diagram_parse, DiagramParse)
     pixels = diagram_parse.primitive_parse.image_segment_parse.diagram_image_segment.pixels
     near_pixels = set(pixel for pixel in pixels if distance_between_arc_and_point(arc, pixel) <= eps)

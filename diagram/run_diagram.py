@@ -1,8 +1,10 @@
 import itertools
 from geosolver.database.geoserver_interface import geoserver_interface
-from geosolver.diagram.computational_geometry import distance_between_points
+from geosolver.diagram.computational_geometry import distance_between_points, cartesian_angle
+from geosolver.diagram.get_instances import get_instances, get_all_instances
 from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.parse_diagram import parse_diagram
+from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives, _distance_between_rho_theta_pair_and_point
 from geosolver.diagram.select_primitives import select_primitives
@@ -89,10 +91,42 @@ def test_instance_exists():
         parses.append(diagram_parse)
 
 
+def test_parse_graph():
+    questions = geoserver_interface.download_questions(1).values()
+    for question in questions:
+        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+        primitive_parse = parse_primitives(image_segment_parse)
+        selected_primitive_parse = select_primitives(primitive_parse)
+        diagram_parse = parse_diagram(selected_primitive_parse)
+        diagram_parse.display_points()
+        print("Parsing graph...")
+        graph_parse = parse_graph(diagram_parse)
+        print("Graph parsing done.")
+        lines = get_all_instances(graph_parse, 'line')
+        circles = get_all_instances(graph_parse, 'circle')
+        arcs = get_all_instances(graph_parse, 'arc')
+        angles = get_all_instances(graph_parse, 'angle')
+        """
+        for angle in angles.values():
+            print(angle)
+            graph_parse.display_instances([angle])
+        """
+        for a, b, c in itertools.combinations(graph_parse.diagram_parse.intersection_points, 3):
+            triangles = get_instances(graph_parse, 'triangle', a, b, c)
+            print(triangles)
+            graph_parse.display_instances(triangles.values())
+def test_temp():
+    center = instantiators['point'](0, 0)
+    a = instantiators['point'](1,-1)
+    print(180*cartesian_angle(center, a)/np.pi)
+
+
 if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
     # test_distance_between_rho_theta_pair_and_point()
     # test_select_primitives()
     # test_parse_diagram()
-    test_instance_exists()
+    # test_instance_exists()
+    test_parse_graph()
+    # test_temp()
