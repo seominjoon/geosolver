@@ -105,6 +105,7 @@ def sort(fs):
 #how they compare in advance (which should hopefully not be too big of a problem, since
 #this only has to be generated once). Handles dealing with iterable objects dividing the
 #equations into each individual value. 
+#
 def sortByKey(fsDict,cls=tuple):
     try:
         lenTot = len(fsDict[fsDict.keys()[0]])
