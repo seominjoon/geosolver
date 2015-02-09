@@ -10,10 +10,16 @@ def and_(truth0, truth1):
     """
     TODO: include t.sigma
     """
-    return max([truth0, truth1], key=lambda t: t.expression.sort_key())
+    truth0.expression = sympy.sympify(truth0.expression)
+    truth1.expression = sympy.sympify(truth1.expression)
+    exp = sympy.Max(truth0.expression, truth1.expression)
+    sig = sympy.Max(truth0.sigma, truth1.sigma)
+    return Truth(exp, sig)
 
 def or_(truth0, truth1):
-    return min([truth0, truth1], key=lambda t: t.expression.sort_key())
+    exp = sympy.Min(truth0.expression, truth1.expression)
+    sig = sympy.Max(truth0.sigma, truth1.sigma)
+    return Truth(exp, sig)
 
 def not_(truth):
     return Truth(-truth.expression, truth.sigma)
@@ -64,7 +70,7 @@ def angleOf_angle(angle):
     a = lengthOf(instantiators['line'](angle.b, angle.c))
     b = lengthOf(instantiators['line'](angle.c, angle.a))
     c = lengthOf(instantiators['line'](angle.a, angle.b))
-    return sympy.acos(sympy.sqrt((a**2 + b**2 - c**2) / (2*a*b)))
+    return sympy.acos((a**2 + c**2 - b**2) / (2*a*c))
 
 
 def angleOf_arc(arc):
@@ -79,12 +85,56 @@ def radiusOf(circle):
 def diameterOf(circle):
     return 2 * circle.radius
 
+
+# Baiscally Bubble Sorting Values, but since they're equations it gets a little funky
+# essentially the max and min get floated to the top and bottom respectively
+# then we repeat this for the second most and so forth.
+def sort(fs):
+    fs = list(fs)
+    for i in range(len(fs)-1,-1,-1):
+        for j in range(i,-1,-1):
+            Fi = fs[i]
+            Fj = fs[j]
+            fs[j] = sympy.Min(Fi,Fj)
+            fs[i] = sympy.Max(Fi,Fj)
+    return fs
+
+#Sort then make a piecewise function where we test if the key is being used currently
+#with that function, then when it is there map it to the value corresponding to that
+#equation. It's pretty funky and gets slow when there are things that are unnknowable
+#how they compare in advance (which should hopefully not be too big of a problem, since
+#this only has to be generated once). Handles dealing with iterable objects dividing the
+#equations into each individual value. 
+def sortByKey(fsDict,cls=tuple):
+    try:
+        lenTot = len(fsDict[fsDict.keys()[0]])
+    except:
+        lenTot = None
+    fs = sort(fsDict.keys())
+    result = []
+    if lenTot == None:
+        for f in fs:
+            pieces = []
+            for (F,v) in fsDict.items():
+                pieces.append((v, f == F))
+            result.append(sympy.Piecewise(*pieces))
+    else:
+        for f in fs:
+            pieces = []
+            for i in range(lenTot):
+                parts = []
+                for (F,v) in fsDict.items():
+                    parts.append((v[i], sympy.Abs(f - F) <= 0))
+                pieces.append(sympy.Piecewise(*parts))
+            result.append(cls(*pieces))
+    return result
+
 def sortPointsClockwise(poly):
     center = tuple(sum(x) for x in zip(*poly))
     centerX, centerY = (center[0]/len(poly), center[1]/len(poly))
     angle = lambda (x1,y1): sympy.atan2(y1 - centerY, x1 - centerX)
-    angles = map(lambda p: (p,angle(p)),poly)
-    return map(lambda (p,_): p, sorted(angles, key=lambda (_,ang): ang.sort_key()))
+    angles = {angle(p) : p for p in poly}
+    return sortByKey(angles,instantiators['point'])
 
 def areaOf_polygon(poly):
     poly = sortPointsClockwise(poly)
@@ -178,9 +228,10 @@ def bisects_line(line0, line1):
 def bisects_angle(line, angle):
     pass
 def isRightAngle(angle):
-    return equal(angleOf_angle(angle), sympy.pi / 2)
+    ang = angleOf_angle(angle)
+    return equal(sympy.re(angleOf_angle(angle)), sympy.pi / 2)
 def nInARow(l,n):
-    dl = list(itertools.chain(quad,quad))
+    dl = list(itertools.chain(l,l))
     return [dl[i:i+n] for i in xrange(len(l))]
 def isHypotenuseOf(line, triangle):
     pass
@@ -216,18 +267,19 @@ def isParallelogram(quad):
 def isRhombus(quad):
     quad = sortPointsClockwise(quad)
     lines = zip(quad, quad[1:] + quad[:1])
-    lengths = map(lambda line: lengthOf(instantiators['line'](line)), lines)
+    lengths = map(lambda line: lengthOf(instantiators['line'](*line)), lines)
     return and_(equal(lengths[0], lengths[1]),
                 and_(equal(lengths[0], lengths[2]),
                      equal(lengths[1], lengths[3])))
 def isRectangle(quad):
-    is90Deg = lambda ordering: isRightAngle(instantiators['angle'](ordering))
+    quad = sortPointsClockwise(quad)
+    is90Deg = lambda ordering: isRightAngle(instantiators['angle'](*ordering))
     return reduce(lambda prev, n: n if not prev else and_(prev, n),
-                  map(is60Deg, nInARow(quad, 3)),
+                  map(is90Deg, nInARow(quad, 3)),
                   False)
 def isSquare(quad):
-    quad = sortPointsClockwise(quad)
     return and_(isRectangle(quad), isRhombus(quad))
+
 def isRadiusOf(line, circle):
     distFromCenterA = lengthOf(instantiators['line'](line[0], circle.center))
     distFromCenterB = lengthOf(instantiators['line'](line[1], circle.center))
@@ -258,6 +310,16 @@ def isSecantOf(line, circle):
                           greater(lengthOf(line1), circle.radius))))
                 
 # And so on...
-p = instantiators['point'](sympy.S('x - 1'),sympy.S('y - 2'))
-l = instantiators['line'](instantiators['point'](sympy.S('x'),sympy.S('y')), instantiators['point'](sympy.S('x+3'),sympy.S('y+6')))
-print((isOn(p,l).expression).evalf())
+# p = instantiators['point'](sympy.S('x+0.5'),sympy.S('y+0.6'))
+# l = instantiators['line'](instantiators['point'](sympy.S('x'),sympy.S('y')), instantiators['point'](sympy.S('x+1'),sympy.S('y+1')))
+# print((isOn(p,l).expression).evalf())
+# x = sympy.S('x')
+# y = sympy.S('y')
+# z = sympy.S('z')
+# 
+# a = instantiators['point'](x,y)
+# b = instantiators['point'](x+2,y+2)
+# c = instantiators['point'](x,y+2)
+# d = instantiators['point'](z,y)
+# 
+# sympy.pprint(isSquare(instantiators['quadrilateral'](a,b,c,d)).expression.evalf())
