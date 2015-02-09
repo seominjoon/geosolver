@@ -1,5 +1,10 @@
+import itertools
 from geosolver.database.geoserver_interface import geoserver_interface
+from geosolver.diagram.computational_geometry import distance_between_points, cartesian_angle
+from geosolver.diagram.get_instances import get_instances, get_all_instances
+from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.parse_diagram import parse_diagram
+from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives, _distance_between_rho_theta_pair_and_point
 from geosolver.diagram.select_primitives import select_primitives
@@ -59,9 +64,69 @@ def test_distance_between_rho_theta_pair_and_point():
     point = instantiators['point'](-1, -1)
     print(_distance_between_rho_theta_pair_and_point(rho_theta_pair, point))
 
+
+def test_instance_exists():
+    questions = geoserver_interface.download_questions(1).values()
+    parses = []
+    for question in questions[:10]:
+        print(question.key)
+        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+        primitive_parse = parse_primitives(image_segment_parse)
+        # primitive_parse.display_each_primitive()
+        selected = select_primitives(primitive_parse)
+        selected.display_primitives()
+        diagram_parse = parse_diagram(selected)
+        diagram_parse.display_points()
+
+        for p0, p1, p2 in itertools.permutations(diagram_parse.intersection_points.values(), 3):
+            radius1 = distance_between_points(p0, p1)
+            radius2 = distance_between_points(p0, p2)
+            if abs(radius1-radius2)/(radius1+radius2) < 0.1:
+                radius = (radius1+radius2)/2.0
+                circle = instantiators['circle'](p0, radius)
+                arc = instantiators['arc'](circle, p1, p2)
+                if instance_exists(diagram_parse, arc):
+                    diagram_parse.display_instance(arc)
+
+        parses.append(diagram_parse)
+
+
+def test_parse_graph():
+    questions = geoserver_interface.download_questions(1).values()
+    for question in questions:
+        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+        primitive_parse = parse_primitives(image_segment_parse)
+        selected_primitive_parse = select_primitives(primitive_parse)
+        diagram_parse = parse_diagram(selected_primitive_parse)
+        diagram_parse.display_points()
+        print("Parsing graph...")
+        graph_parse = parse_graph(diagram_parse)
+        print("Graph parsing done.")
+        lines = get_all_instances(graph_parse, 'line')
+        circles = get_all_instances(graph_parse, 'circle')
+        arcs = get_all_instances(graph_parse, 'arc')
+        angles = get_all_instances(graph_parse, 'angle')
+        """
+        for angle in angles.values():
+            print(angle)
+            graph_parse.display_instances([angle])
+        """
+        for a, b, c in itertools.combinations(graph_parse.diagram_parse.intersection_points, 3):
+            triangles = get_instances(graph_parse, 'triangle', a, b, c)
+            print(triangles)
+            graph_parse.display_instances(triangles.values())
+def test_temp():
+    center = instantiators['point'](0, 0)
+    a = instantiators['point'](1,-1)
+    print(180*cartesian_angle(center, a)/np.pi)
+
+
 if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
     # test_distance_between_rho_theta_pair_and_point()
     # test_select_primitives()
-    test_parse_diagram()
+    # test_parse_diagram()
+    # test_instance_exists()
+    test_parse_graph()
+    # test_temp()
