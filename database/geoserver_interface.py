@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import tempfile
 import urllib
@@ -29,6 +30,66 @@ class GeoserverInterface(object):
             question = Question(pair['pk'], pair['text'], temp_filepath, choices)
             questions[question.key] = question
         return questions
+
+    def upload_question(self, text, diagram_path, choices, answer=""):
+        """
+
+        :param str text: text describing the question
+        :param str diagram_path: path to the diagram image
+        :param list choices: ex. ['5', '4', '2', '3', 'Cannot be determined']
+        :return:
+        """
+        suburl = "/questions/upload/"
+        request_url = urlparse.urljoin(self.server_url, suburl)
+        if len(choices) > 0:
+            has_choices = True
+        else:
+            has_choices = False
+        valid = True
+
+        # Get request
+        r = requests.get(request_url)
+        csrftoken = r.cookies['csrftoken']
+
+        # Post request
+        files = {'diagram': open(diagram_path, 'rb')}
+        data = dict(text=text, has_choices=has_choices, answer=answer, valid=valid,
+                    csrfmiddlewaretoken=csrftoken, html='false')
+        cookies = dict(csrftoken=csrftoken)
+        r = requests.post(request_url, files=files, data=data, cookies=cookies)
+        if r.text == "-1":
+            logging.error("Failed upload question: %s" %text)
+            return False
+        pk = r.text
+
+        for idx, choice_text in enumerate(choices):
+            result = self._upload_choice(idx+1, choice_text, pk)
+            if not result:
+                logging.error("Failed upload question: %s" %text)
+                return False
+
+        return True
+
+    def _upload_choice(self, number, text, question_pk):
+        '''
+        Upload choice
+        '''
+        suburl = "/questions/upload/choice"
+        request_url = urlparse.urljoin(self.server_url, suburl)
+
+        # Get request
+        r = requests.get(request_url)
+        csrftoken = r.cookies['csrftoken']
+
+        # Post request
+        data = dict(number=number, text=text, question=question_pk,
+                    csrfmiddlewaretoken=csrftoken, html='false')
+        cookies = dict(csrftoken=csrftoken)
+        r = requests.post(request_url, data=data, cookies=cookies)
+        if r.text == "-1":
+            logging.error("Failed to upload choice %d: %s" %(number, text))
+            return False
+        return True
 
 
 def _decode_list(data):

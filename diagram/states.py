@@ -86,7 +86,6 @@ class DiagramParse(object):
         display_image(image, block=block)
 
 
-
 class GraphParse(object):
     # TODO :
     def __init__(self, diagram_parse, line_graph, circle_dict, arc_graphs):
@@ -101,7 +100,21 @@ class GraphParse(object):
     def display_instances(self, instances, block=True, **kwargs):
         self.image_segment_parse.display_instances(instances, block=block, **kwargs)
 
+
 class Label:
     def __init__(self, text, position):
         self.text = text
         self.position = position
+
+
+class ImageLabelParse:
+    def __init__(self, image, labels):
+        self.image = image
+        self.labels = labels
+
+    def get_labeled_image(self, **kwargs):
+        image = cv2.cvtColor(self.image, cv2.COLOR_GRAY2BGR)
+        for label in self.labels.values():
+            draw_label(image, label, **kwargs)
+            draw_point(image, label.position)
+        return image

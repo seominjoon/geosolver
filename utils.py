@@ -75,6 +75,22 @@ def open_image(filepath, grayscale=True):
         image = cv2.imread(filepath, cv2.IMREAD_COLOR)
     return image
 
+def open_image_from_file(file, grayscale=True):
+    fp = Image.open(file)
+    _, path = tempfile.mkstemp(suffix=".png")
+    fp.save(path)
+    if grayscale:
+        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    else:
+        image = cv2.imread(path, cv2.IMREAD_COLOR)
+    return image
+
+
+def save_image(image, ext=".png"):
+    fp, filepath = tempfile.mkstemp(suffix=ext)
+    cv2.imwrite(filepath, image)
+    return fp, filepath
+
 
 def display_image(image, title="", block=True):
     cv2.imshow(title, image)
