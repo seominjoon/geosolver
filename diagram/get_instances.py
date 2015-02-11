@@ -18,6 +18,17 @@ def get_all_instances(graph_parse, instance_type_name):
     return eval("_get_all_%ss(graph_parse)" % instance_type_name)
 
 
+def get_points(graph_parse, key):
+    if key in graph_parse.diagram_parse.intersection_points:
+        return {key: graph_parse.diagram_parse.intersection_points[key]}
+    else:
+        return {}
+
+
+def get_all_points(graph_parse):
+    return graph_parse.diagram_parse.intersection_points
+
+
 def _get_lines(graph_parse, a_key, b_key):
     assert isinstance(graph_parse, GraphParse)
     if graph_parse.line_graph.has_edge(a_key, b_key):
