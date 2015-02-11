@@ -33,11 +33,14 @@ def _get_circle_dict(diagram_parse):
     :param diagram_parse:
     :return:
     """
+    # FIXME : this needs to be changed
     eps = CIRCLE_EPS
     assert isinstance(diagram_parse, DiagramParse)
     circle_dict = {}
+
+
     for point_key, point in diagram_parse.intersection_points.iteritems():
-        circle_dict[point_key] = {}
+        d = {}
         radius_key = 0
         for circle in diagram_parse.primitive_parse.circles.values():
             if distance_between_points(point, circle.center) <= eps:
@@ -46,8 +49,10 @@ def _get_circle_dict(diagram_parse):
                     point = diagram_parse.intersection_points[key]
                     if distance_between_circle_and_point(circle, point) <= eps:
                         points[key] = point
-                circle_dict[point_key][radius_key] = {'instance': circle, 'points': points}
+                d[radius_key] = {'instance': circle, 'points': points}
                 radius_key += 1
+        if len(d) > 0:
+            circle_dict[point_key] = d
     return circle_dict
 
 

@@ -1,9 +1,12 @@
 import itertools
 from geosolver.database.geoserver_interface import geoserver_interface
+from geosolver.diagram.get_evalf_subs import get_evalf_subs
 from geosolver.diagram.computational_geometry import distance_between_points, cartesian_angle
 from geosolver.diagram.get_instances import get_instances, get_all_instances
 from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.parse_diagram import parse_diagram
+from geosolver.diagram.parse_general_diagram import parse_general_diagram
+from geosolver.diagram.parse_general_graph import parse_general_graph
 from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives, _distance_between_rho_theta_pair_and_point
@@ -102,6 +105,9 @@ def test_parse_graph():
         print("Parsing graph...")
         graph_parse = parse_graph(diagram_parse)
         print("Graph parsing done.")
+        general_diagram_parse, values = parse_general_diagram(diagram_parse)
+        print(get_evalf_subs(general_diagram_parse.variables, values))
+        general_graph_parse = parse_general_graph(general_diagram_parse, graph_parse)
         lines = get_all_instances(graph_parse, 'line')
         circles = get_all_instances(graph_parse, 'circle')
         arcs = get_all_instances(graph_parse, 'arc')

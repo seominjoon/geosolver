@@ -52,7 +52,6 @@ class ImageSegmentParse(object):
         display_image(image, block=block)
 
 
-
 class PrimitiveParse(object):
     def __init__(self, image_segment_parse, lines, circles):
         assert isinstance(image_segment_parse, ImageSegmentParse)
@@ -70,11 +69,12 @@ class PrimitiveParse(object):
 
 
 class DiagramParse(object):
-    def __init__(self, primitive_parse, intersection_points):
+    def __init__(self, primitive_parse, intersection_points, circles):
         assert isinstance(primitive_parse, PrimitiveParse)
         self.image_segment_parse = primitive_parse.image_segment_parse
         self.primitive_parse = primitive_parse
         self.intersection_points = intersection_points
+        self.circles = circles
 
     def display_points(self, block=True, **kwargs):
         image = self.image_segment_parse.get_colored_original_image()
@@ -99,6 +99,30 @@ class GraphParse(object):
 
     def display_instances(self, instances, block=True, **kwargs):
         self.image_segment_parse.display_instances(instances, block=block, **kwargs)
+
+
+class GeneralDiagramParse(object):
+    def __init__(self, diagram_parse, variables, intersection_points, circles):
+        """
+        :param diagram_parse:
+        :param intersection_points:
+        :param circles:
+        :param variables: {'points': {1: {'x': symbol('p_1_x') 'y': symbol('p_1_y')}}, 'radii': {1: {0: symbol('r_1_0')}}}
+        :return:
+        """
+        self.diagram_parse = diagram_parse
+        self.intersection_points = intersection_points
+        self.circles = circles
+        self.variables = variables
+
+
+class GeneralGraphParse(object):
+    def __init__(self, general_diagram_parse, graph_parse, line_graph, circle_dict, arc_graphs):
+        self.general_diagram_parse = general_diagram_parse
+        self.graph_parse = graph_parse
+        self.line_graph = line_graph
+        self.circle_dict = circle_dict
+        self.arc_graphs = arc_graphs
 
 
 class Label:

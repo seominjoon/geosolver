@@ -71,6 +71,12 @@ class Formula(object):
             return "%s(%s)" % (self.function.name, ", ".join(repr(child) for child in self.children))
 
 
+class TempFormula(object):
+    def __init__(self, basic_ontology, current, children):
+        assert isinstance(basic_ontology, BasicOntology)
+        assert isinstance(current, Function)
+
+
 class BasicOntology(object):
     """
     Basic ontology defines the functions, their symbols (names), and what arguments they take in / return.

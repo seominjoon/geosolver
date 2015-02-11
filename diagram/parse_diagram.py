@@ -16,7 +16,8 @@ def parse_diagram(primitive_parse):
     all_intersections = _get_all_intersections(primitive_parse, params.INTERSECTION_EPS)
     clustered_intersections = _cluster_intersections(all_intersections, params.KMEANS_RADIUS_THRESHOLD)
     intersections = dict(enumerate(clustered_intersections))
-    diagram_parse = DiagramParse(primitive_parse, intersections)
+    circles = _get_circles(primitive_parse, intersections)
+    diagram_parse = DiagramParse(primitive_parse, intersections, circles)
     return diagram_parse
 
 
@@ -85,3 +86,25 @@ def _get_intersections_between_primitives(obj0, obj1, eps):
         return intersections_between_circles(obj0, obj1, eps)
     else:
         raise Exception()
+
+
+def _get_circles(primitive_parse, intersection_points):
+    """
+    A dictionary of dictionaries, where key of the top dictionary is center point.
+    The bottom dictionary contains radii (if multiple circles exist with the same center).
+
+    :param diagram_parse:
+    :return:
+    """
+    eps = params.CIRCLE_EPS
+    circle_dict = {}
+    for point_key, point in intersection_points.iteritems():
+        d = {}
+        radius_key = 0
+        for circle in primitive_parse.circles.values():
+            if distance_between_points(point, circle.center) <= eps:
+                d[radius_key] = circle
+                radius_key += 1
+        if len(d) > 0:
+            circle_dict[point_key] = d
+    return circle_dict
