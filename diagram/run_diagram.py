@@ -11,8 +11,10 @@ from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives, _distance_between_rho_theta_pair_and_point
 from geosolver.diagram.select_primitives import select_primitives
+from geosolver.match.label_distances import label_distance_to_angle
+from geosolver.match.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.utils import open_image
+from geosolver.utils import open_image, display_graph
 import numpy as np
 
 __author__ = 'minjoon'
@@ -121,10 +123,37 @@ def test_parse_graph():
             triangles = get_instances(graph_parse, 'triangle', a, b, c)
             print(triangles)
             graph_parse.display_instances(triangles.values())
+
+
+def test_parse_match():
+    questions = geoserver_interface.download_questions(993)
+    for pk, question in questions.iteritems():
+        label_data = geoserver_interface.download_labels(pk)[pk]
+        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+        primitive_parse = parse_primitives(image_segment_parse)
+        selected_primitive_parse = select_primitives(primitive_parse)
+        selected_primitive_parse.display_primitives()
+        diagram_parse = parse_diagram(selected_primitive_parse)
+        print("Parsing graph...")
+        graph_parse = parse_graph(diagram_parse)
+        print("Graph parsing done.")
+        general_diagram_parse, values = parse_general_diagram(diagram_parse)
+        # print(get_evalf_subs(general_diagram_parse.variables, values))
+        general_graph_parse = parse_general_graph(general_diagram_parse, graph_parse)
+        match_parse = parse_match_from_known_labels(general_graph_parse, label_data)
+        for label in match_parse.label_strings:
+            formula_keys = match_parse.match_graph[label].keys()
+            print(label)
+            print([match_parse.formulas[key] for key in formula_keys])
+        diagram_parse.display_points()
+
 def test_temp():
-    center = instantiators['point'](0, 0)
-    a = instantiators['point'](1,-1)
-    print(180*cartesian_angle(center, a)/np.pi)
+    pa = instantiators['point'](1,2)
+    pb = instantiators['point'](0,0)
+    pc = instantiators['point'](-2,1)
+    pp = instantiators['point'](0,2)
+    angle = instantiators['angle'](pa, pb, pc)
+    print(label_distance_to_angle(pp, angle))
 
 
 if __name__ == "__main__":
@@ -134,5 +163,6 @@ if __name__ == "__main__":
     # test_select_primitives()
     # test_parse_diagram()
     # test_instance_exists()
-    test_parse_graph()
+    # test_parse_graph()
+    test_parse_match()
     # test_temp()

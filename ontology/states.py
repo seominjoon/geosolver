@@ -56,6 +56,19 @@ class Function(object):
         return "%s('%s', return_type='%s')" % (self.__class__.__name__, self.label, self.return_type.name)
 
 
+class Constant(object):
+    def __init__(self, key, content, type_, label=None):
+        self.key = key
+        self.content = content
+        self.type = type_
+        if label is None:
+            label = repr(content)
+        self.label = label
+
+    def __eq__(self, other):
+        return self.key == other.key
+
+
 class Formula(object):
     def __init__(self, basic_ontology, function, children):
         assert isinstance(basic_ontology, BasicOntology)
@@ -74,8 +87,16 @@ class Formula(object):
 class TempFormula(object):
     def __init__(self, basic_ontology, current, children):
         assert isinstance(basic_ontology, BasicOntology)
-        assert isinstance(current, Function)
+        assert isinstance(current, Function) or isinstance(current, Constant)
+        self.basic_ontolgy = basic_ontology
+        self.current = current
+        self.children = children
 
+    def __repr__(self):
+        if len(self.children) == 0:
+            return self.current.label
+        else:
+            return "%s(%s)" % (self.current.name, ", ".join(repr(child) for child in self.children))
 
 class BasicOntology(object):
     """

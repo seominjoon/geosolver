@@ -31,6 +31,20 @@ class GeoserverInterface(object):
             questions[question.key] = question
         return questions
 
+
+    def download_labels(self, key="all"):
+        suburl = "/labels/download/%s" % str(key)
+        request_url = urlparse.urljoin(self.server_url, suburl)
+        r = requests.get(request_url)
+        data = json.loads(r.text, object_hook=_decode_dict)
+        labels = {}
+        for pair in data:
+            question_pk = pair['question_pk']
+            label_data = pair['label_data']
+            labels[question_pk] = label_data
+        return labels
+
+
     def upload_question(self, text, diagram_path, choices, answer=""):
         """
 

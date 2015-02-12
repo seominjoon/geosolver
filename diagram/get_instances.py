@@ -18,15 +18,15 @@ def get_all_instances(graph_parse, instance_type_name):
     return eval("_get_all_%ss(graph_parse)" % instance_type_name)
 
 
-def get_points(graph_parse, key):
-    if key in graph_parse.diagram_parse.intersection_points:
-        return {key: graph_parse.diagram_parse.intersection_points[key]}
+def _get_points(graph_parse, key):
+    if key in graph_parse.intersection_points:
+        return {key: graph_parse.intersection_points[key]}
     else:
         return {}
 
 
-def get_all_points(graph_parse):
-    return graph_parse.diagram_parse.intersection_points
+def _get_all_points(graph_parse):
+    return graph_parse.intersection_points
 
 
 def _get_lines(graph_parse, a_key, b_key):
@@ -80,7 +80,7 @@ def _get_arcs(graph_parse, a_key, b_key):
 def _get_all_arcs(graph_parse):
     assert isinstance(graph_parse, GraphParse)
     items = []
-    for a_key, b_key in itertools.permutations(graph_parse.diagram_parse.intersection_points, 2):
+    for a_key, b_key in itertools.permutations(graph_parse.intersection_points, 2):
         items.extend(_get_arcs(graph_parse, a_key, b_key).iteritems())
     return dict(items)
 
@@ -89,7 +89,7 @@ def _get_polygons(graph_parse, name, *args, **kwargs):
     assert isinstance(graph_parse, GraphParse)
     line_graph = graph_parse.line_graph
     if all(line_graph.has_edge(args[idx-1], arg) for idx, arg in enumerate(args)):
-        points = tuple(graph_parse.diagram_parse.intersection_points[key] for key in args)
+        points = tuple(graph_parse.intersection_points[key] for key in args)
         polygon = instantiators[name](*points)
         polygon_key = tuple(args)
         return {polygon_key: polygon}
@@ -97,7 +97,7 @@ def _get_polygons(graph_parse, name, *args, **kwargs):
         return {}
 
 
-def _get_angle(graph_parse, a_key, b_key, c_key, ignore_trivial=True):
+def _get_angles(graph_parse, a_key, b_key, c_key, ignore_trivial=True):
     assert isinstance(graph_parse, GraphParse)
     line_graph = graph_parse.line_graph
     if line_graph.has_edge(a_key, b_key) and line_graph.has_edge(b_key, c_key):
@@ -116,7 +116,7 @@ def _get_angle(graph_parse, a_key, b_key, c_key, ignore_trivial=True):
                 if b_key in b_points:
                     return {}
 
-        points = graph_parse.diagram_parse.intersection_points
+        points = graph_parse.intersection_points
         a, b, c = points[a_key], points[b_key], points[c_key]
         angle = instantiators['angle'](a, b, c)
         angle_key = (a_key, b_key, c_key)
@@ -133,6 +133,6 @@ def _get_all_angles(graph_parse, ignore_trivial=True):
     """
     assert isinstance(graph_parse, GraphParse)
     items = []
-    for a_key, b_key, c_key in itertools.permutations(graph_parse.diagram_parse.intersection_points, 3):
-        items.extend(_get_angle(graph_parse, a_key, b_key, c_key, ignore_trivial=ignore_trivial).iteritems())
+    for a_key, b_key, c_key in itertools.permutations(graph_parse.intersection_points, 3):
+        items.extend(_get_angles(graph_parse, a_key, b_key, c_key, ignore_trivial=ignore_trivial).iteritems())
     return dict(items)

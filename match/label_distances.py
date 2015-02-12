@@ -1,22 +1,12 @@
 from geosolver.diagram.computational_geometry import distance_between_points, midpoint, cartesian_angle, \
-    signed_distance_between_cartesian_angles, arc_midpoint
+    signed_distance_between_cartesian_angles, arc_midpoint, line_length, arc_length
+from geosolver.ontology.instantiator_definitions import instantiators
+import numpy as np
 
 __author__ = 'minjoon'
 
 
-def label_distance_to_line_length(label_point, line):
-    """
-    distance from midpoint of line
-
-    :param point:
-    :param line:
-    :return:
-    """
-    mp = midpoint(line.a, line.b)
-    return distance_between_points(label_point, mp)
-
-
-def label_distance_to_line(label_point, line):
+def label_distance_to_line(label_point, line, is_length):
     """
     minimum distance among:
     end points, mid point.
@@ -25,9 +15,15 @@ def label_distance_to_line(label_point, line):
     :param line:
     :return:
     """
-    return min(label_distance_to_line_length(label_point, line),
-               distance_between_points(label_point, line.a),
-               distance_between_points(label_point, line.b))
+    mp = midpoint(line.a, line.b)
+    distance = distance_between_points(label_point, mp)
+    if is_length:
+        return distance
+
+    l = 1.0/line_length(line)  # To favor longer line if matching near the points
+    return min(distance,
+               distance_between_points(label_point, line.a) + l,
+               distance_between_points(label_point, line.b) + l)
 
 
 def label_distance_to_arc(label_point, arc):
@@ -43,14 +39,20 @@ def label_distance_to_angle(label_point, angle):
     """
     caa = cartesian_angle(angle.b, angle.a)
     cam = cartesian_angle(angle.b, label_point)
-    cab = cartesian_angle(angle.b, angle.c)
-    dm = signed_distance_between_cartesian_angles(caa, cam)
-    db = signed_distance_between_cartesian_angles(caa, cab)
+    cac = cartesian_angle(angle.b, angle.c)
+    print(caa, cam, cac)
+    dm = signed_distance_between_cartesian_angles(cam, caa)
+    dc = signed_distance_between_cartesian_angles(cac, caa)
+    cav = caa + dc/2.0
+    if cav > 2*np.pi:
+        cav -= 2*np.pi
+    cad = min(signed_distance_between_cartesian_angles(cam, cav), signed_distance_between_cartesian_angles(cav, cam))
+    print(cav, cad)
     dist = distance_between_points(label_point, angle.b)
-    if db > dm:
-        return dist
+    if dc > dm:
+        return dist*(1+cad+dc)
     else:
-        return 4*dist  # effectively infinite
+        return 100*dist  # effectively infinite
 
 
 def label_distance_to_point(label_point, point):
