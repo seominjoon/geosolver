@@ -10,7 +10,7 @@ class Token(object):
         self.key = index
 
     def __repr__(self):
-        return "%s(word=%s, index=%d)" % (self.__class__.__name__, self.word, self.index)
+        return "%s(word=%r, index=%d)" % (self.__class__.__name__, self.word, self.index)
 
     def __eq__(self, other):
         assert isinstance(other, Token)
