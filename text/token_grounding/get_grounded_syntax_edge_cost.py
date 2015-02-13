@@ -9,9 +9,9 @@ def get_grounded_syntax_edge_cost(from_token, to_token, data):
         basic_ontology = from_token.basic_ontology
         entity = basic_ontology.types['entity']
         reference = basic_ontology.types['reference']
-        if from_token.function.return_type == reference and basic_ontology.isinstance(to_token.function.return_type, entity):
+        if from_token.ground.type == reference and basic_ontology.isinstance(to_token.ground.type, entity):
             return 0
-        elif to_token.function.return_type == reference and basic_ontology.isinstance(from_token.function.return_type, entity):
+        elif to_token.ground.type == reference and basic_ontology.isinstance(from_token.ground.type, entity):
             return 0
         else:
             return 1

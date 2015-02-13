@@ -7,10 +7,6 @@ __author__ = 'minjoon'
 
 def get_grounded_syntax(syntax, ontology_semantics, geowordnet, threshold):
     grounded_tokens = get_grounded_tokens(syntax, ontology_semantics, geowordnet, threshold)
-    if len(grounded_tokens) > 0:
-        basic_ontology = grounded_tokens.values()[0].basic_ontology
-    else:
-        basic_ontology = geowordnet.basic_ontology
 
     grounded_syntax_trees = {}
     all_tokens = dict(grounded_tokens.items() + syntax.tokens.items())
@@ -18,5 +14,5 @@ def get_grounded_syntax(syntax, ontology_semantics, geowordnet, threshold):
         grounded_syntax_tree = get_grounded_syntax_tree(all_tokens, syntax_tree)
         grounded_syntax_trees[grounded_syntax_tree.rank] = grounded_syntax_tree
 
-    grounded_syntax = GroundedSyntax(syntax, basic_ontology, grounded_tokens, grounded_syntax_trees)
+    grounded_syntax = GroundedSyntax(syntax, geowordnet.basic_ontology, grounded_tokens, grounded_syntax_trees)
     return grounded_syntax

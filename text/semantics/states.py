@@ -69,20 +69,20 @@ class SemanticWeight(object):
 
 
 class ImpliedInstance(object):
-    def __init__(self, grounded_syntax, parent_grounded_token, arg_idx, function):
+    def __init__(self, grounded_syntax, parent_grounded_token, arg_idx, ground):
         self.grounded_syntax = grounded_syntax
         self.parent_grounded_token = parent_grounded_token
         self.arg_idx = arg_idx
-        self.function = function
+        self.ground = ground
         self.key = (parent_grounded_token.key, arg_idx)
-        self.label = function.label
+        self.label = ground.label
 
 
 class ImpliedSourceFunction(object):
     def __init__(self, grounded_syntax, function, child_grounded_tokens):
         self.grounded_syntax = grounded_syntax
         self.basic_ontology = grounded_syntax.basic_ontology
-        self.function = function
+        self.ground = function
         self.child_grounded_tokens = child_grounded_tokens
         self.key = (function.key, ) + tuple(t.key for t in child_grounded_tokens)
         self.label = "implied_%s" % function.name

@@ -2,7 +2,7 @@ import sympy
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.states import Truth
 import itertools
-from bokeh._glyph_functions import line
+# from bokeh._glyph_functions import line
 
 __author__ = 'minjoon'
 
@@ -311,16 +311,16 @@ def isSecantOf(line, circle):
                           greater(lengthOf(line1), circle.radius))))
                 
 # And so on...
-# p = instantiators['point'](sympy.S('x+0.5'),sympy.S('y+0.6'))
-# l = instantiators['line'](instantiators['point'](sympy.S('x'),sympy.S('y')), instantiators['point'](sympy.S('x+1'),sympy.S('y+1')))
-# print((isOn(p,l).expression).evalf())
-# x = sympy.S('x')
-# y = sympy.S('y')
-# z = sympy.S('z')
+#p = instantiators['point'](sympy.S('x+0.5'),sympy.S('y+0.6'))
+#l = instantiators['line'](instantiators['point'](sympy.S('x'),sympy.S('y')), instantiators['point'](sympy.S('x+1'),sympy.S('y+1')))
+#print((isOn(p,l).expression).evalf())
+x = sympy.S('x')
+y = sympy.S('y')
+z = sympy.S('z')
+
+a = instantiators['point'](x,y)
+b = instantiators['point'](x+2,y+2)
+c = instantiators['point'](x,y+2)
+d = instantiators['point'](z,y)
 # 
-# a = instantiators['point'](x,y)
-# b = instantiators['point'](x+2,y+2)
-# c = instantiators['point'](x,y+2)
-# d = instantiators['point'](z,y)
-# 
-# sympy.pprint(isSquare(instantiators['quadrilateral'](a,b,c,d)).expression.evalf())
+print(isSquare(instantiators['quadrilateral'](a,b,c,d)).expression.evalf())

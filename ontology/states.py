@@ -40,6 +40,7 @@ class Function(object):
         self.key = name
         self.arg_types = arg_types
         self.return_type = return_type
+        self.type = return_type
         self.id = (self.__class__, name)
         self.valence = len(self.arg_types)
         if label is None:
@@ -53,35 +54,39 @@ class Function(object):
         return self.id == other.id
 
     def __repr__(self):
-        return "%s('%s', return_type='%s')" % (self.__class__.__name__, self.label, self.return_type.name)
+        return "%s(%r, return_type=%r)" % (self.__class__.__name__, self.label, self.return_type.name)
 
 
 class Constant(object):
-    def __init__(self, key, content, type_, label=None):
-        self.key = key
+    def __init__(self, content, type_, label=None):
         self.content = content
+        self.key = content
+        self.id = content
         self.type = type_
         if label is None:
-            label = repr(content)
+            label = "%s:%r" % (self.type.name, self.key)
         self.label = label
 
     def __eq__(self, other):
-        return self.key == other.key
+        return self.content == other.content
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__.__name__, self.content)
 
 
 class Formula(object):
     def __init__(self, basic_ontology, function, children):
         assert isinstance(basic_ontology, BasicOntology)
-        assert isinstance(function, Function)
+        assert isinstance(function, Function) or isinstance(function, Constant)
         self.basic_ontology = basic_ontology
         self.function = function
         self.children = children
 
     def __repr__(self):
-        if self.function.valence == 0:
+        if len(self.children) == 0:
             return self.function.label
         else:
-            return "%s(%s)" % (self.function.name, ", ".join(repr(child) for child in self.children))
+            return "%s(%s)" % (self.function.label, ", ".join(repr(child) for child in self.children))
 
 
 class TempFormula(object):
@@ -150,7 +155,7 @@ class OntologyPath(object):
 
     def __repr__(self):
         return "%s(key=%d, path=[%s])" % (self.__class__.__name__, self.key,
-                                          ", ".join(node.name for node in self.path_nodes))
+                                          ", ".join(node.key for node in self.path_nodes))
 
     def __len__(self):
         return len(self.path_nodes)

@@ -1,7 +1,7 @@
 import inflect
 from geosolver.geowordnet.get_lexical_matching_score import get_lexical_matching_score
 from geosolver.geowordnet.filter_functions import filter_functions
-from geosolver.geowordnet.new_function_identifier import new_function_identifier
+from geosolver.geowordnet.identify_constants import identify_constants
 from geosolver.ontology import basic_ontology, ontology_semantics
 import geosolver.geowordnet.definitions as definitions
 from geosolver.geowordnet.sanity_check import sanity_check
@@ -21,7 +21,7 @@ def test_get_lexical_matching_score():
 
 
 def test_new_function_identifier():
-    print(new_function_identifier(basic_ontology, ontology_semantics, "ABC"))
+    print(identify_constants(basic_ontology, ontology_semantics, "ABC"))
 
 
 def test_filters():

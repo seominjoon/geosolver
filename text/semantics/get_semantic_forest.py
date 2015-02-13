@@ -1,7 +1,7 @@
 import itertools
 
 import networkx as nx
-from geosolver.ontology.states import Function
+from geosolver.ontology.states import Function, Constant
 from geosolver.text.semantics.costs.get_implied_instance_cost import get_implied_instance_cost
 from geosolver.text.semantics.costs.get_implied_parent_function_cost import get_implied_parent_function_cost
 
@@ -79,7 +79,9 @@ def _add_semantic_relations(grounded_syntax, forest_graph, syntax_threshold, ont
     forest_graph = forest_graph.copy()
 
     for from_token, to_token in itertools.permutations(grounded_tokens.values(), 2):
-        for arg_idx in range(from_token.function.valence):
+        if isinstance(from_token.ground, Constant):
+            continue
+        for arg_idx in range(from_token.ground.valence):
             semantic_relations = get_semantic_relations(grounded_syntax, from_token, to_token, arg_idx)
             for key, semantic_relation in semantic_relations.iteritems():
                 syntax_cost, ontology_cost = get_semantic_relation_cost(semantic_relation)
@@ -141,13 +143,16 @@ def _get_implied_instances(grounded_syntax):
     implied_instances = {}
     grounded_tokens = grounded_syntax.grounded_tokens
     for grounded_token in grounded_tokens.values():
-        function = grounded_token.function
-        for arg_idx, type_ in enumerate(function.arg_types):
-            new_function = Function((grounded_token.key, arg_idx), [], type_,
-                                    label="%s-%d:%d" % (function.name, grounded_token.index, arg_idx))
-            implied_instance = ImpliedInstance(grounded_syntax, grounded_token, arg_idx, new_function)
-            implied_instances[implied_instance.key] = implied_instance
-            assert implied_instance.key == new_function.name
+        ground = grounded_token.ground
+        if isinstance(ground, Constant):
+            continue
+        num_implied = 1
+        for arg_idx, type_ in enumerate(ground.arg_types):
+            for num_idx in range(num_implied):
+                info = (ground.name, grounded_token.index, arg_idx, num_idx)
+                new_constant = Constant(info, type_, label="%s" % type_.name)
+                implied_instance = ImpliedInstance(grounded_syntax, grounded_token, arg_idx, new_constant)
+                implied_instances[implied_instance.key] = implied_instance
     return implied_instances
 
 
@@ -159,6 +164,7 @@ def _get_implied_parent_functions(grounded_syntax, function):
     :param function:
     :return:
     """
+    assert isinstance(function, Function)
     implied_parent_functions = {}
     grounded_tokens = grounded_syntax.grounded_tokens
 
@@ -171,6 +177,6 @@ def _get_implied_parent_functions(grounded_syntax, function):
 
 def _match(function, arg_tokens):
     for arg_idx, arg_token in enumerate(arg_tokens):
-        if function.arg_types[arg_idx] != arg_token.function.return_type:
+        if function.arg_types[arg_idx] != arg_token.ground.type:
             return False
     return True

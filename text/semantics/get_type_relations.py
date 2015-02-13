@@ -5,7 +5,7 @@ __author__ = 'minjoon'
 
 def get_type_relations(from_type, to_grounded_token):
     ontology_paths = get_ontology_paths(to_grounded_token.basic_ontology,
-                                        from_type, to_grounded_token.function)
+                                        from_type, to_grounded_token.ground)
 
     type_relations = {}
     for key, ontology_path in ontology_paths.iteritems():

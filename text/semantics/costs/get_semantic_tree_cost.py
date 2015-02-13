@@ -12,7 +12,7 @@ def get_semantic_tree_cost(semantic_tree):
     consistency_cost = 0
     for u, data in semantic_tree.tree_graph.nodes(data=True):
         node = semantic_forest.graph_nodes[data['key']]
-        if isinstance(node, GroundedToken) and basic_ontology.isinstance(node.function.return_type, reference):
+        if isinstance(node, GroundedToken) and basic_ontology.isinstance(node.ground.type, reference):
             if node.key in visited:
                 consistency_cost += 100
             else:

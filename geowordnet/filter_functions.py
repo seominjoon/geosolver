@@ -1,5 +1,5 @@
 from geosolver.geowordnet.get_lexical_matching_score import get_lexical_matching_score
-from geosolver.geowordnet.new_function_identifier import new_function_identifier
+from geosolver.geowordnet.identify_constants import identify_constants
 from geosolver.geowordnet.states import EntryScorePair, FunctionScorePair
 
 __author__ = 'minjoon'
@@ -31,9 +31,10 @@ def filter_functions(ontology_semantics, geowordnet, word, threshold):
             function_score_pairs[function_name] = fsp
 
     # From new_function identifier; case might matter here.
-    for name, fsp in new_function_identifier(geowordnet.basic_ontology, ontology_semantics, word).iteritems():
+    """
+    for name, fsp in identify_constants(geowordnet.basic_ontology, ontology_semantics, word).iteritems():
         function_score_pairs[name] = fsp
-
+    """
     return function_score_pairs
 
 

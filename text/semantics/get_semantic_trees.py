@@ -1,7 +1,7 @@
 from collections import namedtuple
 import itertools
 import networkx as nx
-from geosolver.ontology.states import Type
+from geosolver.ontology.states import Type, Constant
 from geosolver.text.semantics.states import SemanticTree, ImpliedInstance, ImpliedSourceFunction
 from geosolver.text.semantics.tree_graph_to_formula import tree_graph_to_formula
 from geosolver.text.token_grounding.states import GroundedToken
@@ -22,7 +22,7 @@ def get_semantic_trees(semantic_forest, head):
 
 def _get_nodes(semantic_forest, head_key):
     head = semantic_forest.graph_nodes[head_key]
-    if isinstance(head, GroundedToken) and head.function.valence == 0 or \
+    if isinstance(head, GroundedToken) and isinstance(head.ground, Constant) or \
             isinstance(head, ImpliedInstance):
         node = Node(head_key, [], [])
         return [node]
@@ -36,7 +36,7 @@ def _get_nodes(semantic_forest, head_key):
                     nodes.append(new_node)
             return nodes
         elif isinstance(head, GroundedToken) or isinstance(head, ImpliedSourceFunction):
-            children_list = [[] for _ in range(head.function.valence)]
+            children_list = [[] for _ in range(head.ground.valence)]
             for u, v, edge_key, data in semantic_forest.forest_graph.edges(head_key, data=True, keys=True):
                 arg_idx = data['arg_idx']
                 new_nodes = _get_nodes(semantic_forest, v)

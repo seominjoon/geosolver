@@ -7,21 +7,20 @@ __author__ = 'minjoon'
 
 
 class GroundedToken(Token):
-    def __init__(self, syntax, basic_ontology, token, function, score):
+    def __init__(self, syntax, basic_ontology, token, ground, score):
         self.syntax = syntax
         self.basic_ontology = basic_ontology
         self.token = token
-        self.function = function
+        self.ground = ground
         self.score = score
-        self.key = (token.index, function.name)
+        self.key = (token.index, ground.key)
         self.index = token.index
-        self.name = function.name
         self.label = "%d, %s" % self.key
         self.sentence = token.sentence
         self.word = token.word
 
     def __repr__(self):
-        return "%s(index=%d, name=%s)" % (self.__class__.__name__, self.index, self.name)
+        return "%s(index=%d, ground=%r)" % (self.__class__.__name__, self.index, self.ground)
 
 
 class GroundedSyntaxTree(object):
