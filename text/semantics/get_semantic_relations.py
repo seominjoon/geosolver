@@ -17,11 +17,11 @@ def get_semantic_relations(grounded_syntax, from_grounded_token, to_grounded_tok
     grounded_syntax_path = min(grounded_syntax_paths.values(),
                                key=lambda p: get_grounded_syntax_path_cost(p))
     ontology_paths = get_ontology_paths(basic_ontology,
-                                        from_grounded_token.function.arg_types[arg_idx],
-                                        to_grounded_token.function)
+                                        from_grounded_token.ground.arg_types[arg_idx],
+                                        to_grounded_token.ground)
     for ontology_path in ontology_paths.values():
         augmented_ontology_path = OntologyPath(basic_ontology,
-                                               [from_grounded_token.function]+ontology_path.path_nodes,
+                                               [from_grounded_token.ground]+ontology_path.path_nodes,
                                                ontology_path.key)
         semantic_relation = SemanticRelation(from_grounded_token, to_grounded_token, arg_idx,
                                              grounded_syntax_path, augmented_ontology_path)

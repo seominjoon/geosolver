@@ -15,7 +15,8 @@ def test_get_semantic_trees():
     string = "Circle O has a radius of 5."
     tokens = string_to_tokens(string)
     print("Tokens initalized.")
-    syntax = create_syntax(tokens, 1)
+    syntax = create_syntax(tokens, 10)
+    syntax.display_graphs()
     print("Syntax initialized.")
     threshold = 0.99
     grounded_syntax = get_grounded_syntax(syntax, ontology_semantics, geowordnet, threshold)

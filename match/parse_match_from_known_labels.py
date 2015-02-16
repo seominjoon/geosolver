@@ -60,24 +60,24 @@ def parse_match_from_known_labels(general_graph_parse, known_labels):
         if type_ == 'line':
             a_key, b_key = argmin_key
             line = general_graph_parse.line_graph[a_key][b_key]['instance']
-            constant = Constant((a_key, b_key), line, basic_ontology.types['line'])
+            constant = Constant(line, basic_ontology.types['line'])
             formula = TempFormula(basic_ontology, constant, [])
             if len(arr) > 1 and arr[0] == 'length':
                 formula = TempFormula(basic_ontology, basic_ontology.functions['lengthOf'], [formula])
         elif type_ == 'point':
             point = general_graph_parse.intersection_points[argmin_key]
-            constant = Constant(argmin_key, point, basic_ontology.types['point'])
+            constant = Constant(point, basic_ontology.types['point'])
             formula = TempFormula(basic_ontology, constant, [])
         elif type_ == 'angle':
             assert len(arr) > 1 and arr[0] == 'angle'
             angle = get_instances(general_graph_parse, type_, *argmin_key).values()[0]
-            constant = Constant(argmin_key, angle, basic_ontology.types['angle'])
+            constant = Constant(angle, basic_ontology.types['angle'])
             formula = TempFormula(basic_ontology, constant, [])
             formula = TempFormula(basic_ontology, basic_ontology.functions['angleOf_angle'], [formula])
         elif type_ == 'arc':
             (center_key, radius_key), a_key, b_key = argmin_key
             arc = general_graph_parse.arc_graphs[(center_key, radius_key)][a_key][b_key]['instance']
-            constant = Constant(argmin_key, arc, basic_ontology.types['arc'])
+            constant = Constant(arc, basic_ontology.types['arc'])
             formula = TempFormula(basic_ontology, constant, [])
 
         # add edge between label and formula

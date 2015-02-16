@@ -1,11 +1,13 @@
-from geosolver.ontology.states import Formula, OntologyPath
+from geosolver.ontology.states import Formula, OntologyPath, Constant
 
 __author__ = 'minjoon'
 
 def tree_graph_to_formula(semantic_forest, tree_graph, node_key):
     basic_ontology = semantic_forest.basic_ontology
-    function = semantic_forest.graph_nodes[node_key].function
-    children = range(function.valence)
+    ground = semantic_forest.graph_nodes[node_key].ground
+    if isinstance(ground, Constant):
+        return Formula(basic_ontology, ground, [])
+    children = range(ground.valence)
     from_index = [x for x, data in tree_graph.nodes(data=True) if data['key'] == node_key][0]
     for _, to_index, data in tree_graph.edges(from_index, data=True):
         u = tree_graph.node[from_index]['key']
@@ -19,7 +21,7 @@ def tree_graph_to_formula(semantic_forest, tree_graph, node_key):
         else:
             path_formula = v_formula
         children[arg_idx] = path_formula
-    formula = Formula(basic_ontology, function, children)
+    formula = Formula(basic_ontology, ground, children)
     return formula
 
 

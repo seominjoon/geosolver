@@ -10,9 +10,17 @@ class Token(object):
         self.key = index
 
     def __repr__(self):
-        return "%s(word=%s, index=%d)" % (self.__class__.__name__, self.word, self.index)
+        return "%s(word=%r, index=%d)" % (self.__class__.__name__, self.word, self.index)
 
     def __eq__(self, other):
         assert isinstance(other, Token)
         return self.index == other.index
 
+
+class ExpressionParse(object):
+    def __init__(self, words, reference_idx):
+        self.words = words
+        self.reference_idx = reference_idx  # the token idx in sentence that the expression is replacing.
+
+    def __repr__(self):
+        return "%s(words=%r, idx=%d" % (self.__class__.__name__, self.words, self.reference_idx)

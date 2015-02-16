@@ -1,19 +1,14 @@
 import re
-from geosolver.geowordnet.states import FunctionScorePair
-from geosolver.ontology.states import Function, BasicOntology
+from geosolver.geowordnet.states import ConstantScorePair
+from geosolver.ontology.states import BasicOntology, Constant
 
-"""
-There are infinite number of "number" functions and "reference" functions.
-Instead of deining entries for these, we have an identifier for them using regex.
-This will NOT be included in GeoWordNet; instead like proximity score, this needs to be called separately.
-"""
 
 __author__ = 'minjoon'
 
 
-def new_function_identifier(basic_ontology, ontology_semantics, word):
+def identify_constants(basic_ontology, ontology_semantics, word):
     """
-    Returns a dictionary of function-score pairs that the word might refer to,
+    Returns a dictionary of constant-score pairs that the word might refer to,
     in the domain of number and reference.
     These functions will be added to the ontology to create new ontology.
     For now, ontology semantics is not used, but later, this needs to be used to instantiate new functions,
@@ -35,13 +30,13 @@ def new_function_identifier(basic_ontology, ontology_semantics, word):
         raise Exception("?")
 
     elif number_score > 0:
-        function = Function(word, [], basic_ontology.types['number'])
-        pair = FunctionScorePair(function, number_score)
+        constant = Constant(word, basic_ontology.types['number'])
+        pair = ConstantScorePair(constant, number_score)
         pairs[word] = pair
 
     elif reference_score > 0:
-        function = Function(word, [], basic_ontology.types['reference'])
-        pair = FunctionScorePair(function, reference_score)
+        constant = Constant(word, basic_ontology.types['reference'])
+        pair = ConstantScorePair(constant, reference_score)
         pairs[word] = pair
 
     return pairs

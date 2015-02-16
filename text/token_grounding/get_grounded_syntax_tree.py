@@ -15,7 +15,6 @@ def get_grounded_syntax_tree(all_tokens, syntax_tree):
         grounded_graph.add_node(grounded_token.key, label=grounded_token.label)
 
     for u, v, data in syntax_tree.graph.edges(data=True):
-
         from_grounded_tokens = _filter_tokens(all_tokens, u)
         to_grounded_tokens = _filter_tokens(all_tokens, v)
 

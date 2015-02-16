@@ -32,28 +32,28 @@ def get_ontology_path_cost(ontology_path):
         nn_node = ontology_path.path_nodes[idx+2]
         if basic_ontology.isinstance(node.return_type, basic_ontology.types['entity']):
             if node.name == 'point':
-                if len(nn_node.name) > 1:
+                if len(nn_node.key) > 1:
                     cost += 100
             elif node.name == 'line':
-                if len(nn_node.name) == 1:
+                if len(nn_node.key) == 1:
                     cost += 100
             elif node.name == 'quadrilateral':
-                if len(nn_node.name) != 4:
+                if len(nn_node.key) != 4:
                     cost += 100
             elif node.name == 'triangle':
-                if len(nn_node.name) != 3:
+                if len(nn_node.key) != 3:
                     cost += 100
             elif node.name == 'circle':
-                if len(nn_node.name) > 1:
+                if len(nn_node.key) > 1:
                     cost += 100
             elif node.name == 'arc':
-                if len(nn_node.name) != 2:
+                if len(nn_node.key) != 2:
                     cost += 100
             elif node.name == 'angle':
-                if len(nn_node.name) not in [1,3]:
+                if len(nn_node.key) not in [1, 3]:
                     cost += 100
         if idx > 0:
-            if node.name in ['?number', '?truth', 'lengthOf', 'angleOf_arc', 'angleOf_angle',
+            if node.name in ['uNumber', 'uTruth', 'lengthOf', 'angleOf_arc', 'angleOf_angle',
                              'line', 'quadrilateral']:
                 cost += 1
             else:

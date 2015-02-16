@@ -1,5 +1,4 @@
-from collections import namedtuple
-from geosolver.text.syntax.misc import syntax_display_graphs
+from geosolver.text.syntax.misc import syntax_display_graphs, syntax_save_graphs
 from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
@@ -21,6 +20,9 @@ class Syntax(object):
         :return:
         """
         syntax_display_graphs(self)
+
+    def save_graphs(self, root_path):
+        syntax_save_graphs(self, root_path)
 
 
 class SyntaxTree(object):

@@ -10,7 +10,7 @@ def get_implied_instance_cost(implied_instance):
     assert isinstance(grounded_syntax, GroundedSyntax)
     assert isinstance(implied_instance, ImpliedInstance)
     basic_ontology = grounded_syntax.basic_ontology
-    if implied_instance.function.return_type == basic_ontology.types['reference']:
+    if implied_instance.ground.type == basic_ontology.types['reference']:
         for syntax_tree in grounded_syntax.syntax_trees.values():
             assert isinstance(syntax_tree, SyntaxTree)
             for u, v, data in syntax_tree.graph.edges(implied_instance.parent_grounded_token.key):
@@ -19,7 +19,7 @@ def get_implied_instance_cost(implied_instance):
                     return 100
                 else:
                     return 1
-    elif basic_ontology.isinstance(implied_instance.function.return_type, basic_ontology.types['entity']):
+    elif basic_ontology.isinstance(implied_instance.ground.type, basic_ontology.types['entity']):
         return 4
 
     return 100

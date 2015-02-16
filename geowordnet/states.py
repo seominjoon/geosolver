@@ -27,4 +27,5 @@ class GeoWordNet(object):
 
 EntryScorePair = namedtuple('EntryScorePair', 'entry score')
 FunctionScorePair = namedtuple('FunctionScorePair', 'function score')
+ConstantScorePair = namedtuple('ConstantScorePair', 'constant score')
 
