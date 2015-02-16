@@ -131,3 +131,7 @@ def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distan
             out_vectors.append(vector)
 
     return out_vectors
+
+
+def get_number_string(n, w):
+    return ("{0:0%d}" % w).format(n)
