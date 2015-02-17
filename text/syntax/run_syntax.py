@@ -1,9 +1,7 @@
 import os
 from geosolver.database.geoserver_interface import geoserver_interface
-from geosolver.text.lexer.separate_expressions import separate_sentence_and_equations
+from geosolver.text.lexer.get_lexical_parses import get_lexical_parses
 from geosolver.text.lexer.string_to_tokens import string_to_tokens
-from geosolver.text.lexer.string_to_words import string_to_words
-from geosolver.text.lexer.words_to_sentences import words_to_sentences
 from geosolver.text.syntax.create_syntax import create_syntax
 from geosolver.text.syntax.get_syntax_paths import get_syntax_paths
 from geosolver.text.syntax.parsers import stanford_parser
@@ -44,6 +42,8 @@ def test_syntax_path():
 
 def test_trees():
     root_path = "/Users/minjoon/Desktop/questions"
+    if not os.path.exists(root_path):
+        os.mkdir(root_path)
     k = 20
     questions = geoserver_interface.download_questions()
     for pk, question in questions.iteritems():
@@ -52,14 +52,13 @@ def test_trees():
         if os.path.exists(question_path):
             continue
         os.mkdir(question_path)
-        sentences = words_to_sentences(string_to_words(question.text))
-        for idx, sentence in enumerate(sentences):
+        lexical_parses = get_lexical_parses(question.text)
+        for idx, lexical_parse in enumerate(lexical_parses):
             sentence_folder_name = get_number_string(idx, 2)
             sentence_path = os.path.join(question_path, sentence_folder_name)
             os.mkdir(sentence_path)
 
-            tokens, equations = separate_sentence_and_equations(sentence)
-            syntax = create_syntax(tokens, k)
+            syntax = create_syntax(lexical_parse.tokens, k)
             syntax.save_graphs(sentence_path)
             print(pk, idx)
 

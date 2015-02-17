@@ -24,3 +24,9 @@ class ExpressionParse(object):
 
     def __repr__(self):
         return "%s(words=%r, idx=%d" % (self.__class__.__name__, self.words, self.reference_idx)
+
+
+class LexicalParse(object):
+    def __init__(self, tokens, expression_parses):
+        self.tokens = tokens
+        self.expression_parses = expression_parses
