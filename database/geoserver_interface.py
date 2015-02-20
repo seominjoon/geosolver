@@ -14,8 +14,19 @@ class GeoserverInterface(object):
     def __init__(self, server_url):
         self.server_url = server_url
 
-    def download_questions(self, key="all"):
-        sub_url = "/questions/download/%s" % str(key)
+    def download_questions(self, key=None):
+        """
+        key='all': download all
+        key=[development,test]: download dev and test
+        key=[1,2,3]: download questions with id 1, 2, and 3
+        :param key:
+        :return:
+        """
+        if key is None:
+            param = 'all'
+        else:
+            param = "+".join(str(x) for x in key)
+        sub_url = "/questions/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, sub_url)
         r = requests.get(request_url)
         data = json.loads(r.text, object_hook=_decode_dict)
@@ -31,7 +42,6 @@ class GeoserverInterface(object):
             questions[question.key] = question
         return questions
 
-
     def download_labels(self, key="all"):
         suburl = "/labels/download/%s" % str(key)
         request_url = urlparse.urljoin(self.server_url, suburl)
@@ -43,7 +53,6 @@ class GeoserverInterface(object):
             label_data = pair['label_data']
             labels[question_pk] = label_data
         return labels
-
 
     def upload_question(self, text, diagram_path, choices, answer=""):
         """

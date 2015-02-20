@@ -41,22 +41,23 @@ def test_syntax_path():
 
 
 def test_trees():
-    root_path = "/Users/minjoon/Desktop/questions"
+    root_path = "/Users/minjoon/Desktop/questions2"
     if not os.path.exists(root_path):
         os.mkdir(root_path)
-    k = 20
-    questions = geoserver_interface.download_questions()
+    k = 300
+    numbers = [26, 28]
+    questions = geoserver_interface.download_questions(numbers)
     for pk, question in questions.iteritems():
         folder_name = get_number_string(pk, 4)
         question_path = os.path.join(root_path, folder_name)
-        if os.path.exists(question_path):
-            continue
-        os.mkdir(question_path)
+        if not os.path.exists(question_path):
+            os.mkdir(question_path)
         lexical_parses = get_lexical_parses(question.text)
         for idx, lexical_parse in enumerate(lexical_parses):
             sentence_folder_name = get_number_string(idx, 2)
             sentence_path = os.path.join(question_path, sentence_folder_name)
-            os.mkdir(sentence_path)
+            if not os.path.exists(sentence_path):
+                os.mkdir(sentence_path)
 
             syntax = create_syntax(lexical_parse.tokens, k)
             syntax.save_graphs(sentence_path)

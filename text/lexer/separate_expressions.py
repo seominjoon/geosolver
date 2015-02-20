@@ -10,7 +10,7 @@ __author__ = 'minjoon'
 dummy_sentence = "a statement is true".split(' ')
 k = 1
 dummy_noun = "a value".split(' ')
-operators = "+-*/=><^"
+operators = "+-*/=><^:"
 comparators = "=><"
 
 def separate_expressions(sentence):

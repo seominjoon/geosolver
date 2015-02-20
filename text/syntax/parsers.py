@@ -7,6 +7,7 @@ from geosolver import settings
 import requests
 import networkx as nx
 from geosolver.text.syntax.states import SyntaxTree
+from geosolver.text.syntax.utils import match_trees
 
 __author__ = 'minjoon'
 
@@ -27,7 +28,7 @@ class StanfordParser(DependencyParser):
     def __init__(self, server_url):
         self.server_url = server_url
 
-    def parse_syntax_trees(self, tokens, k):
+    def parse_syntax_trees(self, tokens, k, unique=True):
         sentence = tokens[0].sentence
         params = {'words': ' '.join(sentence.values()), 'k': k, 'paragraph': ' '.join(sentence.values())}
         r = requests.get(self.server_url, params=params)
@@ -52,7 +53,8 @@ class StanfordParser(DependencyParser):
                     graph.node[to]['label'] = "%s-%d" % (sentence[to], to)
                     graph.node[to]['token'] = tokens[to]
 
-            tree_score_pairs[rank] = SyntaxTree(graph, rank, score)
+            if unique and not any(match_trees(syntax_tree.graph, graph) for syntax_tree in tree_score_pairs.values()):
+                tree_score_pairs[rank] = SyntaxTree(graph, rank, score)
 
         return tree_score_pairs
 
