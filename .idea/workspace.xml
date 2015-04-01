@@ -1,107 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e680bc33-a8be-4477-9de5-9c83c48c7854" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/geoserver_interface.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/question_uploader.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/run_database.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/computational_geometry.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/draw_on_image.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/get_evalf_subs.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/get_instances.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/instance_exists.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/parse_diagram.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/parse_general_diagram.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/parse_general_graph.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/parse_graph.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/parse_image_segments.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/parse_primitives.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/run_diagram.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/select_primitives.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/diagram/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/definitions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/filter_functions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/get_lexical_matching_score.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/identify_constants.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/load_geowordnet.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/run_geowordnet.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/sanity_check.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/geowordnet/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/match/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/match/label_distances.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/match/parse_match_from_known_labels.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/match/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/augment_ontology.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/basic_definitions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/function_definitions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/function_definitions_eval.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/get_ontology_paths.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/instantiator_definitions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/load_ontology.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/run_ontology.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/sanity_check.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/shared.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ontology/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/parameters.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/settings.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/solver/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/solver/algebraic_solver.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/solver/link_equations.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/solver/normalize_truths.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/get_lexical_parses.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/run_lexer.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/separate_expressions.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/string_to_tokens.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/string_to_words.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/lexer/words_to_sentences.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_grounded_syntax_path_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_implied_instance_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_implied_parent_function_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_ontology_path_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_semantic_relation_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_semantic_tree_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/costs/get_semantic_tree_graph_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/get_best_semantic_tree.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/get_semantic_forest.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/get_semantic_relations.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/get_semantic_trees.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/get_type_relations.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/run_semantics.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/tree_graph_to_formula.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/semantics/update_semantic_weight.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/create_syntax.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/get_syntax_paths.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/misc.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/parsers.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/run_syntax.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/syntax/utils.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/get_grounded_syntax.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/get_grounded_syntax_edge_cost.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/get_grounded_syntax_paths.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/get_grounded_syntax_tree.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/get_grounded_tokens.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/run_grounding.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/token_grounding/states.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/tree_grounding/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/text/tree_grounding/semantic_tree_to_formula.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/utils.py" afterPath="" />
-    </list>
+    <list default="true" id="e680bc33-a8be-4477-9de5-9c83c48c7854" name="Default" comment="" />
     <ignored path="geosolver.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -173,6 +73,10 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="geosolver" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="geosolver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="geosolver" />
