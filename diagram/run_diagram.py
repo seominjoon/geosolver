@@ -27,7 +27,7 @@ def test_parse_image_segments():
 
 
 def test_parse_primitives():
-    question = geoserver_interface.download_questions(4).values()[0]
+    question = geoserver_interface.download_questions([1]).values()[0]
     image_segment_parse = parse_image_segments(open_image(question.diagram_path))
     primitive_parse = parse_primitives(image_segment_parse)
     primitive_parse.display_primitives()
@@ -158,11 +158,11 @@ def test_temp():
 
 if __name__ == "__main__":
     # test_parse_image_segments()
-    # test_parse_primitives()
+    test_parse_primitives()
     # test_distance_between_rho_theta_pair_and_point()
     # test_select_primitives()
     # test_parse_diagram()
     # test_instance_exists()
     # test_parse_graph()
-    test_parse_match()
+    # test_parse_match()
     # test_temp()

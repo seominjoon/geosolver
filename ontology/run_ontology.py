@@ -5,7 +5,7 @@ For local running, including testing.
 import sympy
 
 from geosolver.ontology.augment_ontology import augment_ontology
-from geosolver.ontology.function_definitions import lengthOf
+# from geosolver.ontology.function_definitions import lengthOf
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, angle_in_degree
 from geosolver.text.semantics.costs.get_ontology_path_cost import get_ontology_path_cost
@@ -71,10 +71,14 @@ def test_angle():
     angle = instantiators['angle'](p0, p1, p2)
     print(angle_in_degree(angle))
 
+def test():
+    print(len(basic_ontology.functions))
+
 if __name__ == "__main__":
     # test_load_ontology()
     # test_augment_ontology()
     # test_instantiator()
     # test_get_ontology_path_cost()
     # test_distance_between_line_and_point()
-    test_angle()
+    # test_angle()
+    test()

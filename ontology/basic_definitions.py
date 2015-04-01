@@ -93,3 +93,4 @@ function_defs = [
     {'name': 'uNumber', 'arg_types': ['number'], 'return_type': 'uNumber'},
     {'name': 'uTruth', 'arg_types': ['truth'], 'return_type': 'uTruth'},
 ]
+
