@@ -134,4 +134,10 @@ def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distan
 
 
 def get_number_string(n, w):
+    """
+
+    :param int n: number to be formatted
+    :param int w: width of the number (w of 0004 is 4)
+    :return str:
+    """
     return ("{0:0%d}" % w).format(n)
