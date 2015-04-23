@@ -103,7 +103,7 @@ class GraphParse(object):
 
 
 class GeneralDiagramParse(DiagramParse):
-    def __init__(self, diagram_parse, variables, intersection_points, circles):
+    def __init__(self, diagram_parse, variables, values, intersection_points, circles):
         """
         :param diagram_parse:
         :param intersection_points:
@@ -116,6 +116,7 @@ class GeneralDiagramParse(DiagramParse):
         self.intersection_points = intersection_points
         self.circles = circles
         self.variables = variables
+        self.values = values
 
 
 class GeneralGraphParse(GraphParse):

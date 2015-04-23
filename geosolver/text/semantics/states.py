@@ -51,7 +51,7 @@ class SemanticTree(object):
         self.basic_ontology = semantic_forest.basic_ontology
         self.tree_graph = tree_graph
         self.formula = formula
-        self.return_type = formula.function.return_type
+        self.return_type = formula.current.return_type
 
     def display_graph(self):
         display_graph(self.tree_graph)

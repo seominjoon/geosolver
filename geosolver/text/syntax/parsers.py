@@ -14,11 +14,11 @@ __author__ = 'minjoon'
 
 class DependencyParser(object):
 
-    def parse_tree_score_pairs(self, tokens, k):
+    def parse_syntax_trees(self, tokens, k, unique=True):
         """
         Parses top k trees given tokens
         """
-        pass
+        raise Exception("This function must be overriden!")
 
 
 class StanfordParser(DependencyParser):

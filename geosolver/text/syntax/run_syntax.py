@@ -6,6 +6,7 @@ from geosolver.text.syntax.create_syntax import create_syntax
 from geosolver.text.syntax.get_syntax_paths import get_syntax_paths
 from geosolver.text.syntax.parsers import stanford_parser
 from geosolver.utils import display_graph, get_number_string
+from geosolver.text.syntax.states import SyntaxTree
 
 __author__ = 'minjoon'
 
@@ -14,10 +15,11 @@ def test_stanford_parser():
     string = "A cat is walking."
     tokens = string_to_tokens(string)
     k = 3
-    pairs = stanford_parser.parse_tree_score_pairs(tokens, 3)
-    for tree, score in pairs:
-        print(tree.nodes(data=True))
-        display_graph(tree)
+    syntax_trees = stanford_parser.parse_syntax_trees(tokens, k)
+    for syntax_tree in syntax_trees.values():
+        assert isinstance(syntax_tree, SyntaxTree)
+        print(syntax_tree.graph.nodes(data=True))
+        syntax_tree.display_graph()
 
 
 def test_create_syntax():
@@ -66,5 +68,6 @@ def test_trees():
 
 
 if __name__ == "__main__":
+    test_stanford_parser()
     # test_syntax_path()
-    test_trees()
+    # test_trees()

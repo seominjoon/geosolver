@@ -23,7 +23,7 @@ class MatchParse(object):
 
         :param GraphParse graph_parse:
         :param set label_strings:
-        : param dict formulas:
+        :param dict formulas: contains formulas
         :param nx.Graph graph:
         :return:
         """
@@ -31,3 +31,11 @@ class MatchParse(object):
         self.label_strings = label_strings
         self.formulas = formulas
         self.match_graph = match_graph
+
+class GroundedSemanticTree(object):
+    def __init__(self, semantic_tree, grounded_formula, cost, variables):
+        self.semantic_tree = semantic_tree
+        self.grounded_formula = grounded_formula
+        self.cost = cost
+        self.variables = variables
+

@@ -32,5 +32,5 @@ def parse_general_diagram(diagram_parse):
             values['radii'][center_key][radius_key] = radius
             circles[center_key][radius_key] = instantiators['circle'](variables['points'][center_key], r)
 
-    general_diagram_parse = GeneralDiagramParse(diagram_parse, variables, intersection_points, circles)
-    return general_diagram_parse, values
+    general_diagram_parse = GeneralDiagramParse(diagram_parse, variables, values, intersection_points, circles)
+    return general_diagram_parse

@@ -74,22 +74,8 @@ class Constant(object):
         return "%s(%r)" % (self.__class__.__name__, self.content)
 
 
+
 class Formula(object):
-    def __init__(self, basic_ontology, function, children):
-        assert isinstance(basic_ontology, BasicOntology)
-        assert isinstance(function, Function) or isinstance(function, Constant)
-        self.basic_ontology = basic_ontology
-        self.function = function
-        self.children = children
-
-    def __repr__(self):
-        if len(self.children) == 0:
-            return self.function.label
-        else:
-            return "%s(%s)" % (self.function.label, ", ".join(repr(child) for child in self.children))
-
-
-class TempFormula(object):
     def __init__(self, basic_ontology, current, children):
         assert isinstance(basic_ontology, BasicOntology)
         assert isinstance(current, Function) or isinstance(current, Constant)
@@ -173,7 +159,7 @@ class OntologySemantics(object):
 
 class Truth(object):
     """
-    Expression, when evaluated, indicates the truth-ness,
+    Value indicates the truth-ness,
     being certain if 0 or less and uncertain if positive.
     Sigma is the rough prediction of the variance of the expression.
 
@@ -183,7 +169,7 @@ class Truth(object):
 
     For concrete example, see 'equal' function in function_definitions.
     """
-    def __init__(self, expression, sigma):
-        self.expression = expression
+    def __init__(self, value, sigma):
+        self.value = value
         self.sigma = sigma
 

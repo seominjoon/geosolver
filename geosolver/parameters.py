@@ -31,7 +31,7 @@ hough_circle_parameters = HoughCircleParameters(dp=1,
                                                 minDist=2,
                                                 max_gap=100,
                                                 min_length=20,
-                                                max_num=1)
+                                                max_num=20)
 
 # These eps determine pixel coverage of each primitive.
 LINE_EPS = 3

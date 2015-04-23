@@ -1,12 +1,12 @@
 import networkx as nx
 from geosolver.diagram.get_instances import get_all_instances, get_instances
 from geosolver.diagram.states import GeneralGraphParse
-from geosolver.match.label_distances import label_distance_to_line, label_distance_to_point, label_distance_to_arc, \
+from geosolver.grounding.label_distances import label_distance_to_line, label_distance_to_point, label_distance_to_arc, \
     label_distance_to_angle
-from geosolver.match.states import MatchParse
+from geosolver.grounding.states import MatchParse
 from geosolver.ontology import basic_ontology
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.ontology.states import TempFormula, Constant
+from geosolver.ontology.states import Formula, Constant
 
 __author__ = 'minjoon'
 
@@ -61,24 +61,24 @@ def parse_match_from_known_labels(general_graph_parse, known_labels):
             a_key, b_key = argmin_key
             line = general_graph_parse.line_graph[a_key][b_key]['instance']
             constant = Constant(line, basic_ontology.types['line'])
-            formula = TempFormula(basic_ontology, constant, [])
+            formula = Formula(basic_ontology, constant, [])
             if len(arr) > 1 and arr[0] == 'length':
-                formula = TempFormula(basic_ontology, basic_ontology.functions['lengthOf'], [formula])
+                formula = Formula(basic_ontology, basic_ontology.functions['lengthOf'], [formula])
         elif type_ == 'point':
             point = general_graph_parse.intersection_points[argmin_key]
             constant = Constant(point, basic_ontology.types['point'])
-            formula = TempFormula(basic_ontology, constant, [])
+            formula = Formula(basic_ontology, constant, [])
         elif type_ == 'angle':
             assert len(arr) > 1 and arr[0] == 'angle'
             angle = get_instances(general_graph_parse, type_, *argmin_key).values()[0]
             constant = Constant(angle, basic_ontology.types['angle'])
-            formula = TempFormula(basic_ontology, constant, [])
-            formula = TempFormula(basic_ontology, basic_ontology.functions['angleOf_angle'], [formula])
+            formula = Formula(basic_ontology, constant, [])
+            formula = Formula(basic_ontology, basic_ontology.functions['angleOf_angle'], [formula])
         elif type_ == 'arc':
             (center_key, radius_key), a_key, b_key = argmin_key
             arc = general_graph_parse.arc_graphs[(center_key, radius_key)][a_key][b_key]['instance']
             constant = Constant(arc, basic_ontology.types['arc'])
-            formula = TempFormula(basic_ontology, constant, [])
+            formula = Formula(basic_ontology, constant, [])
 
         # add edge between label and formula
         formulas[('formula', idx)] = formula

@@ -141,3 +141,9 @@ def get_number_string(n, w):
     :return str:
     """
     return ("{0:0%d}" % w).format(n)
+
+def index_by_list(data, indices):
+    out = data
+    for index in indices:
+        out = out[index]
+    return out

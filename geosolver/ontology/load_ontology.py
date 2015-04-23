@@ -54,7 +54,7 @@ def _construct_inheritance_graph(types):
     """
     Inheritance graph draws an edge from a supertype to subtype.
     For instance, circle is a subtype of entity, so an edge is drawn from entity to circle.
-    this information is used for type match when constructing basic_ontology graph.
+    this information is used for type grounding when constructing basic_ontology graph.
     The node is indexed by the name of the type.
 
     :param dict type_defs:
