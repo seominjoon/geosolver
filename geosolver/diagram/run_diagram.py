@@ -111,15 +111,15 @@ def test_parse_graph():
         general_diagram_parse = parse_general_diagram(diagram_parse)
         print(get_evalf_subs(general_diagram_parse.variables, general_diagram_parse.values))
         general_graph_parse = parse_general_graph(general_diagram_parse, graph_parse)
-        lines = get_all_instances(graph_parse, 'line')
+        lines = get_all_instances(graph_parse, 'line') # graph_parse can be replaced with general_graph_parse
         circles = get_all_instances(graph_parse, 'circle')
         arcs = get_all_instances(graph_parse, 'arc')
         angles = get_all_instances(graph_parse, 'angle')
-        """
-        for angle in angles.values():
-            print(angle)
-            graph_parse.display_instances([angle])
-        """
+        for key, line in lines.iteritems():
+            print(line)
+            print(graph_parse.line_graph[key[0]][key[1]])
+            print(general_graph_parse.line_graph[key[0]][key[1]])
+            graph_parse.display_instances([line])
         for a, b, c in itertools.combinations(graph_parse.diagram_parse.intersection_points, 3):
             triangles = get_instances(graph_parse, 'triangle', a, b, c)
             print(triangles)
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     # test_select_primitives()
     # test_parse_diagram()
     # test_instance_exists()
-    # test_parse_graph()
+    test_parse_graph()
     # test_parse_match()
     # test_temp()
-    test_substitute_variables()
+    # test_substitute_variables()

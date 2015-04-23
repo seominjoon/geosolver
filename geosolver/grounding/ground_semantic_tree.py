@@ -1,6 +1,7 @@
 from collections import namedtuple
 import itertools
 import sympy
+from geosolver.diagram.get_instances import get_all_instances
 from geosolver.geowordnet.identify_constants import _get_number_score, _get_variable_score
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.states import Formula, Constant, Function
@@ -86,24 +87,43 @@ def _ground_entity(match_parse, entity_formula):
     :return:
     """
     assert isinstance(entity_formula, Formula)
+    basic_ontology = entity_formula.basic_ontolgy
     current = entity_formula.current
     packs = []
     if isinstance(current, Constant):
         assert isinstance(current.content, tuple)
-        packs.extend(_get_all(match_parse, current.type))
+        packs.extend(_get_all(match_parse, basic_ontology, current.type))
     elif isinstance(current, Function):
         assert len(entity_formula.children) == 1
         child = entity_formula.children[0]
         assert isinstance(child.current, Constant)
         if isinstance(child.current.content, tuple):
-            packs.extend(_get_all(match_parse, child.current.type))
+            packs.extend(_get_all(match_parse, basic_ontology, child.current.type))
         elif isinstance(child.current.content, str):
             """
             Get specific entities
+            1. line AB, line CDE
+            2. circle O
+            3. arc AB
+            4. triangle ABC
+            to be added further
             """
-            pass
+            # TODO : next thing to do! take a look at run_diagram's match parse and see how to use label
 
     return packs
 
-def _get_all(match_parse, type_):
-    pass
+def _get_all(match_parse, basic_ontology, type_):
+    assert isinstance(match_parse, MatchParse)
+    general_graph_parse = match_parse.general_graph_parse
+    instances = get_all_instances(general_graph_parse, type_.name)
+    assert isinstance(instances, dict)
+    packs = []
+    for key, d in instances.iteritems():
+        instance = d['instance']
+        constant = Constant(instance, type_)
+        formula = Formula(basic_ontology, constant, [])
+        variables = {}
+        cost = 0
+        packs.append(FormulaPack(formula, variables, cost))
+    return packs
+
