@@ -140,7 +140,7 @@ def test_substitute_variables():
 
 
 def test_parse_match():
-    questions = geoserver_interface.download_questions([2])
+    questions = geoserver_interface.download_questions([1])
     for pk, question in questions.iteritems():
         label_data = geoserver_interface.download_labels(pk)[pk]
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
@@ -155,11 +155,13 @@ def test_parse_match():
         # print(get_evalf_subs(general_diagram_parse.variables, values))
         general_graph_parse = parse_general_graph(general_diagram_parse, graph_parse)
         match_parse = parse_match_from_known_labels(general_graph_parse, label_data)
+        # print(match_parse.match_graph['A']['B'])
         for label in match_parse.label_strings:
             formula_keys = match_parse.match_graph[label].keys()
+            print(formula_keys)
             print(label)
             print([match_parse.formulas[key] for key in formula_keys])
-        print(general_diagram_parse.variables)
+        # print(general_diagram_parse.variables)
         diagram_parse.display_points()
 
 def test_temp():
@@ -171,6 +173,9 @@ def test_temp():
     print(label_distance_to_angle(pp, angle))
 
 
+
+
+
 if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
@@ -178,7 +183,7 @@ if __name__ == "__main__":
     # test_select_primitives()
     # test_parse_diagram()
     # test_instance_exists()
-    test_parse_graph()
-    # test_parse_match()
+    # test_parse_graph()
+    test_parse_match()
     # test_temp()
     # test_substitute_variables()

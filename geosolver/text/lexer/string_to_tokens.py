@@ -17,3 +17,9 @@ def string_to_tokens(string):
     sentence = {idx: word for idx, word in enumerate(words)}
     tokens = {idx: Token(sentence, idx) for idx in sentence}
     return tokens
+
+
+def sentence_to_tokens(sentence):
+    tokens = {idx: Token(sentence, idx) for idx in sentence}
+    return tokens
+
