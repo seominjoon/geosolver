@@ -1,6 +1,7 @@
 import itertools
 import numpy as np
 import scipy
+import networkx as nx
 
 __author__ = 'minjoon'
 
@@ -123,9 +124,17 @@ class BinaryRule(object):
 
 
 def uff1(unary_rule):
-    # TODO : implement feature function
-    assert False
-    return np.array([])
+    # For now, just distance between them in dependency tree and sentence and their product
+    assert isinstance(unary_rule, UnaryRule)
+    if unary_rule.parent_index is not None and unary_rule.child_index is not None:
+        f1 = nx.shortest_path_length(unary_rule.syntax_tree, unary_rule.parent_index, unary_rule.child_index)
+        f2 = abs(unary_rule.parent_index - unary_rule.child_index)
+    else:
+        f1 = len(unary_rule.words)/2.0
+        f2 = f1
+    f3 = np.sqrt(f1*f2)
+    return np.array([f1, f2, f3])
+
 
 def bff1(binary_rule):
     """
@@ -135,9 +144,25 @@ def bff1(binary_rule):
     :param binary_rule:
     :return:
     """
-    # TODO : implement feature function
-    assert False
-    return np.array([])
+    assert isinstance(binary_rule, BinaryRule)
+    unary_rule_a = UnaryRule(binary_rule.words, binary_rule.syntax_tree, binary_rule.tags, binary_rule.parent_index,
+                             binary_rule.parent_signature, binary_rule.a_index, binary_rule.a_signature)
+    unary_rule_b = UnaryRule(binary_rule.words, binary_rule.syntax_tree, binary_rule.tags, binary_rule.parent_index,
+                             binary_rule.parent_signature, binary_rule.b_index, binary_rule.b_signature)
+    if binary_rule.a_index is not None and binary_rule.b_index is not None:
+        f1 = nx.shortest_path_length(binary_rule.syntax_tree, binary_rule.a_index, binary_rule.b_index)
+        f2 = abs(binary_rule.a_index - binary_rule.b_index)
+    else:
+        f1 = len(binary_rule.words)/2.0
+        f2 = f1
+    f3 = np.sqrt(f1*f2)
+
+    a1 = uff1(unary_rule_a)
+    a2 = uff1(unary_rule_b)
+    a3 = [f1, f2, f3]
+
+    return np.array(list(itertools.chain(a1, a2, a3)))
+
 
 class SemanticModel(object):
     def __init__(self, feature_function, initial_weights):
@@ -237,14 +262,39 @@ def log_normalize(distribution):
 
 class UnarySemanticModel(SemanticModel):
     def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
-        assert False
-        return []
+        assert isinstance(parent_signature, FunctionSignature)
+        assert parent_signature.is_unary()
+        excluding_indices = set(excluding_indices)
+        excluding_indices.add(parent_index)
+        available_indices = set(words.keys()).difference(excluding_indices)
+        rules = []
+        for child_index in available_indices:
+            child_signature = tags[child_index]
+            if parent_signature.arg_types[0] == child_signature.return_type:
+                # ontology enforcement
+                rule = UnaryRule(words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature)
+                rules.append(rule)
+        return rules
 
 
 class BinarySemanticModel(SemanticModel):
     def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
-        assert False
-        return []
+        assert isinstance(parent_signature, FunctionSignature)
+        assert parent_signature.is_binary()
+        excluding_indices = set(excluding_indices)
+        excluding_indices.add(parent_index)
+        available_indices = set(words.keys()).difference(excluding_indices)
+        rules = []
+        for a_index, b_index in itertools.permutations(available_indices, 2):
+            # i.e. argument order matters, but no duplicate (this might not be true in future)
+            a_signature = tags[a_index]
+            b_signature = tags[b_index]
+            if tuple(parent_signature.arg_types) == (a_signature.return_type, b_signature.return_type):
+                # ontology enforcement
+                rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature,
+                                  a_index, a_signature, b_index, b_signature)
+                rules.append(rule)
+        return rules
 
 
 class TopDownNaiveDecoder(object):
