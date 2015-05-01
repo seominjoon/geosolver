@@ -21,9 +21,11 @@ class FunctionSignature(object):
     def is_binary(self):
         return len(self.arg_types) == 2
 
-
     def __hash__(self):
         return hash((self.name, self.return_type, tuple(self.arg_types)))
+
+    def __repr__(self):
+        return "%s %s(%s)" % (self.return_type, self.name, ", ".join(self.arg_types))
 
 
 def add_function_signature(signatures, signature_tuple):
@@ -64,6 +66,9 @@ class TagRule(object):
         self.index = index
         self.signature = signature
 
+    def __repr__(self):
+        return "%r->%s" % (self.index, self.signature.name)
+
 
 class DeterministicTagModel(object):
     def __init__(self, tag_rules, feature_function):
@@ -90,6 +95,11 @@ class DeterministicTagModel(object):
         else:
             return None, 0.0
 
+    def get_best_tags(self, words, syntax_tree):
+        tags = {index: self.get_best_tag(words, syntax_tree, index) for index in words.keys()}
+        return tags
+
+
 
 class UnaryRule(object):
     def __init__(self, words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature):
@@ -103,6 +113,10 @@ class UnaryRule(object):
 
     def __hash__(self):
         return hash((self.parent_index, self.parent_signature, self.child_index, self.child_signature))
+
+    def __repr__(self):
+        return "%s@%r->%s@%r" % (self.parent_signature.name, self.parent_index,
+                                 self.child_signature.name, self.child_index)
 
 
 class BinaryRule(object):
@@ -121,6 +135,11 @@ class BinaryRule(object):
     def __hash__(self):
         return hash((self.parent_index, self.parent_signature,
                      self.a_index, self.a_signature, self.b_index, self.b_signature))
+
+    def __repr__(self):
+        return "%s@%r->%s@%r|%s@%r" % (self.parent_signature.name, self.parent_index,
+                                        self.a_signature.name, self.a_index,
+                                        self.b_signature.name, self.b_index)
 
 
 def uff1(unary_rule):
@@ -266,10 +285,15 @@ class UnarySemanticModel(SemanticModel):
         assert parent_signature.is_unary()
         excluding_indices = set(excluding_indices)
         excluding_indices.add(parent_index)
-        available_indices = set(words.keys()).difference(excluding_indices)
+        available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
         rules = []
         for child_index in available_indices:
-            child_signature = tags[child_index]
+            if isinstance(child_index, int):
+                child_signature = tags[child_index]
+            else:
+                assert isinstance(child_index, FunctionSignature)
+                child_signature = child_index
+                child_index = None
             if parent_signature.arg_types[0] == child_signature.return_type:
                 # ontology enforcement
                 rule = UnaryRule(words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature)
@@ -283,12 +307,20 @@ class BinarySemanticModel(SemanticModel):
         assert parent_signature.is_binary()
         excluding_indices = set(excluding_indices)
         excluding_indices.add(parent_index)
-        available_indices = set(words.keys()).difference(excluding_indices)
+        available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
         rules = []
         for a_index, b_index in itertools.permutations(available_indices, 2):
             # i.e. argument order matters, but no duplicate (this might not be true in future)
-            a_signature = tags[a_index]
-            b_signature = tags[b_index]
+            if isinstance(a_index, int):
+                a_signature = tags[a_index]
+            else:
+                a_signature = a_index
+                a_index = None
+            if isinstance(b_index, int):
+                b_signature = tags[b_index]
+            else:
+                b_signature = b_index
+                b_index = None
             if tuple(parent_signature.arg_types) == (a_signature.return_type, b_signature.return_type):
                 # ontology enforcement
                 rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature,
@@ -388,3 +420,75 @@ class TopDownNaiveDecoder(object):
 
         return nodes
 
+
+def tuple_to_tag_rules(words, syntax_tree, tuple_):
+    splitter = '@'
+    implication = 'i'
+    tag_rules = []
+    for string in tuple_:
+        function_name, index = string.split(splitter)
+        if function_name in function_signatures:
+            function_signature = function_signatures[function_name]
+        elif (function_name[0], function_name[-1]) == tuple("''"):
+            function_signature = FunctionSignature(function_name[1:-1], 'modifier', [])
+        elif (function_name[0], function_name[-1]) == tuple("[]"):
+            function_signature = FunctionSignature(function_name[1:-1], 'number', [])
+        elif (function_name[0], function_name[-1]) == tuple("<>"):
+            function_signature = FunctionSignature(function_name[1:-1], 'variable', [])
+        else:
+            raise Exception()
+
+        if index == implication:
+            index = None
+        else:
+            index = int(index)
+        tag_rule = TagRule(words, syntax_tree, index, function_signature)
+        tag_rules.append(tag_rule)
+    return tag_rules
+
+
+def tuples_to_semantic_rules(words, syntax_tree, tuples):
+    tag_rules_list = [tuple_to_tag_rules(words, syntax_tree, tuple_) for tuple_ in tuples]
+    tags = {tag_rule.index: tag_rule.signature for tag_rule in itertools.chain(*tag_rules_list)}
+    for index in words:
+        if index not in tags:
+            tags[index] = None
+
+    unary_rules = []
+    binary_rules = []
+    for tag_rules in tag_rules_list:
+        if len(tag_rules) == 2:
+            unary_rule = UnaryRule(words, syntax_tree, tags, tag_rules[0].index, tag_rules[0].signature,
+                                   tag_rules[1].index, tag_rules[1].signature)
+            unary_rules.append(unary_rule)
+        elif len(tag_rules) == 3:
+            binary_rule = BinaryRule(words, syntax_tree, tags, tag_rules[0].index, tag_rules[0].signature,
+                                     tag_rules[1].index, tag_rules[1].signature,
+                                     tag_rules[2].index, tag_rules[2].signature)
+            binary_rules.append(binary_rule)
+    return unary_rules, binary_rules
+
+
+def run():
+    sentence = "circle O has a radius of 5"
+    word_list = sentence.split(' ')
+    words = {index: word_list[index] for index in range(len(word_list))}
+    syntax_tree = nx.DiGraph()
+    tuples = (
+        ('StartTruth@i', 'Equal@i'),
+        ('Equal@i', 'RadiusOf@4', '[5]@6'),
+        ('RadiusOf@4', 'Circle@0'),
+        ('Circle@0', "'O'@1"),
+    )
+    tag_rules = list(itertools.chain(*(tuple_to_tag_rules(words, syntax_tree, tuple_) for tuple_ in tuples)))
+    tagging_feature_function = lambda x: None
+
+    unary_rules, binary_rules = tuples_to_semantic_rules(words, syntax_tree, tuples)
+    tag_model = DeterministicTagModel(tag_rules, tagging_feature_function)
+    tags = tag_model.get_best_tags(words, syntax_tree)
+    for index, signature in tags.iteritems():
+        print index, signature
+
+
+if __name__ == "__main__":
+    run()
