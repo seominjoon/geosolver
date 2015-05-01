@@ -1,6 +1,6 @@
 import itertools
 import numpy as np
-import scipy
+from scipy.optimize import minimize
 import networkx as nx
 
 __author__ = 'minjoon'
@@ -26,6 +26,9 @@ class FunctionSignature(object):
 
     def __repr__(self):
         return "%s %s(%s)" % (self.return_type, self.name, ", ".join(self.arg_types))
+
+    def __eq__(self, other):
+        return repr(self) == repr(other)
 
 
 def add_function_signature(signatures, signature_tuple):
@@ -58,6 +61,9 @@ class Node(object):
     def __hash__(self):
         return hash((self.function_signature, tuple(self.children)))
 
+    def __eq__(self, other):
+        return self.function_signature == other.function_signature and self.children == other.children
+
 
 class TagRule(object):
     def __init__(self, words, syntax_tree, index, signature):
@@ -68,6 +74,9 @@ class TagRule(object):
 
     def __repr__(self):
         return "%r->%s" % (self.index, self.signature.name)
+
+    def __eq__(self, other):
+        return repr(self) == repr(other)
 
 
 class DeterministicTagModel(object):
@@ -96,13 +105,17 @@ class DeterministicTagModel(object):
             return None, 0.0
 
     def get_best_tags(self, words, syntax_tree):
-        tags = {index: self.get_best_tag(words, syntax_tree, index) for index in words.keys()}
+        tags = {index: self.get_best_tag(words, syntax_tree, index)[0] for index in words.keys()}
         return tags
 
 
 
 class UnaryRule(object):
     def __init__(self, words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature):
+        assert isinstance(parent_signature, FunctionSignature)
+        assert isinstance(child_signature, FunctionSignature)
+        assert isinstance(parent_index, int) or parent_index is None
+        assert isinstance(child_index, int) or child_index is None
         self.words = words
         self.syntax_tree = syntax_tree
         self.tags = tags
@@ -118,10 +131,19 @@ class UnaryRule(object):
         return "%s@%r->%s@%r" % (self.parent_signature.name, self.parent_index,
                                  self.child_signature.name, self.child_index)
 
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+
 
 class BinaryRule(object):
     def __init__(self, words, syntax_tree, tags,
                  parent_index, parent_signature, a_index, a_signature, b_index, b_signature):
+        assert isinstance(parent_signature, FunctionSignature)
+        assert isinstance(a_signature, FunctionSignature)
+        assert isinstance(b_signature, FunctionSignature)
+        assert isinstance(parent_index, int) or parent_index is None
+        assert isinstance(a_index, int) or a_index is None
+        assert isinstance(b_index, int) or b_index is None
         self.words = words
         self.syntax_tree = syntax_tree
         self.tags = tags
@@ -141,18 +163,28 @@ class BinaryRule(object):
                                         self.a_signature.name, self.a_index,
                                         self.b_signature.name, self.b_index)
 
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+
+
+UNARY_FEATURE_DIMENSION = 4
+BINARY_FEATURE_DIMENSION = 2*UNARY_FEATURE_DIMENSION + 3
 
 def uff1(unary_rule):
     # For now, just distance between them in dependency tree and sentence and their product
     assert isinstance(unary_rule, UnaryRule)
     if unary_rule.parent_index is not None and unary_rule.child_index is not None:
-        f1 = nx.shortest_path_length(unary_rule.syntax_tree, unary_rule.parent_index, unary_rule.child_index)
         f2 = abs(unary_rule.parent_index - unary_rule.child_index)
+        # f1 = nx.shortest_path_length(unary_rule.syntax_tree, unary_rule.parent_index, unary_rule.child_index)
+        f1 = f2
     else:
         f1 = len(unary_rule.words)/2.0
         f2 = f1
     f3 = np.sqrt(f1*f2)
-    return np.array([f1, f2, f3])
+    f4 = int(unary_rule.child_signature.is_leaf())
+    out = np.array([f1, f2, f3, f4])
+    assert len(out) == UNARY_FEATURE_DIMENSION
+    return out
 
 
 def bff1(binary_rule):
@@ -169,18 +201,21 @@ def bff1(binary_rule):
     unary_rule_b = UnaryRule(binary_rule.words, binary_rule.syntax_tree, binary_rule.tags, binary_rule.parent_index,
                              binary_rule.parent_signature, binary_rule.b_index, binary_rule.b_signature)
     if binary_rule.a_index is not None and binary_rule.b_index is not None:
-        f1 = nx.shortest_path_length(binary_rule.syntax_tree, binary_rule.a_index, binary_rule.b_index)
         f2 = abs(binary_rule.a_index - binary_rule.b_index)
+        # f1 = nx.shortest_path_length(binary_rule.syntax_tree, binary_rule.a_index, binary_rule.b_index)
+        f1 = f2**2
     else:
         f1 = len(binary_rule.words)/2.0
-        f2 = f1
+        f2 = f1**2
     f3 = np.sqrt(f1*f2)
 
     a1 = uff1(unary_rule_a)
     a2 = uff1(unary_rule_b)
     a3 = [f1, f2, f3]
 
-    return np.array(list(itertools.chain(a1, a2, a3)))
+    out = np.array(list(itertools.chain(a1, a2, a3)))
+    assert len(out) == BINARY_FEATURE_DIMENSION
+    return out
 
 
 class SemanticModel(object):
@@ -211,8 +246,8 @@ class SemanticModel(object):
         negated_loss = lambda weights: -loss_function(weights)
         negated_grad = lambda weights: -grad_function(weights)
 
-        optimized_weights = scipy.optimize.minimize(negated_loss, self.weights, method='BFGS', jac=negated_grad)
-        self.weights = optimized_weights
+        result = minimize(negated_loss, self.weights, method='BFGS', jac=negated_grad)
+        self.weights = result.x
 
     def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
         """
@@ -227,6 +262,7 @@ class SemanticModel(object):
         :param parent_signature:
         :return:
         """
+        assert isinstance(parent_signature, FunctionSignature)
         distribution = {}
         local_unary_rules = self.get_possible_rules(words, syntax_tree, tags, parent_index, parent_signature,
                                                     excluding_indices)
@@ -240,16 +276,19 @@ class SemanticModel(object):
         return normalized_distribution
 
     def get_log_prob(self, rule, excluding_indices=()):
-        assert isinstance(rule, UnaryRule)
-        distribution = self.get_log_distribution(rule.words, rule.tags, rule.parent_index,
+        assert isinstance(rule, UnaryRule) or isinstance(rule, BinaryRule)
+        distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
                                                  rule.parent_signature, excluding_indices)
         if rule in distribution:
             return distribution[rule]
+        else:
+            print(rule)
+            print(distribution)
 
         return -np.inf
 
     def get_log_grad(self, rule, excluding_indices=()):
-        distribution = self.get_log_distribution(rule.words, rule.tags, rule.parent_index,
+        distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
                                                  rule.parent_signature, excluding_indices)
         log_grad = self.feature_function(rule) - sum(np.exp(logp) * self.feature_function(each_rule)
                                                      for each_rule, logp in distribution.iteritems())
@@ -274,8 +313,8 @@ class SemanticModel(object):
 
 
 def log_normalize(distribution):
-    sum_value = sum(logp for _, logp in distribution)
-    normalized_distribution = {key: value-sum_value for key, value in distribution.iteritems()}
+    log_sum_value = np.log(sum(np.exp(logp) for _, logp in distribution.iteritems()))
+    normalized_distribution = {key: value - log_sum_value for key, value in distribution.iteritems()}
     return normalized_distribution
 
 
@@ -294,6 +333,10 @@ class UnarySemanticModel(SemanticModel):
                 assert isinstance(child_index, FunctionSignature)
                 child_signature = child_index
                 child_index = None
+
+            if parent_signature is None or child_signature is None:
+                continue
+
             if parent_signature.arg_types[0] == child_signature.return_type:
                 # ontology enforcement
                 rule = UnaryRule(words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature)
@@ -321,6 +364,10 @@ class BinarySemanticModel(SemanticModel):
             else:
                 b_signature = b_index
                 b_index = None
+
+            if parent_signature is None or a_signature is None or b_signature is None:
+                continue
+
             if tuple(parent_signature.arg_types) == (a_signature.return_type, b_signature.return_type):
                 # ontology enforcement
                 rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature,
@@ -488,6 +535,21 @@ def run():
     tags = tag_model.get_best_tags(words, syntax_tree)
     for index, signature in tags.iteritems():
         print index, signature
+
+    unary_initial_weights = np.zeros(UNARY_FEATURE_DIMENSION)
+    binary_initial_weights = np.zeros(BINARY_FEATURE_DIMENSION)
+    unary_model = UnarySemanticModel(uff1, unary_initial_weights)
+    binary_model = BinarySemanticModel(bff1, binary_initial_weights)
+
+    # unary_rules = unary_model.get_possible_rules(words, syntax_tree, tags, 0, function_signatures['Circle'])
+    for unary_rule in unary_rules:
+        print(unary_rule)
+
+
+    unary_model.optimize_weights(unary_rules, 1)
+    binary_model.optimize_weights(binary_rules, 1)
+    print(unary_model.weights)
+    print(binary_model.weights)
 
 
 if __name__ == "__main__":
