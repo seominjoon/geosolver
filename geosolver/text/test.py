@@ -50,6 +50,7 @@ tuples = (
     ('RadiusOf', 'number', ['circle']),
     ('Equal', 'truth', ['number', 'number'], True),
     ('Circle', 'circle', ['modifier']),
+    ('Line', 'line', ['modifier']),
     ('The', 'modifier', []),
 )
 for tuple_ in tuples:
@@ -57,30 +58,42 @@ for tuple_ in tuples:
 
 
 class Node(object):
-    def __init__(self, function_signature, children):
+    def __init__(self, index, function_signature, children):
         assert isinstance(function_signature, FunctionSignature)
         for child in children:
             assert isinstance(child, Node)
 
         self.function_signature = function_signature
         self.children = children
+        self.index = index
 
     def __hash__(self):
         if self.function_signature.is_symmetric:
-            return hash((self.function_signature, frozenset(self.children)))
-        return hash((self.function_signature, tuple(self.children)))
+            return hash((self.index, self.function_signature, frozenset(self.children)))
+        return hash((self.index, self.function_signature, tuple(self.children)))
 
     def __eq__(self, other):
         if self.function_signature.is_symmetric:
-            return self.function_signature == other.function_signature and set(self.children) == set(other.children)
+            return self.index == other.index and self.function_signature == other.function_signature and \
+                   frozenset(self.children) == frozenset(other.children)
         return repr(self) == repr(other)
 
     def __repr__(self):
         if len(self.children) == 0:
-            return "%s %s" % (self.function_signature.return_type, self.function_signature.name)
+            if self.function_signature.return_type == 'modifier':
+                if self.function_signature.name in function_signatures:
+                    return "%s@%r" % (self.function_signature.name, self.index)
+                else:
+                    return "'%s'@%r" % (self.function_signature.name, self.index)
+            elif self.function_signature.return_type == 'number':
+                return "[%s]@%r" % (self.function_signature.name, self.index)
+            elif self.function_signature.return_type == 'variable':
+                return "<%s>@%r" % (self.function_signature.name, self.index)
+            else:
+                return "%s@%r" % (self.function_signature.name, self.index)
 
         args_string = ", ".join(repr(child) for child in self.children)
-        return "%s(%s)" % (self.function_signature.name, args_string)
+        return "%s@%r(%s)" % (self.function_signature.name, self.index, args_string)
 
 
 class TagRule(object):
@@ -120,7 +133,9 @@ class DeterministicTagModel(object):
         elif words[index] == '5':
             return FunctionSignature('5', 'number', []), 0.0
         elif words[index] == 'the':
-            return function_signatures['The'], np.log(0.1)
+            return function_signatures['The'], np.log(0.05)
+        elif words[index] == 'line':
+            return function_signatures['Line'], 0.0
         else:
             return None, 0.0
 
@@ -428,8 +443,7 @@ class TopDownNaiveDecoder(object):
         :return:
         """
 
-        # TODO : enforce non-redundancy within formula
-        # TODO : since this is top-down, no syntactic feature for implied functions. Reweight formulas in another method
+        # TODO : implement index inheritance, or bottom-up approach?
 
         def _recurse_unary(unary_rule, top_logp, excluding_indices):
             assert isinstance(unary_rule, UnaryRule)
@@ -438,7 +452,7 @@ class TopDownNaiveDecoder(object):
 
 
             if unary_rule.child_signature.is_leaf():
-                child_nodes = {Node(unary_rule.child_signature, []): 0}
+                child_nodes = {Node(unary_rule.child_index, unary_rule.child_signature, []): 0}
             elif unary_rule.child_signature.is_unary():
                 distribution = self.unary_semantic_model.get_log_distribution(words, syntax_tree, tags,
                     unary_rule.child_index, unary_rule.child_signature, excluding_indices)
@@ -456,7 +470,7 @@ class TopDownNaiveDecoder(object):
 
             assert is_log_consistent(child_nodes)
 
-            parent_nodes = {Node(unary_rule.parent_signature, [child_node]): top_logp + logp
+            parent_nodes = {Node(unary_rule.parent_index, unary_rule.parent_signature, [child_node]): top_logp + logp
                             for child_node, logp in child_nodes.iteritems()}
             return parent_nodes
 
@@ -466,7 +480,7 @@ class TopDownNaiveDecoder(object):
             excluding_indices = excluding_indices.union({binary_rule.parent_index})
 
             if binary_rule.a_signature.is_leaf():
-                a_nodes = {Node(binary_rule.a_signature, []): 0}
+                a_nodes = {Node(binary_rule.a_index, binary_rule.a_signature, []): 0}
             elif binary_rule.a_signature.is_unary():
                 distribution = self.unary_semantic_model.get_log_distribution(words, syntax_tree, tags,
                         binary_rule.a_index, binary_rule.a_signature, excluding_indices)
@@ -483,7 +497,7 @@ class TopDownNaiveDecoder(object):
                         log_add(a_nodes, node, logq)
 
             if binary_rule.b_signature.is_leaf():
-                b_nodes = {Node(binary_rule.b_signature, []): 0}
+                b_nodes = {Node(binary_rule.b_index, binary_rule.b_signature, []): 0}
             elif binary_rule.b_signature.is_unary():
                 distribution = self.unary_semantic_model.get_log_distribution(words, syntax_tree, tags,
                                                                               binary_rule.b_index, binary_rule.b_signature, excluding_indices)
@@ -504,18 +518,13 @@ class TopDownNaiveDecoder(object):
 
             parent_nodes = {}
             for a_node, b_node in itertools.product(a_nodes, b_nodes):
-                node = Node(binary_rule.parent_signature, [a_node, b_node])
+                node = Node(binary_rule.parent_index, binary_rule.parent_signature, [a_node, b_node])
                 log_add(parent_nodes, node, top_logp + a_nodes[a_node] + b_nodes[b_node])
 
             return parent_nodes
 
         top_dist = self.unary_semantic_model.get_log_distribution(words, syntax_tree, tags,
                                                                       None, function_signatures[start])
-
-        """
-        nodes = dict(itertools.chain(*[_recurse_unary(start_unary_rule, 1.0, set([])).iteritems()
-                                       for start_unary_rule in start_unary_rules]))
-        """
 
         nodes = {}
         for start_unary_rule, logp in top_dist.iteritems():
@@ -552,6 +561,7 @@ def tuple_to_tag_rules(words, syntax_tree, tuple_):
 
 
 def tuples_to_semantic_rules(words, syntax_tree, tuples):
+    # TODO : index inheritance
     tag_rules_list = [tuple_to_tag_rules(words, syntax_tree, tuple_) for tuple_ in tuples]
     tags = {tag_rule.index: tag_rule.signature for tag_rule in itertools.chain(*tag_rules_list)}
     for index in words:
@@ -603,7 +613,7 @@ def get_models():
 
 
 def test_models(tag_model, unary_model, binary_model):
-    sentence = "the radius circle O is 5"
+    sentence = "the radius of circle O is 5"
     words = string_to_words(sentence)
     syntax_tree = nx.DiGraph()
 
