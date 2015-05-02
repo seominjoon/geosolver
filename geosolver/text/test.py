@@ -72,7 +72,6 @@ class Node(object):
 
     def __eq__(self, other):
         if self.function_signature.is_symmetric:
-            print set(self.children) == set(other.children), self.children, other.children
             return self.function_signature == other.function_signature and set(self.children) == set(other.children)
         return repr(self) == repr(other)
 
@@ -343,7 +342,6 @@ def log_normalize(distribution):
 
 def is_log_consistent(distribution, eps=0.01):
     sum_value = sum(np.exp(logp) for _, logp in distribution.iteritems())
-    print(sum_value)
     return np.abs(1-sum_value) < eps
 
 
@@ -438,6 +436,7 @@ class TopDownNaiveDecoder(object):
             assert isinstance(excluding_indices, set)
             excluding_indices = excluding_indices.union({unary_rule.parent_index})
 
+
             if unary_rule.child_signature.is_leaf():
                 child_nodes = {Node(unary_rule.child_signature, []): 0}
             elif unary_rule.child_signature.is_unary():
@@ -455,9 +454,6 @@ class TopDownNaiveDecoder(object):
                     for node, logq in _recurse_binary(current_binary_rule, logp, excluding_indices).iteritems():
                         log_add(child_nodes, node, logq)
 
-            print(unary_rule)
-            for node, logp in child_nodes.iteritems():
-                print node, np.exp(logp)
             assert is_log_consistent(child_nodes)
 
             parent_nodes = {Node(unary_rule.parent_signature, [child_node]): top_logp + logp
@@ -506,9 +502,10 @@ class TopDownNaiveDecoder(object):
             assert is_log_consistent(a_nodes)
             assert is_log_consistent(b_nodes)
 
-            parent_nodes = {Node(binary_rule.parent_signature, [a_node, b_node]):
-                            top_logp + a_nodes[a_node] + b_nodes[b_node]
-                            for a_node, b_node in itertools.product(a_nodes, b_nodes)}
+            parent_nodes = {}
+            for a_node, b_node in itertools.product(a_nodes, b_nodes):
+                node = Node(binary_rule.parent_signature, [a_node, b_node])
+                log_add(parent_nodes, node, top_logp + a_nodes[a_node] + b_nodes[b_node])
 
             return parent_nodes
 
