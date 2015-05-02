@@ -1,3 +1,4 @@
+from collections import deque
 import itertools
 import numpy as np
 from scipy.optimize import minimize
@@ -66,6 +67,17 @@ class Node(object):
         self.function_signature = function_signature
         self.children = children
         self.index = index
+
+    def get_index(self, lift_index=False):
+        if self.index is not None:
+            return self.index
+        if lift_index:
+            if self.function_signature.is_leaf():
+                return self.index
+            elif self.function_signature.is_unary():
+                return self.children[0].get_index(True)
+            elif self.function_signature.is_binary():
+                return self.index
 
     def __hash__(self):
         if self.function_signature.is_symmetric:
@@ -144,8 +156,11 @@ class DeterministicTagModel(object):
         return tags
 
 
+class Rule(object):
+    pass
 
-class UnaryRule(object):
+
+class UnaryRule(Rule):
     def __init__(self, words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature):
         assert isinstance(parent_signature, FunctionSignature)
         assert isinstance(child_signature, FunctionSignature)
@@ -171,7 +186,7 @@ class UnaryRule(object):
 
 
 
-class BinaryRule(object):
+class BinaryRule(Rule):
     def __init__(self, words, syntax_tree, tags,
                  parent_index, parent_signature, a_index, a_signature, b_index, b_signature):
         assert isinstance(parent_signature, FunctionSignature)
@@ -203,7 +218,7 @@ class BinaryRule(object):
         return repr(self) == repr(other)
 
 
-UNARY_FEATURE_DIMENSION = 4
+UNARY_FEATURE_DIMENSION = 5
 BINARY_FEATURE_DIMENSION = 2*UNARY_FEATURE_DIMENSION + 3
 
 def uff1(unary_rule):
@@ -218,7 +233,8 @@ def uff1(unary_rule):
         f2 = f1
     f3 = np.sqrt(f1*f2)
     f4 = int(unary_rule.child_signature.is_leaf())
-    out = np.array([f1, f2, f3, f4])
+    f5 = int(unary_rule.parent_index is None)
+    out = np.array([f1, f2, f3, f4, f5])
     assert len(out) == UNARY_FEATURE_DIMENSION
     return out
 
@@ -248,6 +264,7 @@ def bff1(binary_rule):
     a1 = uff1(unary_rule_a)
     a2 = uff1(unary_rule_b)
     a3 = [f1, f2, f3]
+    #return np.array(a3)
 
     out = np.array(list(itertools.chain(a1, a2, a3)))
     assert len(out) == BINARY_FEATURE_DIMENSION
@@ -285,7 +302,8 @@ class SemanticModel(object):
         result = minimize(negated_loss, self.weights, method='BFGS', jac=negated_grad)
         self.weights = result.x
 
-    def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
+    def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=(),
+                             lifted_rule=None):
         """
         dictionary of unary_rule : log probability pair
         The distribution must be well defined, i.e. must sum up to 1.
@@ -300,21 +318,38 @@ class SemanticModel(object):
         """
         assert isinstance(parent_signature, FunctionSignature)
         distribution = {}
-        local_unary_rules = self.get_possible_rules(words, syntax_tree, tags, parent_index, parent_signature,
-                                                    excluding_indices)
-        for unary_rule in local_unary_rules:
-            features = self.feature_function(unary_rule)
+        local_rules = self.get_possible_rules(words, syntax_tree, tags, parent_index, parent_signature, excluding_indices)
+        for rule in local_rules:
+            if lifted_rule is not None:
+                if isinstance(rule, UnaryRule):
+                    if rule.parent_signature == lifted_rule.parent_signature and rule.parent_index == lifted_rule.parent_index and \
+                            rule.child_index is None and rule.child_signature == lifted_rule.child_signature:
+                        rule = lifted_rule
+                elif isinstance(rule, BinaryRule):
+                    a_index = rule.a_index
+                    b_index = rule.b_index
+                    if rule.parent_signature == lifted_rule.parent_signature and rule.parent_index == lifted_rule.parent_index and \
+                            rule.a_index is None and rule.a_signature == lifted_rule.a_signature:
+                        a_index = lifted_rule.a_index
+                    if rule.parent_signature == lifted_rule.parent_signature and rule.parent_index == lifted_rule.parent_index and \
+                            rule.b_index is None and rule.b_signature == lifted_rule.b_signature:
+                        b_index = lifted_rule.b_index
+                    rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature, a_index, rule.a_signature,
+                                      b_index, rule.b_signature)
+
+            features = self.feature_function(rule)
             numerator = np.dot(self.weights, features)
-            distribution[unary_rule] = numerator
+            distribution[rule] = numerator
 
         normalized_distribution = log_normalize(distribution)
 
         return normalized_distribution
 
-    def get_log_prob(self, rule, excluding_indices=()):
-        assert isinstance(rule, UnaryRule) or isinstance(rule, BinaryRule)
+    def get_log_prob(self, rule, excluding_indices=(), lifted=False):
+        assert isinstance(rule, Rule)
         distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
-                                                 rule.parent_signature, excluding_indices)
+                                                 rule.parent_signature, excluding_indices,
+                                                 lifted_rule=rule)
         if rule in distribution:
             return distribution[rule]
         else:
@@ -425,13 +460,18 @@ class BinarySemanticModel(SemanticModel):
         return rules
 
 
-class TopDownNaiveDecoder(object):
+class Decoder(object):
     def __init__(self, unary_semantic_model, binary_semantic_model):
         assert isinstance(unary_semantic_model, UnarySemanticModel)
         assert isinstance(binary_semantic_model, BinarySemanticModel)
         self.unary_semantic_model = unary_semantic_model
         self.binary_semantic_model = binary_semantic_model
 
+    def get_formula_distribution(self, words, syntax_tree, tags, start="StartTruth"):
+        return {}
+
+
+class TopDownNaiveDecoder(Decoder):
     def get_formula_distribution(self, words, syntax_tree, tags, start="StartTruth"):
         """
         Returns a fully-grounded node : probability pair
@@ -442,9 +482,6 @@ class TopDownNaiveDecoder(object):
         :param tags:
         :return:
         """
-
-        # TODO : implement index inheritance, or bottom-up approach?
-
         def _recurse_unary(unary_rule, top_logp, excluding_indices):
             assert isinstance(unary_rule, UnaryRule)
             assert isinstance(excluding_indices, set)
@@ -529,9 +566,23 @@ class TopDownNaiveDecoder(object):
         nodes = {}
         for start_unary_rule, logp in top_dist.iteritems():
             for node, logq in _recurse_unary(start_unary_rule, logp, set([])).iteritems():
-                nodes[node.children[0]] = logq
+                nodes[node] = logq
 
         return nodes
+
+class TopDownLiftedDecoder(TopDownNaiveDecoder):
+    def get_formula_distribution(self, words, syntax_tree, tags, start="StartTruth"):
+        distribution = super(TopDownLiftedDecoder, self).get_formula_distribution(words, syntax_tree, tags, start=start)
+        new_distribution = {}
+        for node in distribution.keys():
+            unary_rules, binary_rules = node_to_semantic_rules(words, syntax_tree, tags, node, True)
+            unary_sum = sum(self.unary_semantic_model.get_log_prob(unary_rule) for unary_rule in unary_rules)
+            binary_sum = sum(self.binary_semantic_model.get_log_prob(binary_rule) for binary_rule in binary_rules)
+            new_distribution[node] = unary_sum + binary_sum
+
+        normalized_distribution = log_normalize(new_distribution)
+        return normalized_distribution
+
 
 
 def tuple_to_tag_rules(words, syntax_tree, tuple_):
@@ -582,6 +633,36 @@ def tuples_to_semantic_rules(words, syntax_tree, tuples):
             binary_rules.append(binary_rule)
     return unary_rules, binary_rules
 
+
+def node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=False):
+    assert isinstance(node, Node)
+    unary_rules = []
+    binary_rules = []
+
+    stack = deque()
+    stack.appendleft(node)
+    while len(stack) > 0:
+        curr_node = stack.pop()
+        assert isinstance(curr_node, Node)
+        if curr_node.function_signature.is_leaf():
+            continue
+        elif curr_node.function_signature.is_unary():
+            child_node = curr_node.children[0]
+            unary_rule = UnaryRule(words, syntax_tree, tags, curr_node.index, curr_node.function_signature,
+                                   child_node.get_index(lift_index), child_node.function_signature)
+            unary_rules.append(unary_rule)
+            stack.appendleft(child_node)
+        elif curr_node.function_signature.is_binary():
+            a_node, b_node = curr_node.children
+            binary_rule = BinaryRule(words, syntax_tree, tags, curr_node.index, curr_node.function_signature,
+                                     a_node.get_index(lift_index), a_node.function_signature,
+                                     b_node.get_index(lift_index), b_node.function_signature)
+            binary_rules.append(binary_rule)
+            stack.appendleft(a_node)
+            stack.appendleft(b_node)
+    return unary_rules, binary_rules
+
+
 def string_to_words(string):
     word_list = string.split(' ')
     words = {index: word_list[index] for index in range(len(word_list))}
@@ -603,25 +684,29 @@ def get_models():
     unary_rules, binary_rules = tuples_to_semantic_rules(words, syntax_tree, tuples)
     tag_model = DeterministicTagModel(tag_rules, tagging_feature_function)
     unary_initial_weights = np.zeros(UNARY_FEATURE_DIMENSION)
+    unary_initial_weights = np.array([-1,-1,-1,0,-1])
     binary_initial_weights = np.zeros(BINARY_FEATURE_DIMENSION)
     unary_model = UnarySemanticModel(uff1, unary_initial_weights)
     binary_model = BinarySemanticModel(bff1, binary_initial_weights)
-    unary_model.optimize_weights(unary_rules, 1)
-    binary_model.optimize_weights(binary_rules, 1)
+    #unary_model.optimize_weights(unary_rules, 0)
+    binary_model.optimize_weights(binary_rules, 0)
+
+    print unary_model.weights
 
     return tag_model, unary_model, binary_model
 
 
 def test_models(tag_model, unary_model, binary_model):
-    sentence = "the radius of circle O is 5"
+    sentence = "O circle radius 5"
     words = string_to_words(sentence)
     syntax_tree = nx.DiGraph()
 
     tags = tag_model.get_best_tags(words, syntax_tree)
-    decoder = TopDownNaiveDecoder(unary_model, binary_model)
+    decoder = TopDownLiftedDecoder(unary_model, binary_model)
     dist = decoder.get_formula_distribution(words, syntax_tree, tags)
     items = sorted(dist.items(), key=lambda x: x[1])
     for node, logp in items:
+        # print(node_to_semantic_rules(words, syntax_tree, tags, node, True))
         print node, np.exp(logp)
 
 if __name__ == "__main__":
