@@ -51,6 +51,7 @@ tuples = (
     ('Root', 'root', ['start']),
     ('StartTruth', 'start', ['truth']),
     ('RadiusOf', 'number', ['circle']),
+    ('isRadiusOf', 'truth', ['line', 'circle']),
     ('Equal', 'truth', ['number', 'number'], True),
     ('Circle', 'circle', ['modifier']),
     ('Line', 'line', ['modifier']),
@@ -84,6 +85,22 @@ class Node(object):
     @staticmethod
     def string_to_node(string):
         return string_to_node(string)
+
+    def iterate(self):
+        """
+        Iterate through all nodes, including self,
+        and output (index, signature), i.e. tag pair
+
+        :return:
+        """
+        start = self
+        queue = deque()
+        queue.appendleft(start)
+        while len(queue) > 0:
+            out = deque().pop()
+            assert isinstance(out, Node)
+            yield out.index, out.function_signature
+
 
     def __hash__(self):
         if self.function_signature.is_symmetric:
@@ -132,11 +149,42 @@ class TagRule(object):
         return repr(self) == repr(other)
 
 
-class DeterministicTagModel(object):
-    def __init__(self, tag_rules, feature_function):
+class TagModel(object):
+    def __init__(self):
         pass
 
-    def get_tag_distribution(self, words, syntax_tree, index):
+    def get_log_distribution(self, words, syntax_tree, index):
+        """
+        TO BE OVERRIDDEN
+
+        :param words:
+        :param syntax_tree:
+        :param index:
+        :return:
+        """
+        pass
+
+    def get_best_tag(self, words, syntax_tree, index):
+        dist = self.get_log_distribution(words, syntax_tree, index)
+        return max(dist.items(), key=lambda x: x[1])
+
+    def get_best_tags(self, words, syntax_tree):
+        tags = {index: self.get_best_tag(words, syntax_tree, index)[0] for index in words.keys()}
+        return tags
+
+    def get_log_combinations(self, words, syntax_tree):
+        combinations = []
+        indices = words.keys()
+        distributions = [self.get_log_distribution(words, syntax_tree, index) for index in indices]
+        for pairs in itertools.product(*distributions):
+            tags = {indices[index]: pair[0] for index, pair in enumerate(pairs)}
+            prob = sum(pair[1] for pair in pairs)
+            combinations.append((tags, prob))
+        return combinations
+
+
+class RuleBasedTagModel(TagModel):
+    def get_log_distribution(self, words, syntax_tree, index):
         """
         Returns a dictionary of signature:probability pair
         :param words:
@@ -144,26 +192,51 @@ class DeterministicTagModel(object):
         :param index:
         :return:
         """
-
-    def get_best_tag(self, words, syntax_tree, index):
         if words[index] == 'radius':
-            return function_signatures['RadiusOf'], 0.0
+            return {function_signatures['RadiusOf']: 0.0}
         elif words[index] == 'circle':
-            return function_signatures['Circle'], 0.0
+            return {function_signatures['Circle']: 0.0}
         elif words[index] == 'O':
-            return FunctionSignature('O', 'modifier', []), 0.0
+            return {FunctionSignature('O', 'modifier', []): 0.0}
         elif words[index] == '5':
-            return FunctionSignature('5', 'number', []), 0.0
+            return {FunctionSignature('5', 'number', []): 0.0}
         elif words[index] == 'the':
-            return function_signatures['The'], np.log(0.05)
+            return {function_signatures['The']: np.log(0.05), None: np.log(0.95)}
         elif words[index] == 'line':
-            return function_signatures['Line'], 0.0
+            return {function_signatures['Line']: 0.0}
         else:
-            return None, 0.0
+            return {None: 0.0}
 
-    def get_best_tags(self, words, syntax_tree):
-        tags = {index: self.get_best_tag(words, syntax_tree, index)[0] for index in words.keys()}
-        return tags
+
+class CountBasedTagModel(TagModel):
+    def __init__(self, tag_rules):
+        self.tag_rules = tag_rules
+        self.counter = {}
+        for tag_rule in tag_rules:
+            word = tag_rule.words[tag_rule.index]
+            signature_name = tag_rule.signature.name
+            if word not in self.counter:
+                self.counter[word] = {}
+                self.counter[word]['$'] = 0
+            if signature_name not in self.counter[word]:
+                self.counter[word][signature_name] = 0
+            self.counter[word][signature_name] += 1
+            self.counter[word]['$'] += 1
+
+        self.ref_regex = re.compile(r"[b-z]|([A-Z][A-Z])+$")
+
+    def get_log_distribution(self, words, syntax_tree, index):
+        word = words[index]
+        dist = {}
+        if word in self.counter:
+            for sig_name, count in self.counter[word].iteritems():
+                sig = function_signatures[sig_name]
+                dist[sig] = np.log(float(count)/self.counter[word]['$'])
+
+        else:
+            pass
+
+
 
 
 class Rule(object):
@@ -290,7 +363,7 @@ class SemanticModel(object):
         """
         Obtain weights that maximizes the likelihood of the unary rules
         Log linear model with L2 regularization (ridge)
-        Use BFGS for gradient descent
+        Use L-BFGS-B for gradient descent
         Update the self.weights
 
         :param rules:
@@ -309,7 +382,7 @@ class SemanticModel(object):
         negated_loss = lambda weights: -loss_function(weights)
         negated_grad = lambda weights: -grad_function(weights)
 
-        result = minimize(negated_loss, self.weights, method='BFGS', jac=negated_grad)
+        result = minimize(negated_loss, self.weights, method='L-BFGS-B', jac=negated_grad)
         self.weights = result.x
 
     def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=(),
@@ -692,7 +765,7 @@ def get_models():
     tagging_feature_function = lambda x: None
 
     unary_rules, binary_rules = tuples_to_semantic_rules(words, syntax_tree, tuples)
-    tag_model = DeterministicTagModel(tag_rules, tagging_feature_function)
+    tag_model = RuleBasedTagModel()
     unary_initial_weights = np.zeros(UNARY_FEATURE_DIMENSION)
     binary_initial_weights = np.zeros(BINARY_FEATURE_DIMENSION)
     unary_model = UnarySemanticModel(uff1, unary_initial_weights)
@@ -747,8 +820,6 @@ def string_to_node(string):
             return end_index, Node(word_index, function_signature, [a_node, b_node])
 
     return _recurse(0)[1]
-
-
 
 
 def test_models(tag_model, unary_model, binary_model):
