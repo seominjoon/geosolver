@@ -1,8 +1,10 @@
 from collections import deque
 import itertools
+import re
 import numpy as np
 from scipy.optimize import minimize
 import networkx as nx
+from pyparsing import *
 
 __author__ = 'minjoon'
 
@@ -79,6 +81,10 @@ class Node(object):
             elif self.function_signature.is_binary():
                 return self.index
 
+    @staticmethod
+    def string_to_node(string):
+        return string_to_node(string)
+
     def __hash__(self):
         if self.function_signature.is_symmetric:
             return hash((self.index, self.function_signature, frozenset(self.children)))
@@ -91,21 +97,25 @@ class Node(object):
         return repr(self) == repr(other)
 
     def __repr__(self):
+        if self.index is None:
+            index = 'i'
+        else:
+            index = str(self.index)
         if len(self.children) == 0:
             if self.function_signature.return_type == 'modifier':
                 if self.function_signature.name in function_signatures:
-                    return "%s@%r" % (self.function_signature.name, self.index)
+                    return "%s@%s" % (self.function_signature.name, index)
                 else:
-                    return "'%s'@%r" % (self.function_signature.name, self.index)
+                    return "'%s'@%s" % (self.function_signature.name, index)
             elif self.function_signature.return_type == 'number':
-                return "[%s]@%r" % (self.function_signature.name, self.index)
+                return "[%s]@%s" % (self.function_signature.name, index)
             elif self.function_signature.return_type == 'variable':
-                return "<%s>@%r" % (self.function_signature.name, self.index)
+                return "<%s>@%s" % (self.function_signature.name, index)
             else:
-                return "%s@%r" % (self.function_signature.name, self.index)
+                return "%s@%s" % (self.function_signature.name, index)
 
         args_string = ", ".join(repr(child) for child in self.children)
-        return "%s@%r(%s)" % (self.function_signature.name, self.index, args_string)
+        return "%s@%s(%s)" % (self.function_signature.name, index, args_string)
 
 
 class TagRule(object):
@@ -684,16 +694,61 @@ def get_models():
     unary_rules, binary_rules = tuples_to_semantic_rules(words, syntax_tree, tuples)
     tag_model = DeterministicTagModel(tag_rules, tagging_feature_function)
     unary_initial_weights = np.zeros(UNARY_FEATURE_DIMENSION)
-    unary_initial_weights = np.array([-1,-1,-1,0,-1])
     binary_initial_weights = np.zeros(BINARY_FEATURE_DIMENSION)
     unary_model = UnarySemanticModel(uff1, unary_initial_weights)
     binary_model = BinarySemanticModel(bff1, binary_initial_weights)
-    #unary_model.optimize_weights(unary_rules, 0)
+    unary_model.optimize_weights(unary_rules, 0)
     binary_model.optimize_weights(binary_rules, 0)
 
     print unary_model.weights
 
     return tag_model, unary_model, binary_model
+
+
+def string_to_node(string):
+    """
+    Equal@i(RadiusOf@2(Circle@1('O'@0)), [5]@3)
+    :param string:
+    :return:
+    """
+    ref = Literal("'") + Word(alphas, alphanums+"_") + Literal("'").suppress()
+    var = Literal("<") + Word(alphas, alphanums+"_") + Literal(">").suppress()
+    num = Literal("[") + Word(nums) + Literal("]").suppress()
+    idx = Literal("i") | Word(nums)
+    tag = (ref | var | num | Word(alphas)) + Literal("@").suppress() + idx
+    expr = Forward()
+    expr << tag + Optional(Literal("(").suppress() + expr + Optional(Literal(",").suppress() + expr) + Literal(")").suppress())
+    tokens = expr.parseString(string)
+
+
+    def _recurse(token_index):
+        if tokens[token_index] == "'":
+            token_index += 1
+            function_signature = FunctionSignature(tokens[token_index], "modifier", [])
+        elif tokens[token_index] == "<":
+            token_index += 1
+            function_signature = FunctionSignature(tokens[token_index], "variable", [])
+        elif tokens[token_index] == "[":
+            token_index += 1
+            function_signature = FunctionSignature(tokens[token_index], "number", [])
+        else:
+            function_signature = function_signatures[tokens[token_index]]
+        word_index = tokens[token_index+1]
+        if function_signature.is_leaf():
+            return token_index+2, Node(word_index, function_signature, [])
+
+        elif function_signature.is_unary():
+            end_index, node = _recurse(token_index+2)
+            return end_index, Node(word_index, function_signature, [node])
+
+        elif function_signature.is_binary():
+            end_index, a_node = _recurse(token_index+2)
+            end_index, b_node = _recurse(end_index)
+            return end_index, Node(word_index, function_signature, [a_node, b_node])
+
+    return _recurse(0)[1]
+
+
 
 
 def test_models(tag_model, unary_model, binary_model):
@@ -710,5 +765,6 @@ def test_models(tag_model, unary_model, binary_model):
         print node, np.exp(logp)
 
 if __name__ == "__main__":
+    print(Node.string_to_node("Equal@i(RadiusOf@3('O'@5),[5]@2)"))
     tag_model, unary_model, binary_model = get_models()
     test_models(tag_model, unary_model, binary_model)
