@@ -82,10 +82,6 @@ class Node(object):
             elif self.function_signature.is_binary():
                 return self.index
 
-    @staticmethod
-    def string_to_node(string):
-        return string_to_node(string)
-
     def iterate(self):
         """
         Iterate through all nodes, including self,
@@ -97,9 +93,12 @@ class Node(object):
         queue = deque()
         queue.appendleft(start)
         while len(queue) > 0:
-            out = deque().pop()
+            out = queue.pop()
             assert isinstance(out, Node)
             yield out.index, out.function_signature
+            for child in out.children:
+                queue.appendleft(child)
+
 
 
     def __hash__(self):
@@ -177,8 +176,8 @@ class TagModel(object):
         indices = words.keys()
         distributions = [self.get_log_distribution(words, syntax_tree, index) for index in indices]
         for pairs in itertools.product(*distributions):
-            tags = {indices[index]: pair[0] for index, pair in enumerate(pairs)}
-            prob = sum(pair[1] for pair in pairs)
+            tags = {indices[index]: pair[0] for index, pair in enumerate(pairs) if pair[0] is not None}
+            prob = sum(pair[1] for pair in pairs if pair[0] is not None)
             combinations.append((tags, prob))
         return combinations
 
@@ -212,38 +211,58 @@ class CountBasedTagModel(TagModel):
     def __init__(self, tag_rules):
         self.tag_rules = tag_rules
         self.counter = {}
+        self._sum_key = '$'
         for tag_rule in tag_rules:
+            if tag_rule.index is None:
+                continue
             word = tag_rule.words[tag_rule.index]
-            signature_name = tag_rule.signature.name
+            signature = tag_rule.signature
             if word not in self.counter:
                 self.counter[word] = {}
-                self.counter[word]['$'] = 0
-            if signature_name not in self.counter[word]:
-                self.counter[word][signature_name] = 0
-            self.counter[word][signature_name] += 1
-            self.counter[word]['$'] += 1
+                self.counter[word][self._sum_key] = 0
+            if signature not in self.counter[word]:
+                self.counter[word][signature] = 0
+            self.counter[word][signature] += 1
+            self.counter[word][self._sum_key] += 1
 
-        self.ref_regex = re.compile(r"[b-z]|([A-Z][A-Z])+$")
+        self.ref_regex = re.compile(r"^[b-z]|([A-Z][A-Z]+)$")
+        self.var_regex = re.compile(r"^[b-z]$")
+        self.num_regex = re.compile(r"^\d+(\.\d+)?^")
 
     def get_log_distribution(self, words, syntax_tree, index):
         word = words[index]
         dist = {}
         if word in self.counter:
-            for sig_name, count in self.counter[word].iteritems():
-                sig = function_signatures[sig_name]
-                dist[sig] = np.log(float(count)/self.counter[word]['$'])
+            for sig, count in self.counter[word].iteritems():
+                if sig == self._sum_key:
+                    continue
+                dist[sig] = np.log(float(count)/self.counter[word][self._sum_key])
 
         else:
-            pass
+            if self.num_regex.match(word):
+                sig = FunctionSignature(word, "number", [])
+                dist = {sig: 0.0}
+            elif self.var_regex.match(word) and self.ref_regex.match(word):
+                var_sig = FunctionSignature(word, "variable", [])
+                ref_sig = FunctionSignature(word, "modifier", [])
+                dist = {var_sig: np.log(0.5), ref_sig: np.log(0.5)}
+            elif self.var_regex.match(word):
+                sig = FunctionSignature(word, "variable", [])
+                dist = {sig: 0.0}
+            elif self.ref_regex.match(word):
+                sig = FunctionSignature(word, "modifier", [])
+                dist = {sig: 0.0}
+            else:
+                dist = {None: 0.0}
+
+        return dist
 
 
-
-
-class Rule(object):
+class SemanticRule(object):
     pass
 
 
-class UnaryRule(Rule):
+class UnaryRule(SemanticRule):
     def __init__(self, words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature):
         assert isinstance(parent_signature, FunctionSignature)
         assert isinstance(child_signature, FunctionSignature)
@@ -268,8 +287,7 @@ class UnaryRule(Rule):
         return repr(self) == repr(other)
 
 
-
-class BinaryRule(Rule):
+class BinaryRule(SemanticRule):
     def __init__(self, words, syntax_tree, tags,
                  parent_index, parent_signature, a_index, a_signature, b_index, b_signature):
         assert isinstance(parent_signature, FunctionSignature)
@@ -347,7 +365,6 @@ def bff1(binary_rule):
     a1 = uff1(unary_rule_a)
     a2 = uff1(unary_rule_b)
     a3 = [f1, f2, f3]
-    #return np.array(a3)
 
     out = np.array(list(itertools.chain(a1, a2, a3)))
     assert len(out) == BINARY_FEATURE_DIMENSION
@@ -429,7 +446,7 @@ class SemanticModel(object):
         return normalized_distribution
 
     def get_log_prob(self, rule, excluding_indices=(), lifted=False):
-        assert isinstance(rule, Rule)
+        assert isinstance(rule, SemanticRule)
         distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
                                                  rule.parent_signature, excluding_indices,
                                                  lifted_rule=rule)
@@ -746,6 +763,16 @@ def node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=False):
     return unary_rules, binary_rules
 
 
+def node_to_tag_rules(words, syntax_tree, node):
+    assert isinstance(node, Node)
+    tag_rules = []
+    for index, sig in node.iterate():
+        if index is not None:
+            tag_rule = TagRule(words, syntax_tree, index, sig)
+            tag_rules.append(tag_rule)
+    return tag_rules
+
+
 def string_to_words(string):
     word_list = string.split(' ')
     words = {index: word_list[index] for index in range(len(word_list))}
@@ -755,17 +782,15 @@ def get_models():
     sentence = "circle O has a radius of 5"
     words = string_to_words(sentence)
     syntax_tree = nx.DiGraph()
-    tuples = (
-        ('StartTruth@i', 'Equal@i'),
-        ('Equal@i', 'RadiusOf@4', '[5]@6'),
-        ('RadiusOf@4', 'Circle@0'),
-        ('Circle@0', "'O'@1"),
-    )
-    tag_rules = list(itertools.chain(*[tuple_to_tag_rules(words, syntax_tree, tuple_) for tuple_ in tuples]))
-    tagging_feature_function = lambda x: None
+    annotation = "Equal@i(RadiusOf@4(Circle@0('O'@1)), [5]@6)"
+    node = annotation_to_node(annotation)
+    print(node)
+    tag_rules = node_to_tag_rules(words, syntax_tree, node)
+    print(tag_rules)
+    tag_model = CountBasedTagModel(tag_rules)
+    tags = tag_model.get_best_tags(words, syntax_tree)
 
-    unary_rules, binary_rules = tuples_to_semantic_rules(words, syntax_tree, tuples)
-    tag_model = RuleBasedTagModel()
+    unary_rules, binary_rules = node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=True)
     unary_initial_weights = np.zeros(UNARY_FEATURE_DIMENSION)
     binary_initial_weights = np.zeros(BINARY_FEATURE_DIMENSION)
     unary_model = UnarySemanticModel(uff1, unary_initial_weights)
@@ -773,15 +798,13 @@ def get_models():
     unary_model.optimize_weights(unary_rules, 0)
     binary_model.optimize_weights(binary_rules, 0)
 
-    print unary_model.weights
-
     return tag_model, unary_model, binary_model
 
 
-def string_to_node(string):
+def annotation_to_node(annotation):
     """
     Equal@i(RadiusOf@2(Circle@1('O'@0)), [5]@3)
-    :param string:
+    :param annotation:
     :return:
     """
     ref = Literal("'") + Word(alphas, alphanums+"_") + Literal("'").suppress()
@@ -791,7 +814,7 @@ def string_to_node(string):
     tag = (ref | var | num | Word(alphas)) + Literal("@").suppress() + idx
     expr = Forward()
     expr << tag + Optional(Literal("(").suppress() + expr + Optional(Literal(",").suppress() + expr) + Literal(")").suppress())
-    tokens = expr.parseString(string)
+    tokens = expr.parseString(annotation)
 
 
     def _recurse(token_index):
@@ -807,6 +830,11 @@ def string_to_node(string):
         else:
             function_signature = function_signatures[tokens[token_index]]
         word_index = tokens[token_index+1]
+        if word_index == 'i':
+            word_index = None
+        else:
+            assert re.match(r"^\d+$", word_index)
+            word_index = int(word_index)
         if function_signature.is_leaf():
             return token_index+2, Node(word_index, function_signature, [])
 
@@ -826,7 +854,6 @@ def test_models(tag_model, unary_model, binary_model):
     sentence = "O circle radius 5"
     words = string_to_words(sentence)
     syntax_tree = nx.DiGraph()
-
     tags = tag_model.get_best_tags(words, syntax_tree)
     decoder = TopDownLiftedDecoder(unary_model, binary_model)
     dist = decoder.get_formula_distribution(words, syntax_tree, tags)
@@ -836,6 +863,5 @@ def test_models(tag_model, unary_model, binary_model):
         print node, np.exp(logp)
 
 if __name__ == "__main__":
-    print(Node.string_to_node("Equal@i(RadiusOf@3('O'@5),[5]@2)"))
     tag_model, unary_model, binary_model = get_models()
     test_models(tag_model, unary_model, binary_model)
