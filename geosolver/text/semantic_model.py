@@ -2,17 +2,41 @@ import itertools
 from scipy.optimize import minimize
 import numpy as np
 from geosolver.text.dist_utils import log_normalize
+from geosolver.text.feature_functions import FeatureFunction
 from geosolver.text.ontology import function_signatures, issubtype
 from geosolver.text.ontology_states import FunctionSignature
 from geosolver.text.rule import SemanticRule, BinaryRule, UnaryRule
 
 __author__ = 'minjoon'
 class SemanticModel(object):
-    def __init__(self, feature_function, initial_weights):
+    def __init__(self, feature_function, initial_weights=None, initial_impliable_signatures=set()):
+        assert isinstance(feature_function(), FeatureFunction)
         self.feature_function = feature_function
+        if initial_weights is None:
+            initial_weights = np.zeros(feature_function.dim)
         self.weights = initial_weights
+        self.impliable_signatures = initial_impliable_signatures
 
-    def optimize_weights(self, rules, reg_const):
+    def fit(self, rules, reg_const):
+        self._add_impliable_signatures(rules)
+        self._optimize_weights(rules, reg_const)
+
+    def _add_impliable_signatures(self, rules):
+        for rule in rules:
+            if isinstance(rule, UnaryRule):
+                if rule.parent_index is None:
+                    self.impliable_signatures.add(rule.parent_signature)
+                if rule.child_index is None:
+                    self.impliable_signatures.add(rule.child_signature)
+            elif isinstance(rule, BinaryRule):
+                if rule.parent_index is None:
+                    self.impliable_signatures.add(rule.parent_signature)
+                if rule.a_index is None:
+                    self.impliable_signatures.add(rule.a_signature)
+                if rule.b_index is None:
+                    self.impliable_signatures.add(rule.b_signature)
+
+    def _optimize_weights(self, rules, reg_const):
         """
         Obtain weights that maximizes the likelihood of the unary rules
         Log linear model with L2 regularization (ridge)
@@ -24,12 +48,12 @@ class SemanticModel(object):
         :return:
         """
         def loss_function(weights):
-            model = self.__class__(self.feature_function, weights)
+            model = self.__class__(self.feature_function, weights, self.impliable_signatures)
             return sum(model.get_log_prob(rule) for rule in rules) - \
                    0.5*reg_const*np.dot(weights, weights)
 
         def grad_function(weights):
-            model = self.__class__(self.feature_function, weights)
+            model = self.__class__(self.feature_function, weights, self.impliable_signatures)
             return sum(model.get_log_grad(rule) for rule in rules) - reg_const*weights
 
         negated_loss = lambda weights: -loss_function(weights)
@@ -38,7 +62,7 @@ class SemanticModel(object):
         result = minimize(negated_loss, self.weights, method='L-BFGS-B', jac=negated_grad)
         self.weights = result.x
 
-    def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=(),
+    def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=set(),
                              lifted_rule=None):
         """
         dictionary of unary_rule : log probability pair
@@ -73,7 +97,7 @@ class SemanticModel(object):
                     rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature, a_index, rule.a_signature,
                                       b_index, rule.b_signature)
 
-            features = self.feature_function(rule)
+            features = self.feature_function.evaluate(rule)
             numerator = np.dot(self.weights, features)
             distribution[rule] = numerator
 
@@ -97,7 +121,7 @@ class SemanticModel(object):
     def get_log_grad(self, rule, excluding_indices=()):
         distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
                                                  rule.parent_signature, excluding_indices)
-        log_grad = self.feature_function(rule) - sum(np.exp(logp) * self.feature_function(each_rule)
+        log_grad = self.feature_function.evaluate(rule) - sum(np.exp(logp) * self.feature_function.evaluate(each_rule)
                                                      for each_rule, logp in distribution.iteritems())
         return log_grad
 
@@ -123,50 +147,63 @@ class UnarySemanticModel(SemanticModel):
         assert isinstance(parent_signature, FunctionSignature)
         assert parent_signature.is_unary()
         excluding_indices = set(excluding_indices)
-        excluding_indices.add(parent_index)
+        if parent_index is not None:
+            excluding_indices.add(parent_index)
         available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
         rules = []
+
         for child_index in available_indices:
             if isinstance(child_index, int):
                 child_signature = tags[child_index]
-            else:
-                assert isinstance(child_index, FunctionSignature)
+                if child_signature is None:
+                    continue
+            elif isinstance(child_index, FunctionSignature):
                 child_signature = child_index
                 child_index = None
-
-            if parent_signature is None or child_signature is None:
-                continue
+                if child_signature not in self.impliable_signatures:
+                    continue
+            else:
+                raise Exception()
 
             if issubtype(child_signature.return_type, parent_signature.arg_types[0]):
                 # ontology enforcement
                 rule = UnaryRule(words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature)
                 rules.append(rule)
+
+        assert len(rules) > 0
         return rules
 
 
 class BinarySemanticModel(SemanticModel):
-    def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
+    def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=set()):
         assert isinstance(parent_signature, FunctionSignature)
         assert parent_signature.is_binary()
-        excluding_indices = set(excluding_indices)
-        excluding_indices.add(parent_index)
+        if parent_index is not None:
+            excluding_indices.add(parent_index)
         available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
         rules = []
+
         for a_index, b_index in itertools.permutations(available_indices, 2):
             # i.e. argument order matters, but no duplicate (this might not be true in future)
             if isinstance(a_index, int):
                 a_signature = tags[a_index]
-            else:
+                if a_signature is None:
+                    continue
+            elif isinstance(a_index, FunctionSignature):
                 a_signature = a_index
                 a_index = None
+                if a_signature not in self.impliable_signatures:
+                    continue
+
             if isinstance(b_index, int):
                 b_signature = tags[b_index]
-            else:
+                if b_signature is None:
+                    continue
+            elif isinstance(b_index, FunctionSignature):
                 b_signature = b_index
                 b_index = None
-
-            if parent_signature is None or a_signature is None or b_signature is None:
-                continue
+                if b_signature not in self.impliable_signatures:
+                    continue
 
             if issubtype(a_signature.return_type, parent_signature.arg_types[0]) and \
                     issubtype(b_signature.return_type, parent_signature.arg_types[1]):
@@ -174,5 +211,7 @@ class BinarySemanticModel(SemanticModel):
                 rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature,
                                   a_index, a_signature, b_index, b_signature)
                 rules.append(rule)
+
+        assert len(rules) > 0
         return rules
 

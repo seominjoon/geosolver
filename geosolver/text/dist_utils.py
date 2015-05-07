@@ -2,6 +2,8 @@ import numpy as np
 __author__ = 'minjoon'
 
 def log_normalize(distribution):
+    if len(distribution) == 0:
+        return distribution
     log_sum_value = np.log(sum(np.exp(logp) for _, logp in distribution.iteritems()))
     normalized_distribution = {key: value - log_sum_value for key, value in distribution.iteritems()}
     assert is_log_consistent(normalized_distribution)

@@ -1,7 +1,7 @@
 import re
 from pyparsing import *
 from geosolver.text.node import Node
-from geosolver.text.ontology import function_signatures
+from geosolver.text.ontology import function_signatures, issubtype
 from geosolver.text.ontology_states import FunctionSignature
 
 __author__ = 'minjoon'
@@ -59,4 +59,10 @@ def annotation_to_node(annotation):
             end_index, b_node = _recurse(end_index)
             return end_index, Node(word_index, function_signature, [a_node, b_node])
 
-    return _recurse(0)[1]
+    child_node = _recurse(0)[1]
+    if issubtype(child_node.function_signature.return_type, 'truth'):
+        parent_node = Node(None, function_signatures['StartTruth'], [child_node])
+    else:
+        raise Exception
+    return parent_node
+

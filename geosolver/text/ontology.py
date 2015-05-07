@@ -29,7 +29,7 @@ tuples = (
     ('Length', 'number', ['line']),
     ('Tangent', 'truth', ['line', 'circle']),
     ('Secant', 'truth', ['line', 'circle']),
-    ('Add', 'number', ['number', 'number']),
+    #('Add', 'number', ['number', 'number']),
     ('circle', 'circle', []),
     ('unkNum', 'number', []),
     ('unkSt', 'truth', []),

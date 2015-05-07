@@ -1,7 +1,7 @@
 from collections import deque
 import itertools
 from geosolver.text.node import Node
-from geosolver.text.ontology import function_signatures
+from geosolver.text.ontology import function_signatures, issubtype
 from geosolver.text.ontology_states import FunctionSignature
 from geosolver.text.rule import TagRule, UnaryRule, BinaryRule
 
@@ -60,6 +60,16 @@ def node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=False):
     assert isinstance(node, Node)
     unary_rules = []
     binary_rules = []
+    """
+    if issubtype(node.function_signature.return_type, 'truth'):
+        start_rule = UnaryRule(words, syntax_tree, tags, None, function_signatures['StartTruth'], node.index, node.function_signature)
+    else:
+        print node.function_signature
+        start_rule = None
+        raise Exception()
+    unary_rules.append(start_rule)
+    """
+
 
     stack = deque()
     stack.appendleft(node)

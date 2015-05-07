@@ -83,7 +83,7 @@ class CountBasedTagModel(TagModel):
             self.counter[word][signature] += 1
             self.counter[word][self._sum_key] += 1
 
-        self.ref_regex = re.compile(r"^[b-z]|([A-Z][A-Z]+)$")
+        self.ref_regex = re.compile(r"^([b-z]|([A-Z][A-Z]+))$")
         self.var_regex = re.compile(r"^[b-z]$")
         self.num_regex = re.compile(r"^\d+(\.\d+)?^")
 
