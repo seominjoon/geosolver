@@ -1,5 +1,5 @@
 from collections import deque
-from geosolver.text.ontology import function_signatures
+from geosolver.text.ontology import function_signatures, issubtype
 from geosolver.text.ontology_states import FunctionSignature
 
 __author__ = 'minjoon'
@@ -14,6 +14,13 @@ class Node(object):
         self.function_signature = function_signature
         self.children = children
         self.index = index
+
+        # Ontology enforcement
+        if self.function_signature.is_leaf():
+            assert len(self.children) == 0
+        else:
+            for idx, child in enumerate(self.children):
+                assert issubtype(child.function_signature.return_type, self.function_signature.arg_types[idx])
 
     def get_index(self, lift_index=False):
         if self.index is not None:

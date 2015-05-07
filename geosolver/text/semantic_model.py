@@ -2,7 +2,7 @@ import itertools
 from scipy.optimize import minimize
 import numpy as np
 from geosolver.text.dist_utils import log_normalize
-from geosolver.text.ontology import function_signatures
+from geosolver.text.ontology import function_signatures, issubtype
 from geosolver.text.ontology_states import FunctionSignature
 from geosolver.text.rule import SemanticRule, BinaryRule, UnaryRule
 
@@ -137,7 +137,7 @@ class UnarySemanticModel(SemanticModel):
             if parent_signature is None or child_signature is None:
                 continue
 
-            if parent_signature.arg_types[0] == child_signature.return_type:
+            if issubtype(child_signature.return_type, parent_signature.arg_types[0]):
                 # ontology enforcement
                 rule = UnaryRule(words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature)
                 rules.append(rule)
@@ -168,7 +168,8 @@ class BinarySemanticModel(SemanticModel):
             if parent_signature is None or a_signature is None or b_signature is None:
                 continue
 
-            if tuple(parent_signature.arg_types) == (a_signature.return_type, b_signature.return_type):
+            if issubtype(a_signature.return_type, parent_signature.arg_types[0]) and \
+                    issubtype(b_signature.return_type, parent_signature.arg_types[1]):
                 # ontology enforcement
                 rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature,
                                   a_index, a_signature, b_index, b_signature)
