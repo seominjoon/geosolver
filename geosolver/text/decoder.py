@@ -6,7 +6,7 @@ from geosolver.text.semantic_model import UnarySemanticModel
 from geosolver.text.semantic_model import BinarySemanticModel
 from geosolver.text.rule import UnaryRule, BinaryRule
 from geosolver.text.node import Node
-from geosolver.text.transitions import node_to_semantic_rules
+from geosolver.text.transitions import node_to_semantic_rules, node_to_tag_rules
 
 __author__ = 'minjoon'
 
@@ -119,7 +119,26 @@ class TopDownNaiveDecoder(Decoder):
             for node, logq in _recurse_unary(start_unary_rule, logp, set([])).iteritems():
                 nodes[node] = logq
 
-        return nodes
+        return self._filter_nodes(words, syntax_tree, nodes)
+
+
+    def _filter_nodes(self, words, syntax_tree, nodes):
+        new_nodes = {}
+        for node, prob in nodes.iteritems():
+            visited = set()
+            acceptable = True
+            tag_rules = node_to_tag_rules(words, syntax_tree, node)
+            for tag_rule in tag_rules:
+                if isinstance(tag_rule.index, int):
+                    if tag_rule.index not in visited:
+                        visited.add(tag_rule.index)
+                    else:
+                        acceptable = False
+                        break
+            if acceptable:
+                new_nodes[node] = prob
+        return new_nodes
+
 
 class TopDownLiftedDecoder(TopDownNaiveDecoder):
     def get_formula_distribution(self, words, syntax_tree, tags, start="StartTruth"):

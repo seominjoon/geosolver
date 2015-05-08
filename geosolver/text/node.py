@@ -53,14 +53,19 @@ class Node(object):
 
 
     def __hash__(self):
+        return hash(repr(self))
+        """
         if self.function_signature.is_symmetric:
             return hash((self.index, self.function_signature, frozenset(self.children)))
         return hash((self.index, self.function_signature, tuple(self.children)))
+        """
 
     def __eq__(self, other):
+        """
         if self.function_signature.is_symmetric:
             return self.index == other.index and self.function_signature == other.function_signature and \
                    frozenset(self.children) == frozenset(other.children)
+        """
         return repr(self) == repr(other)
 
     def __repr__(self):
@@ -81,5 +86,8 @@ class Node(object):
             else:
                 return "%s@%s" % (self.function_signature.name, index)
 
-        args_string = ", ".join(repr(child) for child in self.children)
+        if self.function_signature.is_symmetric:
+            args_string = ", ".join(string for string in sorted(repr(child) for child in self.children))
+        else:
+            args_string = ", ".join(repr(child) for child in self.children)
         return "%s@%s(%s)" % (self.function_signature.name, index, args_string)

@@ -9,13 +9,14 @@ from geosolver.text.rule import SemanticRule, BinaryRule, UnaryRule
 
 __author__ = 'minjoon'
 class SemanticModel(object):
-    def __init__(self, feature_function, initial_weights=None, initial_impliable_signatures=set()):
+    def __init__(self, feature_function, initial_weights=None, initial_impliable_signatures=set(), localities = {}):
         assert isinstance(feature_function(), FeatureFunction)
         self.feature_function = feature_function
         if initial_weights is None:
             initial_weights = np.zeros(feature_function.dim)
         self.weights = initial_weights
         self.impliable_signatures = initial_impliable_signatures
+        self.localities = localities
         self.feature_vectors = {}
 
     def fit(self, rules, reg_const):
@@ -159,7 +160,12 @@ class UnarySemanticModel(SemanticModel):
         excluding_indices = set(excluding_indices)
         if parent_index is not None:
             excluding_indices.add(parent_index)
-        available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
+
+        all_indices = set(words.keys())
+        if parent_index is not None and tags[parent_index] in self.localities:
+            locality = self.localities[tags[parent_index]]
+            all_indices = all_indices.intersection(set(range(parent_index-locality, parent_index+locality+1)))
+        available_indices = all_indices.difference(excluding_indices).union(function_signatures.values())
         rules = []
 
         for child_index in available_indices:
@@ -191,7 +197,11 @@ class BinarySemanticModel(SemanticModel):
         excluding_indices = set(excluding_indices)
         if parent_index is not None:
             excluding_indices.add(parent_index)
-        available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
+        all_indices = set(words.keys())
+        if parent_index is not None and tags[parent_index] in self.localities:
+            locality = self.localities[tags[parent_index]]
+            all_indices = all_indices.intersection(set(range(parent_index-locality, parent_index+locality+1)))
+        available_indices = set(all_indices).difference(excluding_indices).union(function_signatures.values())
         rules = []
 
         for a_index, b_index in itertools.product(available_indices, repeat=2):
