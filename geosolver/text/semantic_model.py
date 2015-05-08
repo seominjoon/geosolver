@@ -2,7 +2,7 @@ import itertools
 from scipy.optimize import minimize
 import numpy as np
 from geosolver.text.dist_utils import log_normalize
-from geosolver.text.feature_functions import FeatureFunction
+from geosolver.text.feature_function import FeatureFunction
 from geosolver.text.ontology import function_signatures, issubtype
 from geosolver.text.ontology_states import FunctionSignature
 from geosolver.text.rule import SemanticRule, BinaryRule, UnaryRule
@@ -16,6 +16,7 @@ class SemanticModel(object):
             initial_weights = np.zeros(feature_function.dim)
         self.weights = initial_weights
         self.impliable_signatures = initial_impliable_signatures
+        self.feature_vectors = {}
 
     def fit(self, rules, reg_const):
         self._add_impliable_signatures(rules)
@@ -96,16 +97,22 @@ class SemanticModel(object):
                         b_index = lifted_rule.b_index
                     rule = BinaryRule(words, syntax_tree, tags, parent_index, parent_signature, a_index, rule.a_signature,
                                       b_index, rule.b_signature)
-
-            features = self.feature_function.evaluate(rule)
-            numerator = np.dot(self.weights, features)
+            if rule in self.feature_vectors:
+                feature_vector = self.feature_vectors[rule]
+            else:
+                feature_vector = self.feature_function.evaluate(rule)
+                self.feature_vectors[rule] = feature_vector
+            numerator = np.dot(self.weights, feature_vector)
             distribution[rule] = numerator
 
-        normalized_distribution = log_normalize(distribution)
+        # print distribution
+        if len(distribution) == 0:
+            return distribution
 
+        normalized_distribution = log_normalize(distribution)
         return normalized_distribution
 
-    def get_log_prob(self, rule, excluding_indices=(), lifted=False):
+    def get_log_prob(self, rule, excluding_indices=set(), lifted=False):
         assert isinstance(rule, SemanticRule)
         distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
                                                  rule.parent_signature, excluding_indices,
@@ -114,18 +121,21 @@ class SemanticModel(object):
             return distribution[rule]
         else:
             print(rule)
+            print(rule.words)
+            print(rule.tags)
             print(distribution)
+            raise Exception()
 
         return -np.inf
 
-    def get_log_grad(self, rule, excluding_indices=()):
+    def get_log_grad(self, rule, excluding_indices=set()):
         distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags, rule.parent_index,
                                                  rule.parent_signature, excluding_indices)
         log_grad = self.feature_function.evaluate(rule) - sum(np.exp(logp) * self.feature_function.evaluate(each_rule)
                                                      for each_rule, logp in distribution.iteritems())
         return log_grad
 
-    def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
+    def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=set()):
         """
         NEED TO BE OVERRIDDEN
         Need to enforce type-matching here! That is, get only rules consistent with the ontology.
@@ -143,7 +153,7 @@ class SemanticModel(object):
         return []
 
 class UnarySemanticModel(SemanticModel):
-    def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=()):
+    def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=set()):
         assert isinstance(parent_signature, FunctionSignature)
         assert parent_signature.is_unary()
         excluding_indices = set(excluding_indices)
@@ -170,7 +180,7 @@ class UnarySemanticModel(SemanticModel):
                 rule = UnaryRule(words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature)
                 rules.append(rule)
 
-        assert len(rules) > 0
+        # assert len(rules) > 0
         return rules
 
 
@@ -178,13 +188,17 @@ class BinarySemanticModel(SemanticModel):
     def get_possible_rules(self, words, syntax_tree, tags, parent_index, parent_signature, excluding_indices=set()):
         assert isinstance(parent_signature, FunctionSignature)
         assert parent_signature.is_binary()
+        excluding_indices = set(excluding_indices)
         if parent_index is not None:
             excluding_indices.add(parent_index)
         available_indices = set(words.keys()).difference(excluding_indices).union(function_signatures.values())
         rules = []
 
-        for a_index, b_index in itertools.permutations(available_indices, 2):
-            # i.e. argument order matters, but no duplicate (this might not be true in future)
+        for a_index, b_index in itertools.product(available_indices, repeat=2):
+            # i.e. argument order matters, but no duplicate except implications
+            if a_index == b_index and isinstance(a_index, int):
+                continue
+
             if isinstance(a_index, int):
                 a_signature = tags[a_index]
                 if a_signature is None:

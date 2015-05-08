@@ -1,6 +1,7 @@
 from geosolver.text.rule import UnaryRule, BinaryRule
 import networkx as nx
 import numpy as np
+from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
 
@@ -22,7 +23,7 @@ class UFF1(FeatureFunction):
         assert isinstance(unary_rule, UnaryRule)
         if unary_rule.parent_index is not None and unary_rule.child_index is not None:
             d0 = abs(unary_rule.parent_index - unary_rule.child_index)
-            d1 = nx.shortest_path_length(unary_rule.syntax_tree, unary_rule.parent_index, unary_rule.child_index)
+            d1 = nx.shortest_path_length(unary_rule.syntax_tree.undirected, unary_rule.parent_index, unary_rule.child_index)
         else:
             d0 = len(unary_rule.words)/2.0
             d1 = d0
@@ -46,8 +47,13 @@ class BFF1(FeatureFunction):
         a = UFF1.evaluate(unary_rule_a)
         b = UFF1.evaluate(unary_rule_b)
 
-        d0 = abs(binary_rule.a_index - binary_rule.b_index)
-        d1 = nx.shortest_path_length(binary_rule.syntax_tree, binary_rule.a_index, binary_rule.b_index)
+
+        if binary_rule.a_index is not None and binary_rule.b_index is not None:
+            d0 = abs(binary_rule.a_index - binary_rule.b_index)
+            d1 = nx.shortest_path_length(binary_rule.syntax_tree.undirected, binary_rule.a_index, binary_rule.b_index)
+        else:
+            d0 = len(binary_rule.words)/2.0
+            d1 = d0
         my = np.array([d0, d1])
 
         out = np.concatenate([a, b, my])

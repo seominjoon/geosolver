@@ -6,11 +6,17 @@ Only provide interface here.
 from geosolver import settings
 import requests
 import networkx as nx
-from geosolver.text.syntax.states import SyntaxTree
 from geosolver.text.syntax.utils import match_trees
 
 __author__ = 'minjoon'
 
+class SyntaxTree(object):
+    def __init__(self, words, directed, undirected, rank, score):
+        self.words = words
+        self.directed = directed
+        self.undirected = undirected
+        self.rank = rank
+        self.score = score
 
 class DependencyParser(object):
 
@@ -21,7 +27,7 @@ class DependencyParser(object):
         raise Exception("This function must be overriden!")
 
     def get_best_syntax_tree(self, words):
-        return self.get_syntax_trees(words, 1)[0][0]
+        return self.get_syntax_trees(words, 1)[0]
 
 
 class StanfordParser(DependencyParser):
@@ -37,7 +43,7 @@ class StanfordParser(DependencyParser):
         r = requests.get(self.server_url, params=params)
         data = r.json()
 
-        tree_score_pairs = []
+        trees = []
 
         for rank, tree_data in enumerate(data):
             score = tree_data['score']
@@ -57,10 +63,11 @@ class StanfordParser(DependencyParser):
                     graph.node[to]['label'] = "%s-%d" % (words[to], to)
                     graph.node[to]['word'] = words[to]
 
-            if unique and not any(match_trees(syntax_tree.graph, graph) for syntax_tree in tree_score_pairs):
-                tree_score_pairs.append((graph, score))
+            if unique and not any(match_trees(syntax_tree.directed, graph) for syntax_tree in trees):
+                tree = SyntaxTree(words, graph, graph.to_undirected(), rank, score)
+                trees.append(tree)
 
-        return tree_score_pairs
+        return trees
 
 
 stanford_parser = StanfordParser(settings.STANFORD_PARSER_SERVER_URL)

@@ -55,7 +55,8 @@ class TopDownNaiveDecoder(Decoder):
                     for node, logq in _recurse_binary(current_binary_rule, logp, excluding_indices).iteritems():
                         log_add(child_nodes, node, logq)
 
-            assert is_log_consistent(child_nodes)
+            if len(child_nodes) == 0:
+                return {}
 
             parent_nodes = {Node(unary_rule.parent_index, unary_rule.parent_signature, [child_node]): top_logp + logp
                             for child_node, logp in child_nodes.iteritems()}
@@ -80,7 +81,7 @@ class TopDownNaiveDecoder(Decoder):
                                                                                binary_rule.a_index, binary_rule.a_signature, excluding_indices)
                 a_nodes = {}
                 for current_binary_rule, logp in distribution.iteritems():
-                    for node, logq in _recurse_binary(binary_rule, logp, excluding_indices).iteritems():
+                    for node, logq in _recurse_binary(current_binary_rule, logp, excluding_indices).iteritems():
                         log_add(a_nodes, node, logq)
 
             if binary_rule.b_signature.is_leaf():
@@ -97,11 +98,11 @@ class TopDownNaiveDecoder(Decoder):
                                                                                binary_rule.b_index, binary_rule.b_signature, excluding_indices)
                 b_nodes = {}
                 for current_binary_rule, logp in distribution.iteritems():
-                    for node, logq in _recurse_binary(binary_rule, logp, excluding_indices).iteritems():
+                    for node, logq in _recurse_binary(current_binary_rule, logp, excluding_indices).iteritems():
                         log_add(b_nodes, node, logq)
 
-            assert is_log_consistent(a_nodes)
-            assert is_log_consistent(b_nodes)
+            if len(a_nodes) == 0 or len(b_nodes) == 0:
+                return {}
 
             parent_nodes = {}
             for a_node, b_node in itertools.product(a_nodes, b_nodes):

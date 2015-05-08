@@ -105,6 +105,21 @@ def node_to_tag_rules(words, syntax_tree, node):
     return tag_rules
 
 
+def tag_rules_to_tags(words, tag_rules):
+    """
+    a list of tag rules --> tags for single sentence
+    :param tag_rules:
+    :return:
+    """
+    tags = {index: None for index in words}
+    if len(tag_rules) == 0:
+        return tags
+    for tag_rule in tag_rules:
+        assert isinstance(tag_rule, TagRule)
+        tags[tag_rule.index] = tag_rule.signature
+    return tags
+
+
 def string_to_words(string):
     word_list = string.split(' ')
     words = {index: word_list[index] for index in range(len(word_list))}
