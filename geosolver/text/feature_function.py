@@ -1,9 +1,129 @@
+from geosolver.text.ontology import types
 from geosolver.text.rule import UnaryRule, BinaryRule
 import networkx as nx
 import numpy as np
-from geosolver.utils import display_graph
+from geosolver.text.transitions import binary_rule_to_unary_rules
 
 __author__ = 'minjoon'
+
+def get_unary_feature_function(unary_rules, degree=1):
+    """
+    Change functions to add more dimensions
+
+    :param unary_rules:
+    :return:
+    """
+    functions = unary_generate(unary_rules)
+    def out(unary_rule):
+        return np.array([function(unary_rule) for function in functions])
+    return out
+
+
+def get_binary_feature_funtion(binary_rules, degree=1):
+    functions = binary_generate(binary_rules)
+    def out(binary_rule):
+        return np.array([function(binary_rule) for function in functions])
+    return out
+
+def unary_generate(unary_rules):
+    """
+    Only add more functions here!
+
+    :param unary_rules:
+    :return:
+    """
+    functions = unary_generate_00(unary_rules) + unary_generate_01(unary_rules) + unary_generate_02(unary_rules)
+    return functions
+
+
+def binary_generate(binary_rules):
+    """
+    Don't change this!
+
+    :param binary_rules:
+    :return:
+    """
+    pairs = [binary_rule_to_unary_rules(binary_rule) for binary_rule in binary_rules]
+    u1s, u2s, u3s = zip(*pairs)
+    return unary_generate(u1s) + unary_generate(u2s) + unary_generate(u3s)
+
+def unary_generate_00(unary_rules):
+    """
+    direct neighbors with edge label in syntax tree, both ways
+
+    :param unary_rules:
+    :return:
+    """
+    labels = set()
+    for unary_rule in unary_rules:
+        if unary_rule.parent_index in unary_rule.syntax_tree.undirected[unary_rule.child_index]:
+            label = unary_rule.syntax_tree.undirected[unary_rule.parent_index][unary_rule.child_index]
+            labels.add(label)
+
+    functions = []
+    for label in labels:
+        def down(rule):
+            if rule.child_index in rule.syntax_tree.directed[rule.parent_index] and \
+                    rule.syntax_tree.directed[rule.parent_index][rule.child_index] == label:
+                return 1
+            else:
+                return 0
+
+        def up(rule):
+            if rule.parent_index in rule.syntax_tree.directed[rule.child_index] and \
+                            rule.syntax_tree.directed[rule.child_index][rule.parent_index] == label:
+                return 1
+            else:
+                return 0
+        functions.append(down)
+        functions.append(up)
+    return functions
+
+
+def unary_generate_01(unary_rules):
+    """
+    return type of parent signature and child signature
+
+    :param unary_rules:
+    :return:
+    """
+    functions = []
+    for type_ in types:
+        def parent(rule):
+            if rule.parent_signature.return_type == type_:
+                return 1
+            else:
+                return 0
+
+        def child(rule):
+            if rule.child_signature.return_type == type_:
+                return 1
+            else:
+                return 0
+        functions.append(parent)
+        functions.append(child)
+    return functions
+
+
+def unary_generate_02(unary_rules):
+    distances = set()
+    for unary_rule in unary_rules:
+        if unary_rule.parent_index is not None and unary_rule.child_index is not None:
+            distance = nx.shortest_path_length(unary_rule.syntax_tree.undirected, unary_rule.parent_index, unary_rule.child_index)
+            distances.add(distance)
+
+    functions = []
+    for distance in distances:
+        def function(rule):
+            if rule.parent_index is not None and rule.child_index is not None:
+                curr_distance = nx.shortest_path_length(rule.syntax_tree.undirected, rule.parent_index, rule.child_index)
+                if curr_distance == distance:
+                    return 1
+            return 0
+        functions.append(function)
+    return functions
+
+
 
 
 class FeatureFunction(object):

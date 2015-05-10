@@ -11,7 +11,7 @@ class TagRule(object):
         self.signature = signature
 
     def __repr__(self):
-        return "%r->%s" % (self.index, self.signature.name)
+        return "%s@%r:%s" % (self.words[self.index], self.index, self.signature.name)
 
     def __eq__(self, other):
         return repr(self) == repr(other)

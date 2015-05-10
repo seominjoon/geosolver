@@ -14,10 +14,16 @@ def add_function_signature(signatures, signature_tuple):
 def issubtype(child, parent):
     if child == 'variable' and parent == 'number':
         return True
+    if child in ['triangle', 'quad'] and parent == 'polygon':
+        return True
+    if child in ['line', 'circle', 'triangle', 'quad'] and parent == 'entity':
+        return True
+    if child in ['circle', 'triangle', 'quad'] and parent == 'circle+polygon':
+        return True
     return child == parent
 
 
-types = ['root', 'start', 'number', 'modifier', 'circle', 'line', 'truth']
+types = ['root', 'start', 'number', 'modifier', 'circle', 'line', 'truth', 'point', 'quad', 'arc']
 function_signatures = {}
 tuples = (
     ('Root', 'root', ['start']),
@@ -26,6 +32,7 @@ tuples = (
     ('IsRadius', 'truth', ['line', 'circle']),
     ('DiameterOf', 'number', ['circle']),
     ('IsDiameter', 'truth', ['line', 'circle']),
+    ('IsSecant', 'truth', ['line', 'circle']),
     ('IsChord', 'truth', ['line', 'circle']),
     ('IsMedian', 'truth', ['line', 'triangle']),
     ('IsAltitude', 'truth', ['line', 'triangle']),
@@ -34,6 +41,11 @@ tuples = (
     ('Line', 'line', ['modifier']),
     ('Triangle', 'triangle', ['modifier']),
     ('Angle', 'angle', ['modifier']),
+    ('AngleOfArc', 'number', ['arc']),
+    ('Arc', 'arc', []),
+    ('AngleOf', 'number', ['angle']),
+    ('Point', 'point', ['modifier']),
+    ('On', 'truth', ['point', 'line']),
     ('the', 'modifier', []),
     ('LengthOf', 'number', ['line']),
     ('Tangent', 'truth', ['line', 'circle']),
@@ -50,6 +62,20 @@ tuples = (
     ('unkSt', 'truth', []),
     ('line', 'line', []),
     ('angle', 'angle', []),
+    ('quad', 'quad', []),
+    ('all', 'modifier', []),
+    ('IsRhombus', 'truth', ['quad']),
+    ('Quad', 'quad', ['modifier']),
+    ('PerimeterOf', 'number', ['polygon']),
+    ('IsRight', 'truth', ['triangle']),
+    ('IsHypotenuse', 'truth', ['line', 'triangle']),
+    ('Intersects', 'truth', ['entity', 'entity'], True),
+    ('IsMidpoint', 'truth', ['point', 'line']),
+    ('Equilateral', 'truth', ['triangle']),
+    ('Isosceles', 'truth', ['triangle']),
+    ('AreaOf', 'number', ['circle+polygon']),
+    ('IsSquare', 'truth', ['quad']),
+    ('IsParallelogram', 'truth', ['quad']),
 )
 for tuple_ in tuples:
     add_function_signature(function_signatures, tuple_)

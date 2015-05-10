@@ -124,3 +124,17 @@ def string_to_words(string):
     word_list = string.split(' ')
     words = {index: word_list[index] for index in range(len(word_list))}
     return words
+
+
+def binary_rule_to_unary_rules(rule):
+    """
+    transform a binary rule to three unary rules, namely
+    parent-left, parent-right, left-right
+
+    :param binary_rule:
+    :return:
+    """
+    parent_left = UnaryRule(rule.words, rule.syntax_tree, rule.tags, rule.parent_index, rule.parent_signature, rule.a_index, rule.b_signature)
+    parent_right = UnaryRule(rule.words, rule.syntax_tree, rule.tags, rule.parent_index, rule.parent_signature, rule.b_index, rule.b_signature)
+    left_right = UnaryRule(rule.words, rule.syntax_tree, rule.tags, rule.a_index, rule.a_signature, rule.b_index, rule.b_signature)
+    return parent_left, parent_right, left_right

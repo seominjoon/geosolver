@@ -19,7 +19,7 @@ def annotation_to_node(annotation):
     :param annotation:
     :return:
     """
-    ref = Literal("'") + Word(alphas, alphanums+"_") + Literal("'").suppress()
+    ref = Literal("'") + Word(alphanums, alphanums+"_") + Literal("'").suppress()
     var = Literal("<") + Word(alphas, alphanums+"_") + Literal(">").suppress()
     num = Literal("[") + Word(nums) + Literal("]").suppress()
     idx = Literal("i") | Word(nums)

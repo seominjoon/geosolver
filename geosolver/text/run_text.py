@@ -58,13 +58,16 @@ def get_models():
                 local_unary_rules, local_binary_rules = node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=True)
                 unary_rules.extend(local_unary_rules)
                 binary_rules.extend(local_binary_rules)
+    print("All annotation nodes obtained.")
 
     tag_model = CountBasedTagModel(tag_rules)
 
     # localities = {function_signatures['add']: 1}
     unary_model = UnarySemanticModel(UFF2)
+    print("Learning unary model...")
     unary_model.fit(unary_rules, 1)
     binary_model = BinarySemanticModel(BFF1)
+    print("Learning binary model...")
     binary_model.fit(binary_rules, 1)
 
     print unary_model.weights
