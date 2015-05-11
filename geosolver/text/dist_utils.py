@@ -21,3 +21,10 @@ def log_add(distribution, key, logp):
         distribution[key] = np.log(np.exp(distribution[key]) + np.exp(logp))
     else:
         distribution[key] = logp
+
+def normalize(dist):
+    s = sum(dist.values())
+    new_dist = {}
+    for key, prob in dist.iteritems():
+        new_dist[key] = prob/s
+    return new_dist

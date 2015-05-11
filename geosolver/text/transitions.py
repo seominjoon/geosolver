@@ -151,3 +151,20 @@ def semantic_rule_to_tag_rules(semantic_rule):
         tag_rules.append(TagRule(semantic_rule.words, semantic_rule.syntax_tree, semantic_rule.b_index, semantic_rule.b_signature))
     return tag_rules
 
+
+def rules_to_impliable_signatures(rules):
+    impliable_signatures = set()
+    for rule in rules:
+        if isinstance(rule, UnaryRule):
+            if rule.parent_index is None:
+                impliable_signatures.add(rule.parent_signature)
+            if rule.child_index is None:
+                impliable_signatures.add(rule.child_signature)
+        elif isinstance(rule, BinaryRule):
+            if rule.parent_index is None:
+                impliable_signatures.add(rule.parent_signature)
+            if rule.a_index is None:
+                impliable_signatures.add(rule.a_signature)
+            if rule.b_index is None:
+                impliable_signatures.add(rule.b_signature)
+    return impliable_signatures

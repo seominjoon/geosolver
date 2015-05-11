@@ -12,17 +12,18 @@ from geosolver.text.transitions import semantic_rule_to_tag_rules
 __author__ = 'minjoon'
 
 class SemanticModel(object):
-    def __init__(self, feature_function, weights=None):
+    def __init__(self, feature_function, weights=None, impliable_signatures=None):
         assert isinstance(feature_function, FeatureFunction)
         self.feature_function = feature_function
         if weights is None:
             weights = np.zeros(feature_function.dim)
         self.weights = weights
-        self.impliable_signatures = set()
+        if impliable_signatures is None:
+            impliable_signatures = set()
+        self.impliable_signatures = impliable_signatures
         self.localities = {}
 
     def fit(self, rules, reg_const):
-        self._add_impliable_signatures(rules)
         # num_vector_list = [self.feature_function.evaluate(rule) for rule in rules]
         denom_rules_list = [self.get_possible_rules(rule.words, rule.syntax_tree, rule.tags,
                                                     rule.parent_index, rule.parent_signature,
@@ -60,22 +61,7 @@ class SemanticModel(object):
 
         result = minimize(negated_original, self.weights, method='L-BFGS-B', jac=negated_grad) # jac
         self.weights = result.x
-        print self.weights
 
-    def _add_impliable_signatures(self, rules):
-        for rule in rules:
-            if isinstance(rule, UnaryRule):
-                if rule.parent_index is None:
-                    self.impliable_signatures.add(rule.parent_signature)
-                if rule.child_index is None:
-                    self.impliable_signatures.add(rule.child_signature)
-            elif isinstance(rule, BinaryRule):
-                if rule.parent_index is None:
-                    self.impliable_signatures.add(rule.parent_signature)
-                if rule.a_index is None:
-                    self.impliable_signatures.add(rule.a_signature)
-                if rule.b_index is None:
-                    self.impliable_signatures.add(rule.b_signature)
 
     def get_log_distribution(self, words, syntax_tree, tags, parent_index, parent_signature,
                              excluding_indices=set(), lifted_tag_rules=set()):

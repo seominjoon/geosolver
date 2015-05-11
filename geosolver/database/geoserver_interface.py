@@ -28,7 +28,6 @@ class GeoserverInterface(object):
             param = "+".join(str(x) for x in key)
         sub_url = "/questions/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, sub_url)
-        print("Accessing: %s" % request_url)
         r = requests.get(request_url)
         data = json.loads(r.text, object_hook=_decode_dict)
         questions = {}
@@ -42,7 +41,6 @@ class GeoserverInterface(object):
             words = {int(index): {int(index): word for index, word in words.iteritems()} for index, words in pair['words'].iteritems()}
             question = Question(pair['pk'], pair['text'], words, temp_filepath, choices)
             questions[question.key] = question
-        print("Download complete.")
         return questions
 
     def download_labels(self, key="all"):

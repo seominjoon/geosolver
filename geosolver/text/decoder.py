@@ -6,7 +6,7 @@ from geosolver.text.semantic_model_2 import UnarySemanticModel
 from geosolver.text.semantic_model_2 import BinarySemanticModel
 from geosolver.text.rule import UnaryRule, BinaryRule
 from geosolver.text.node import Node
-from geosolver.text.transitions import node_to_semantic_rules, node_to_tag_rules
+from geosolver.text.transitions import node_to_semantic_rules, node_to_tag_rules, semantic_rule_to_tag_rules
 
 __author__ = 'minjoon'
 
@@ -146,10 +146,17 @@ class TopDownLiftedDecoder(TopDownNaiveDecoder):
         new_distribution = {}
         for node in distribution.keys():
             unary_rules, binary_rules = node_to_semantic_rules(words, syntax_tree, tags, node, True)
-            unary_sum = sum(self.unary_semantic_model.get_log_prob(unary_rule) for unary_rule in unary_rules)
-            binary_sum = sum(self.binary_semantic_model.get_log_prob(binary_rule) for binary_rule in binary_rules)
+            unary_sum = sum(self.unary_semantic_model.get_log_prob(unary_rule, lifted_tag_rules=set(semantic_rule_to_tag_rules(unary_rule)))
+                            for unary_rule in unary_rules)
+            binary_sum = sum(self.binary_semantic_model.get_log_prob(binary_rule, lifted_tag_rules=set(semantic_rule_to_tag_rules(binary_rule)))
+                             for binary_rule in binary_rules)
             new_distribution[node] = unary_sum + binary_sum
 
         normalized_distribution = log_normalize(new_distribution)
         return normalized_distribution
 
+
+class BottomUpNaiveDecoder(Decoder):
+    """
+    CKY-style bottom-up naive decoder (enumerates all)
+    """
