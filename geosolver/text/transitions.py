@@ -138,3 +138,16 @@ def binary_rule_to_unary_rules(rule):
     parent_right = UnaryRule(rule.words, rule.syntax_tree, rule.tags, rule.parent_index, rule.parent_signature, rule.b_index, rule.b_signature)
     left_right = UnaryRule(rule.words, rule.syntax_tree, rule.tags, rule.a_index, rule.a_signature, rule.b_index, rule.b_signature)
     return parent_left, parent_right, left_right
+
+
+def semantic_rule_to_tag_rules(semantic_rule):
+    tag_rules = []
+    tag_rules.append(TagRule(semantic_rule.words, semantic_rule.syntax_tree, semantic_rule.parent_index, semantic_rule.parent_signature))
+
+    if isinstance(semantic_rule, UnaryRule):
+        tag_rules.append(TagRule(semantic_rule.words, semantic_rule.syntax_tree, semantic_rule.child_index, semantic_rule.child_signature))
+    if isinstance(semantic_rule, BinaryRule):
+        tag_rules.append(TagRule(semantic_rule.words, semantic_rule.syntax_tree, semantic_rule.a_index, semantic_rule.a_signature))
+        tag_rules.append(TagRule(semantic_rule.words, semantic_rule.syntax_tree, semantic_rule.b_index, semantic_rule.b_signature))
+    return tag_rules
+

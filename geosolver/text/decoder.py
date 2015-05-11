@@ -1,9 +1,9 @@
 import itertools
-from geosolver.text.dist_utils import is_log_consistent, log_normalize
+from geosolver.text.dist_utils import log_normalize
 from geosolver.text.dist_utils import log_add
 from geosolver.text.ontology import function_signatures
-from geosolver.text.semantic_model import UnarySemanticModel
-from geosolver.text.semantic_model import BinarySemanticModel
+from geosolver.text.semantic_model_2 import UnarySemanticModel
+from geosolver.text.semantic_model_2 import BinarySemanticModel
 from geosolver.text.rule import UnaryRule, BinaryRule
 from geosolver.text.node import Node
 from geosolver.text.transitions import node_to_semantic_rules, node_to_tag_rules

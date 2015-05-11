@@ -42,6 +42,7 @@ class GeoserverInterface(object):
             words = {int(index): {int(index): word for index, word in words.iteritems()} for index, words in pair['words'].iteritems()}
             question = Question(pair['pk'], pair['text'], words, temp_filepath, choices)
             questions[question.key] = question
+        print("Download complete.")
         return questions
 
     def download_labels(self, key="all"):

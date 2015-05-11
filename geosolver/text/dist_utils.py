@@ -6,6 +6,7 @@ __author__ = 'minjoon'
 def log_normalize(distribution):
     log_sum_exp = logsumexp(distribution.values())
     normalized_distribution = {key: value - log_sum_exp for key, value in distribution.iteritems()}
+    # print distribution
     assert is_log_consistent(normalized_distribution)
     return normalized_distribution
 

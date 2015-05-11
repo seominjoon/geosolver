@@ -1,20 +1,16 @@
 import numpy as np
-import networkx as nx
 from geosolver.database.geoserver_interface import geoserver_interface
 from geosolver.text.annotation_to_node import annotation_to_node, is_valid_annotation
 from geosolver.text.decoder import TopDownLiftedDecoder
 from geosolver.text.dependency_parser import stanford_parser
-from geosolver.text.dist_utils import log_normalize
 from geosolver.text.feature_function import UFF1, UFF2
 from geosolver.text.feature_function import BFF1
-from geosolver.text.ontology import function_signatures
-from geosolver.text.semantic_model import UnarySemanticModel
-from geosolver.text.semantic_model import BinarySemanticModel
+from geosolver.text.semantic_model_2 import UnarySemanticModel
+from geosolver.text.semantic_model_2 import BinarySemanticModel
 from geosolver.text.tag_model import CountBasedTagModel
-from geosolver.text.transitions import string_to_words, node_to_semantic_rules, tag_rules_to_tags
+from geosolver.text.transitions import node_to_semantic_rules, tag_rules_to_tags
 from geosolver.text.transitions import node_to_tag_rules
 import matplotlib.pyplot as plt
-from geosolver.utils import display_graph
 
 __author__ = 'minjoon'
 
@@ -58,15 +54,14 @@ def get_models():
                 local_unary_rules, local_binary_rules = node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=True)
                 unary_rules.extend(local_unary_rules)
                 binary_rules.extend(local_binary_rules)
-    print("All annotation nodes obtained.")
 
     tag_model = CountBasedTagModel(tag_rules)
 
     # localities = {function_signatures['add']: 1}
-    unary_model = UnarySemanticModel(UFF2)
+    unary_model = UnarySemanticModel(UFF2())
     print("Learning unary model...")
     unary_model.fit(unary_rules, 1)
-    binary_model = BinarySemanticModel(BFF1)
+    binary_model = BinarySemanticModel(BFF1())
     print("Learning binary model...")
     binary_model.fit(binary_rules, 1)
 
@@ -78,6 +73,7 @@ def get_models():
 
 
 def test_models(tag_model, unary_model, binary_model):
+    print("Testing the model...")
     query = "annotated"
     questions = geoserver_interface.download_questions([query])
     semantics = geoserver_interface.download_semantics([query])
