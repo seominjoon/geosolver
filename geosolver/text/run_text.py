@@ -44,48 +44,41 @@ def get_models():
         syntax_trees = pickle.load(open("syntax_trees.p", 'rb'))
 
 
-
     print "Obtaining nodes..."
-    tag_rules = []
-    unary_rules = []
-    binary_rules = []
-    for pk, question in questions.iteritems():
-        for sentence_index, words in question.words.iteritems():
-            syntax_tree = syntax_trees[pk][sentence_index]
-            words = syntax_tree.words
-            # display_graph(syntax_tree.directed)
-            annotations = semantics[pk][sentence_index]
-            sentence_tag_rules = []
-            nodes = []
-            for num, annotation in annotations.iteritems():
-                """
-                if not is_valid_annotation(annotation):
-                    raise Exception("%d %d %d %s" % (pk, sentence_index, num, annotation))
-                """
-                node = annotation_to_node(annotation)
-                nodes.append(node)
-                local_tag_rules = node_to_tag_rules(words, syntax_tree, node)
-                sentence_tag_rules.extend(local_tag_rules)
-                tag_rules.extend(local_tag_rules)
-            tags = tag_rules_to_tags(words, sentence_tag_rules)
+    nodes = {pk: {sentence_index: [annotation_to_node(annotation) for _, annotation in annotations.iteritems()]
+                  for sentence_index, annotations in d.iteritems()}
+             for pk, d in semantics.iteritems()}
 
-            for node in nodes:
-                local_unary_rules, local_binary_rules = node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=True)
-                unary_rules.extend(local_unary_rules)
-                binary_rules.extend(local_binary_rules)
+    print "Extracting tag rules..."
+    tag_rules = []
+    for pk, d in nodes.iteritems():
+        for sentence_index, dd in d.iteritems():
+            syntax_tree = syntax_trees[pk][sentence_index]
+            for node in dd:
+                local_tag_rules = node_to_tag_rules(syntax_tree.words, syntax_tree, node)
+                tag_rules.extend(local_tag_rules)
 
     print "Learning tag model..."
     tag_model = CountBasedTagModel(tag_rules)
 
+    print "Extracting semantic rules..."
+    unary_rules = []
+    binary_rules = []
+    for pk, d in nodes.iteritems():
+        for sentence_index, dd in d.iteritems():
+            syntax_tree = syntax_trees[pk][sentence_index]
+            for node in dd:
+                local_unary_rules, local_binary_rules = node_to_semantic_rules(syntax_tree.words, syntax_tree, tag_model, node, lift_index=True)
+                unary_rules.extend(local_unary_rules)
+                binary_rules.extend(local_binary_rules)
+
     # localities = {function_signatures['add']: 1}
     impliable_signatures = rules_to_impliable_signatures(unary_rules + binary_rules)
+    print "Learning unary model..."
     unary_model = UnarySemanticModel(UFF2(), impliable_signatures=impliable_signatures)
-    binary_model = BinarySemanticModel(BFF1(), impliable_signatures=impliable_signatures)
-    print("Learning unary model...")
     unary_model.fit(unary_rules, 1)
-    print("Learning binary model...")
-    for binary_rule in binary_rules:
-        print binary_rule
+    print "Learning binary model..."
+    binary_model = BinarySemanticModel(BFF1(), impliable_signatures=impliable_signatures)
     binary_model.fit(binary_rules, 1)
 
     print "unary weights:", unary_model.weights
@@ -105,6 +98,8 @@ def test_models(tag_model, unary_model, binary_model):
     all_my_node_dict = {}
     reweighed_my_dict = {}
 
+    sizes = []
+
     for pk, question in questions.iteritems():
         all_gt_nodes[pk] = {}
         all_my_node_dict[pk] = {}
@@ -115,10 +110,10 @@ def test_models(tag_model, unary_model, binary_model):
             reweighed_my_dict[pk][sentence_index] = {}
             words = replace(words)
             syntax_tree = stanford_parser.get_best_syntax_tree(words)
-            tags = tag_model.get_best_tags(words, syntax_tree)
             decoder = TopDownLiftedDecoder(unary_model, binary_model)
-            dist = decoder.get_formula_distribution(words, syntax_tree, tags)
+            dist = decoder.get_formula_distribution(words, syntax_tree, tag_model)
             items = sorted(dist.items(), key=lambda x: x[1])
+            sizes.append(len(items))
             print "---------------"
             print pk, sentence_index
             print " ".join(words.values())
@@ -126,7 +121,11 @@ def test_models(tag_model, unary_model, binary_model):
                 # print(node_to_semantic_rules(words, syntax_tree, tags, node, True))
                 print node, np.exp(logp)
                 all_my_node_dict[pk][sentence_index][node] = np.exp(logp)
-            reweighed_my_dict[pk][sentence_index] = reweigh(words, syntax_tree, tags, all_my_node_dict[pk][sentence_index])
+            reweighed_my_dict[pk][sentence_index] = reweigh(words, syntax_tree, tag_model, all_my_node_dict[pk][sentence_index])
+
+    print "--------------"
+    print "sizes:", max(sizes), np.median(sizes), min(sizes)
+
 
     prs =  [get_pr(all_gt_nodes, all_my_node_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
     re_prs =  [get_pr(all_gt_nodes, reweighed_my_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
@@ -150,7 +149,6 @@ def get_pr(all_gt_nodes, all_my_node_dict, threshold):
 
     for pk, question in all_gt_nodes.iteritems():
         for index, curr_gt_nodes in question.iteritems():
-            print pk, index
             curr_my_node_dict = all_my_node_dict[pk][index]
             my_nodes = set(node for node, prob in curr_my_node_dict.iteritems() if prob >= threshold)
             intersection_set = curr_gt_nodes.intersection(my_nodes)
@@ -172,8 +170,13 @@ def get_pr(all_gt_nodes, all_my_node_dict, threshold):
     return precision, recall
 
 
-def get_coverage(words, syntax_tree, tags, nodes):
-    all_indices = set([key for key in tags.keys() if key is not None])
+def get_coverage(words, syntax_tree, tag_model, nodes):
+    all_indices = set()
+    for index in words.keys():
+        dist = tag_model.get_log_distribution(words, syntax_tree, index)
+        if None not in dist or dist[None] < 0:
+            all_indices.add(index)
+
     covered_indices = set()
     for node in nodes:
         tag_rules = node_to_tag_rules(words, syntax_tree, node)
