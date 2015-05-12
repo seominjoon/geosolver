@@ -4,8 +4,7 @@ from geosolver.database.geoserver_interface import geoserver_interface
 from geosolver.text.annotation_to_node import annotation_to_node, is_valid_annotation
 from geosolver.text.decoder import TopDownLiftedDecoder
 from geosolver.text.dependency_parser import stanford_parser
-from geosolver.text.feature_function import UFF1, UFF2
-from geosolver.text.feature_function import BFF1
+from geosolver.text.feature_function import generate_unary_feature_function, generate_binary_feature_function
 from geosolver.text.semantic_model_2 import UnarySemanticModel
 from geosolver.text.semantic_model_2 import BinarySemanticModel
 from geosolver.text.tag_model import CountBasedTagModel
@@ -74,11 +73,13 @@ def get_models():
 
     # localities = {function_signatures['add']: 1}
     impliable_signatures = rules_to_impliable_signatures(unary_rules + binary_rules)
+    uff1 = generate_unary_feature_function(unary_rules)
+    bff1 = generate_binary_feature_function(binary_rules)
     print "Learning unary model..."
-    unary_model = UnarySemanticModel(UFF2(), impliable_signatures=impliable_signatures)
+    unary_model = UnarySemanticModel(uff1, impliable_signatures=impliable_signatures)
     unary_model.fit(unary_rules, 1)
     print "Learning binary model..."
-    binary_model = BinarySemanticModel(BFF1(), impliable_signatures=impliable_signatures)
+    binary_model = BinarySemanticModel(bff1, impliable_signatures=impliable_signatures)
     binary_model.fit(binary_rules, 1)
 
     print "unary weights:", unary_model.weights
@@ -172,8 +173,8 @@ def get_pr(all_gt_nodes, all_my_node_dict, threshold):
 
 def get_coverage(words, syntax_tree, tag_model, nodes):
     all_indices = set()
-    for index in words.keys():
-        dist = tag_model.get_log_distribution(words, syntax_tree, index)
+    for index, word in words.iteritems():
+        dist = tag_model.get_log_distribution(word)
         if None not in dist or dist[None] < 0:
             all_indices.add(index)
 
@@ -200,6 +201,16 @@ def reweigh(words, syntax_tree, tags, node_dict):
 
 def get_node_sequence(words, syntax_tree, tags, nodes):
     sequence = []
+
+
+
+def is_valid_node(node):
+    """
+    1. no constant is used twice
+    2.
+    :param node:
+    :return:
+    """
 
 
 

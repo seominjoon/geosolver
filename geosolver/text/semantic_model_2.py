@@ -26,12 +26,18 @@ class SemanticModel(object):
 
     def fit(self, rules, reg_const):
         # num_vector_list = [self.feature_function.evaluate(rule) for rule in rules]
-        denom_rules_list = [self.get_possible_rules(rule.words, rule.syntax_tree, rule.tags,
+        denom_rules_list = [self.get_possible_rules(rule.words, rule.syntax_tree, rule.tag_model,
                                                     rule.parent_index, rule.parent_signature,
                                                     lifted_tag_rules=set(semantic_rule_to_tag_rules(rule)))
                             for rule in rules]
         denom_vectors_list = [[self.feature_function.evaluate(denom_rule) for denom_rule in denom_rules] for denom_rules in denom_rules_list]
         num_index_list = [denom_rules_list[rule_index].index(rule) for rule_index, rule in enumerate(rules)]
+
+        """
+        for idx, denom_vectors in enumerate(denom_vectors_list):
+            print denom_rules_list[idx][num_index_list[idx]]
+            print denom_vectors[num_index_list[idx]]
+        """
 
 
         def _get_log_distribution(weights, curr_denom_vectors):
@@ -82,7 +88,7 @@ class SemanticModel(object):
 
     def get_log_prob(self, rule, excluding_indices=set(), lifted_tag_rules=set()):
         assert isinstance(rule, SemanticRule)
-        distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tags,
+        distribution = self.get_log_distribution(rule.words, rule.syntax_tree, rule.tag_model,
                                                  rule.parent_index, rule.parent_signature,
                                                  excluding_indices, lifted_tag_rules)
         if rule not in distribution:
@@ -107,7 +113,7 @@ class SemanticModel(object):
 
         explicit_tag_rules = set(TagRule(words, syntax_tree, index, signature)
                                  for index in words.keys()
-                                 for signature in tag_model.get_log_distribution(words, syntax_tree, index).keys()
+                                 for signature in tag_model.get_log_distribution(words[index]).keys()
                                  if signature is not None)
         implicit_tag_rules = set(TagRule(words, syntax_tree, None, signature)
                                  for signature in function_signatures.values())

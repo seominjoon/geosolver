@@ -25,14 +25,14 @@ class SemanticRule(object):
 
 
 class UnaryRule(SemanticRule):
-    def __init__(self, words, syntax_tree, tags, parent_index, parent_signature, child_index, child_signature):
+    def __init__(self, words, syntax_tree, tag_model, parent_index, parent_signature, child_index, child_signature):
         assert isinstance(parent_signature, FunctionSignature)
         assert isinstance(child_signature, FunctionSignature)
         assert isinstance(parent_index, int) or parent_index is None
         assert isinstance(child_index, int) or child_index is None
         self.words = words
         self.syntax_tree = syntax_tree
-        self.tags = tags
+        self.tag_model = tag_model
         self.parent_index = parent_index
         self.parent_signature = parent_signature
         self.child_index = child_index
@@ -50,7 +50,7 @@ class UnaryRule(SemanticRule):
 
 
 class BinaryRule(SemanticRule):
-    def __init__(self, words, syntax_tree, tags,
+    def __init__(self, words, syntax_tree, tag_model,
                  parent_index, parent_signature, a_index, a_signature, b_index, b_signature):
         assert isinstance(parent_signature, FunctionSignature)
         assert isinstance(a_signature, FunctionSignature)
@@ -60,13 +60,17 @@ class BinaryRule(SemanticRule):
         assert isinstance(b_index, int) or b_index is None
         self.words = words
         self.syntax_tree = syntax_tree
-        self.tags = tags
+        self.tag_model = tag_model
         self.parent_index = parent_index
         self.parent_signature = parent_signature
         self.a_index = a_index
         self.a_signature = a_signature
         self.b_index = b_index
         self.b_signature = b_signature
+        self.a_rule = UnaryRule(words, syntax_tree, tag_model, parent_index, parent_signature, a_index, a_signature)
+        self.b_rule = UnaryRule(words, syntax_tree, tag_model, parent_index, parent_signature, b_index, b_signature)
+        self.c_rule = UnaryRule(words, syntax_tree, tag_model, a_index, a_signature, b_index, b_signature)
+        self.unary_rules = [self.a_rule, self.b_rule, self.c_rule]
 
     def __hash__(self):
         return hash((self.parent_index, self.parent_signature,
