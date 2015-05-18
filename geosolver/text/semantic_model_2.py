@@ -26,7 +26,7 @@ class SemanticModel(object):
 
     def fit(self, rules, reg_const):
         # num_vector_list = [self.feature_function.evaluate(rule) for rule in rules]
-        denom_rules_list = [self.get_possible_rules(rule.words, rule.syntax_tree, rule.tag_model,
+        denom_rules_list = [self.get_next_semantic_rules(rule.words, rule.syntax_tree, rule.tag_model,
                                                     rule.parent_index, rule.parent_signature,
                                                     lifted_tag_rules=set(semantic_rule_to_tag_rules(rule)))
                             for rule in rules]
@@ -73,7 +73,7 @@ class SemanticModel(object):
     def get_log_distribution(self, words, syntax_tree, tag_model, parent_index, parent_signature,
                              excluding_indices=set(), lifted_tag_rules=set()):
         distribution = {}
-        local_rules = self.get_possible_rules(words, syntax_tree, tag_model, parent_index, parent_signature,
+        local_rules = self.get_next_semantic_rules(words, syntax_tree, tag_model, parent_index, parent_signature,
                                               excluding_indices, lifted_tag_rules)
         for rule in local_rules:
             feature_vector = self.feature_function.evaluate(rule)
@@ -96,7 +96,7 @@ class SemanticModel(object):
         else:
             return distribution[rule]
 
-    def get_possible_rules(self, words, syntax_tree, tag_model, parent_index, parent_signature, excluding_indices=set(),
+    def get_next_semantic_rules(self, words, syntax_tree, tag_model, parent_index, parent_signature, excluding_indices=set(),
                            lifted_tag_rules=set()):
         return []
 
@@ -135,7 +135,7 @@ class SemanticModel(object):
 
 
 class UnarySemanticModel(SemanticModel):
-    def get_possible_rules(self, words, syntax_tree, tag_model, parent_index, parent_signature, excluding_indices=set(),
+    def get_next_semantic_rules(self, words, syntax_tree, tag_model, parent_index, parent_signature, excluding_indices=set(),
                            lifted_tag_rules=set()):
 
         assert isinstance(parent_signature, FunctionSignature)
@@ -154,7 +154,7 @@ class UnarySemanticModel(SemanticModel):
 
 
 class BinarySemanticModel(SemanticModel):
-    def get_possible_rules(self, words, syntax_tree, tag_model, parent_index, parent_signature, excluding_indices=set(),
+    def get_next_semantic_rules(self, words, syntax_tree, tag_model, parent_index, parent_signature, excluding_indices=set(),
                            lifted_tag_rules=set()):
         assert isinstance(parent_signature, FunctionSignature)
         assert parent_signature.is_binary()

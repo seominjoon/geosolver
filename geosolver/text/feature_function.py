@@ -64,7 +64,7 @@ def _get_up(label):
 
 def unary_generator_01(unary_rules):
     """
-    return type of parent signature and child signature
+    return type of parent content and child content
 
     :param unary_rules:
     :return:

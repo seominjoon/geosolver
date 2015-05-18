@@ -42,7 +42,6 @@ def get_models():
     else:
         syntax_trees = pickle.load(open("syntax_trees.p", 'rb'))
 
-
     print "Obtaining nodes..."
     nodes = {pk: {sentence_index: [annotation_to_node(annotation) for _, annotation in annotations.iteritems()]
                   for sentence_index, annotations in d.iteritems()}
@@ -128,8 +127,11 @@ def test_models(tag_model, unary_model, binary_model):
     print "sizes:", max(sizes), np.median(sizes), min(sizes)
 
 
-    prs =  [get_pr(all_gt_nodes, all_my_node_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
-    re_prs =  [get_pr(all_gt_nodes, reweighed_my_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
+    #prs =  [get_pr(all_gt_nodes, all_my_node_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
+    prs =  [get_pr_by_rank(all_gt_nodes, all_my_node_dict, rank) for rank in range(1,400)]
+    print prs
+    #re_prs =  [get_pr(all_gt_nodes, reweighed_my_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
+    re_prs =  [get_pr_by_rank(all_gt_nodes, reweighed_my_dict, rank) for rank in range(1,400)]
     draw(prs)
     draw(re_prs)
     plt.show()
@@ -141,6 +143,32 @@ def draw(prs):
     plt.plot(rs, ps)
 
 
+def get_pr_by_rank(all_gt_nodes, all_my_node_dict, rank):
+    retrieved = 0
+    relevant = 0
+    intersection = 0
+
+    for pk, question in all_gt_nodes.iteritems():
+        for index, curr_gt_nodes in question.iteritems():
+            curr_my_node_dict = all_my_node_dict[pk][index]
+            my_nodes = set([y[0] for y in sorted(curr_my_node_dict.items(), key=lambda x: -x[1])][:rank])
+            intersection_set = curr_gt_nodes.intersection(my_nodes)
+            retrieved += len(my_nodes)
+            relevant += len(curr_gt_nodes)
+            intersection += len(intersection_set)
+            """
+            if len(intersection_set) < len(curr_gt_nodes):
+                print curr_gt_nodes-intersection_set
+            """
+
+    if retrieved == 0:
+        precision = 1
+    else:
+        precision = float(intersection)/retrieved
+    recall = float(intersection)/relevant
+    # print missed_set
+
+    return precision, recall
 
 
 def get_pr(all_gt_nodes, all_my_node_dict, threshold):

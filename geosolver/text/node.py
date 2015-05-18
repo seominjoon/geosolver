@@ -36,7 +36,7 @@ class Node(object):
     def iterate(self):
         """
         Iterate through all nodes, including self,
-        and output (index, signature), i.e. tag pair
+        and output (index, content), i.e. tag pair
 
         :return:
         """
