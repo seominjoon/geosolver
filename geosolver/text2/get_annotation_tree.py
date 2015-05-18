@@ -1,29 +1,22 @@
 from collections import deque
 from pyparsing import *
 from geosolver.text2.ontology import function_signatures, issubtype, FunctionSignature, Variable, Span
+from geosolver.text2.rule import TagRule
 
 __author__ = 'minjoon'
 
 class AnnotationNode(object):
-    def __init__(self, content, span, children):
-        assert content.valence >= len(children)
+    def __init__(self, content, children):
         self.content = content
-        self.span = span
         self.children = children
+        self.valence = len(children)
 
     def __repr__(self):
-        if self.span == "i":
-            span_string = self.span
-        elif self.span[0] + 1 == self.span[1]:
-            span_string = "%d" % self.span[0]
-        else:
-            span_string = "%d:%d" % self.span
-
         if len(self.children) == 0:
-            return "%s@%s" % (self.content.name, span_string)
+            return repr(self.content)
         else:
             args_string = ", ".join(repr(child) for child in self.children)
-            return "%s@%s(%s)" % (self.content.name, span_string, args_string)
+            return "%r(%s)" % (self.content, args_string)
 
 
 class AnnotationTree(object):
@@ -44,8 +37,8 @@ class AnnotationTree(object):
         return repr(self.head)
 
 
-
-def get_annotation_tree(words, annotation_string):
+def get_annotation_tree(syntax_parse, annotation_string):
+    words = syntax_parse.words
     def span_f(a, b, c):
         if len(c) == 1:
             if c[0] == 'i':
@@ -70,12 +63,13 @@ def get_annotation_tree(words, annotation_string):
         else:
             name = "_".join(words[idx] for idx in range(*local_span))
         if string in function_signatures:
-            content = function_signatures[string]
+            signature = function_signatures[string]
         elif type_ == 'function' and len(children) == 0:
-            content = FunctionSignature(local_span, string, [], name=string)
+            signature = FunctionSignature(local_span, string, [], name=string)
         else:
-            content = Variable(local_span, string, name="$" + string)
-        return AnnotationNode(content, local_span, children)
+            signature = Variable(local_span, string, name="$" + string)
+        content = TagRule(syntax_parse, local_span, signature)
+        return AnnotationNode(content, children)
 
     current = Optional(Literal("$")) + Word(alphas)
     span = Literal("i") | (Word(nums) + Literal(":").suppress() + Word(nums)) | Word(nums)

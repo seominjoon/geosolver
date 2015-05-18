@@ -1,6 +1,6 @@
 __author__ = 'minjoon'
 
-def span_to_string(span):
+def _span_to_string(span):
     if span == "i":
         return span
     elif span[0] + 1 == span[1]:
@@ -13,9 +13,10 @@ class TagRule(object):
         self.syntax_parse = syntax_parse
         self.span = span
         self.signature = signature
+        self.is_implicit = self.span == "i"
 
     def __repr__(self):
-        return "%s@%s" % (self.signature.name, span_to_string(self.span))
+        return "%s@%s" % (self.signature.name, _span_to_string(self.span))
 
 class SemanticRule(object):
     pass
