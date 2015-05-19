@@ -1,6 +1,6 @@
 from collections import deque
 from pyparsing import *
-from geosolver.text2.ontology import function_signatures, issubtype, FunctionSignature, Variable, Span
+from geosolver.text2.ontology import function_signatures, FunctionSignature, VariableSignature
 from geosolver.text2.rule import TagRule
 
 __author__ = 'minjoon'
@@ -67,7 +67,7 @@ def get_annotation_tree(syntax_parse, annotation_string):
         elif type_ == 'function' and len(children) == 0:
             signature = FunctionSignature(local_span, string, [], name=string)
         else:
-            signature = Variable(local_span, string, name="$" + string)
+            signature = VariableSignature(local_span, string, name="$" + string)
         content = TagRule(syntax_parse, local_span, signature)
         return AnnotationNode(content, children)
 

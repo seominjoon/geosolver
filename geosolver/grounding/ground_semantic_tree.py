@@ -41,7 +41,7 @@ def _ground_formula(match_parse, text_formula):
     basic_ontology = text_formula.basic_ontolgy
 
     # Base cases: entity | number and constant | function | error
-    current = text_formula.current  # current is either Constant or Function
+    current = text_formula.current  # current is either Constant or FunctionNode
     packs = []
     if isinstance(current, Constant) and basic_ontology.isinstance(current.type, basic_ontology.types['number']):
         # Either variable ('x', 'y', etc) or number ('1', '555', etc.)

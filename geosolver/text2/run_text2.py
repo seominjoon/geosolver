@@ -7,6 +7,6 @@ __author__ = 'minjoon'
 if __name__ == "__main__":
     words = {1: '5', 2: 'length', 3: 'good', 4: 'line'}
     syntax_parse = SyntaxParse(words, None)
-    tree = get_annotation_tree(syntax_parse, "Equals@i(LengthOf@2($line@3:5), What@1)")
+    tree = get_annotation_tree(syntax_parse, "Is@i(IntersectionOf@1($l@1, $k@2), $Q@3)")
     print annotation_tree_to_tag_rules(syntax_parse, tree)
     print annotation_tree_to_semantic_rules(syntax_parse, tree)

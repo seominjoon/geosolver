@@ -3,14 +3,26 @@ import networkx as nx
 __author__ = 'minjoon'
 
 
-class FunctionSignature(object):
-    def __init__(self, id_, return_type, arg_types, arg_pluralities=None, is_symmetric=False, name=None):
+class Signature(object):
+    def __init__(self, id_, return_type, valence, name=None):
         self.id = id_
         self.return_type = return_type
-        self.arg_types = arg_types
         if name is None:
-            name = id_
+            if isinstance(id_, str):
+                name = id_
+            else:
+                name = repr(id_)
         self.name = name
+        self.valence = valence
+
+    def __eq__(self, other):
+        assert isinstance(other, Signature)
+        return self.id == other.id
+
+class FunctionSignature(Signature):
+    def __init__(self, id_, return_type, arg_types, arg_pluralities=None, is_symmetric=False, name=None):
+        super(FunctionSignature, self).__init__(id_, return_type, len(arg_types), name=name)
+        self.arg_types = arg_types
         if arg_pluralities is None:
             arg_pluralities = (False,) * len(arg_types)
         self.arg_pluralities = arg_pluralities
@@ -18,47 +30,39 @@ class FunctionSignature(object):
         self.valence = len(arg_types)
 
     def __repr__(self):
-        return repr(self.name)
+        return self.name
 
-    def __eq__(self, other):
-        assert isinstance(other, FunctionSignature)
-        return self.id == other.id
 
     def __hash__(self):
         return hash(self.id)
 
 
-class Variable(object):
+class VariableSignature(Signature):
     def __init__(self, id_, return_type, name=None):
-        self.id = id_
-        self.return_type = return_type
-        if name is None:
-            name = id_
-        self.name = name
-        self.valence = 0
+        super(VariableSignature, self).__init__(id_, return_type, 0, name=name)
 
     def __repr__(self):
         return self.name
 
 
-class Function(object):
+class FunctionNode(object):
     def __init__(self, signature, children):
         self.signature = signature
         for child in children:
-            assert isinstance(child, Set)
+            assert isinstance(child, SetNode)
         self.children = children
 
         self.return_type = signature.return_type
 
 
-class Set(object):
+class SetNode(object):
     def __init__(self, head, members=None):
         self.head = head
         self.return_type = head.return_type
         if members is None:
             members = set([head])
         for member in members:
-            assert isinstance(member, Function) or isinstance(member, Variable)
+            assert isinstance(member, FunctionNode) or isinstance(member, VariableSignature)
         self.members = members
 
     def is_singular(self):
@@ -66,18 +70,6 @@ class Set(object):
 
     def is_plural(self):
         return len(self.members) > 1
-
-
-class Span(tuple):
-    def __new__(cls, start, end):
-        obj = tuple.__new__(cls, (start, end))
-        obj.is_single = start + 1 == end
-
-    def __repr__(self):
-        if self.is_single:
-            return "%d" % self[0]
-        else:
-            return "%d:%d" % (self[0], self[1])
 
 
 types = ('root', 'truth', 'number', 'entity', 'line', 'circle', 'triangle', 'quad', 'polygon')
