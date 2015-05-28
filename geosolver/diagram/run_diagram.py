@@ -1,4 +1,6 @@
 import itertools
+import os
+import cv2
 from geosolver.database.geoserver_interface import geoserver_interface
 from geosolver.diagram.get_evalf_subs import get_evalf_subs
 from geosolver.diagram.computational_geometry import distance_between_points, cartesian_angle
@@ -34,23 +36,24 @@ def test_parse_primitives():
 
 
 def test_select_primitives():
-    questions = geoserver_interface.download_questions().values()
+    questions = geoserver_interface.download_questions(['test']).values()
     parses = []
-    for question in questions[:80]:
+    folder_path = "/Users/minjoon/selected/"
+    for question in questions:
         print(question.key)
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         # primitive_parse.display_each_primitive()
         selected = select_primitives(primitive_parse)
-        parses.append(selected)
+        image = selected.get_image_primitives()
+        cv2.imwrite(os.path.join(folder_path, "%s.png" % str(question.key)), image)
 
-    for parse in parses:
-        parse.display_primitives()
 
 def test_parse_diagram():
-    questions = geoserver_interface.download_questions().values()
+    questions = geoserver_interface.download_questions(['test']).values()
     parses = []
-    for question in questions[:10]:
+    folder_path = "/Users/minjoon/images/"
+    for question in questions:
         print(question.key)
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
@@ -58,10 +61,8 @@ def test_parse_diagram():
         selected = select_primitives(primitive_parse)
         # selected.display_primitives()
         diagram_parse = parse_diagram(selected)
-        parses.append(diagram_parse)
-
-    for parse in parses:
-        parse.display_points()
+        image = diagram_parse.get_image_points()
+        cv2.imwrite(os.path.join(folder_path, str(question.key) + ".png"), image)
 
 
 
@@ -180,10 +181,10 @@ if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
     # test_distance_between_rho_theta_pair_and_point()
-    # test_select_primitives()
+    test_select_primitives()
     # test_parse_diagram()
     # test_instance_exists()
     # test_parse_graph()
-    test_parse_match()
+    # test_parse_match()
     # test_temp()
     # test_substitute_variables()

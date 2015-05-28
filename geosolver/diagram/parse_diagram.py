@@ -83,7 +83,7 @@ def _get_intersections_between_primitives(obj0, obj1, eps):
     elif is_circle0 and is_line1:
         return intersections_between_circle_and_line(obj0, obj1, eps)
     elif is_circle0 and is_circle1:
-        return intersections_between_circles(obj0, obj1, eps)
+        return intersections_between_circles(obj0, obj1)
     else:
         raise Exception()
 

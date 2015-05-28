@@ -118,6 +118,7 @@ function_signature_tuples = (
     ('IsMidpointOf', 'truth', ['point', 'line']),
     ('LengthOf', 'number', ['line']),
     ('Conj', 'truth', ['root', 'root'], None, True),
+    ('Same', 'truth', ['entity', 'entity'], None, True),
 )
 
 def get_function_signatures():

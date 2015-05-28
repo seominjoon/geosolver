@@ -28,6 +28,7 @@ class GeoserverInterface(object):
             param = "+".join(str(x) for x in key)
         sub_url = "/questions/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, sub_url)
+        print "accessing: %s" % request_url
         r = requests.get(request_url)
         data = json.loads(r.text, object_hook=_decode_dict)
         questions = {}

@@ -1,7 +1,7 @@
 import cv2
 
 from geosolver.diagram.draw_on_image import draw_line, draw_circle, draw_point, draw_instance, draw_label
-from geosolver.utils import display_image
+from geosolver.utils import display_image, save_image
 
 
 __author__ = 'minjoon'
@@ -45,11 +45,14 @@ class ImageSegmentParse(object):
         for image_segment in self.label_image_segments.values():
             image_segment.display_segmented_image()
 
-    def display_instances(self, instances, block=True, **kwargs):
+    def get_image_instances(self, instances, **kwargs):
         image = self.get_colored_original_image()
         for instance in instances:
             draw_instance(image, instance, offset=self.diagram_image_segment.offset, **kwargs)
-        display_image(image, block=block)
+        return image
+
+    def display_instances(self, instances, block=True, **kwargs):
+        display_image(self.get_image_instances(instances, **kwargs), block=block)
 
 
 class PrimitiveParse(object):
@@ -62,6 +65,9 @@ class PrimitiveParse(object):
 
     def display_primitives(self, block=True, **kwargs):
         self.image_segment_parse.display_instances(self.primitives.values(), block=block, **kwargs)
+
+    def get_image_primitives(self, **kwargs):
+        return self.image_segment_parse.get_image_instances(self.primitives.values(), **kwargs)
 
     def display_each_primitive(self, **kwargs):
         for primitive in self.primitives.values():
@@ -76,13 +82,17 @@ class DiagramParse(object):
         self.intersection_points = intersection_points
         self.circles = circles
 
-    def display_points(self, block=True, **kwargs):
+    def get_image_points(self, **kwargs):
         image = self.image_segment_parse.get_colored_original_image()
         offset = self.image_segment_parse.diagram_image_segment.offset
         for key, point in self.intersection_points.iteritems():
             label = Label("%d" % key, point)
             draw_label(image, label, offset=offset, **kwargs)
             draw_point(image, point, offset=offset, **kwargs)
+        return image
+
+    def display_points(self, block=True, **kwargs):
+        image = self.get_image(**kwargs)
         display_image(image, block=block)
 
 
