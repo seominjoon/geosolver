@@ -36,7 +36,9 @@ def test_parse_primitives():
 
 
 def test_select_primitives():
-    questions = geoserver_interface.download_questions(['test']).values()
+    questions = geoserver_interface.download_questions(['development']).values()
+    print sum(len(question.words) for question in questions)
+    return
     parses = []
     folder_path = "/Users/minjoon/selected/"
     for question in questions:

@@ -31,8 +31,13 @@ def line_length(line):
     return distance_between_points(line.a, line.b)
 
 
+def line_vector(line):
+    array = (np.array(line[1]) - np.array(line[0]))
+    return array
+
+
 def line_unit_vector(line):
-    array = (np.array(line[1]) - np.array(line[0]))/line_length(line)
+    array = line_vector(line)/line_length(line)
     return tuple(array)
 
 
