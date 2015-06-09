@@ -16,4 +16,7 @@ and in the last section it will show how to connect them for an end-to-end syste
 ## Text parser
 
 ## Solver
+Location: `geosolver.solver`
+Required 3rd-party packages: numpy, scipy
 
+For all the examples, see `geosolver.solver.run_solver`. We will go through its first example here.
