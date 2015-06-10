@@ -69,6 +69,8 @@ def example_2():
     AO = vh.line(A, O)
     BO = vh.line(B, O)
     AB = vh.line(A, B)
+    # vh.circle() with one argument assumes the radius is an unknown value (i.e. variable).
+    # if you want to define radius, just give it two arguments, e.g. vh.circle(O, r)
     cO = vh.circle(O)
     a = vh.apply('LengthOf', AO)
     b = vh.apply('LengthOf', BO)

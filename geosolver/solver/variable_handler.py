@@ -106,11 +106,12 @@ class VariableHandler(object):
     def line(self, p1, p2):
         return self.apply('Line', p1, p2)
 
-    def circle(self, center, init=None):
+    def circle(self, center, r=None, init=None):
         if init is None:
             init = np.random.rand()
-        r_name = "%s_r" % center.current
-        r = self.number(r_name, init=init)
+        if r is None:
+            r_name = "%s_r" % center.current
+            r = self.number(r_name, init=init)
         return self.apply('Circle', center, r)
 
     def apply(self, name, *args):
