@@ -48,11 +48,14 @@ def example_1():
     p1 = a == 4
     p2 = c == x
     p3 = vh.apply('Perpendicular', AB, BC)
-    q = b == (16 + x**2)**0.5
+    q1 = b == (16 + x**2)**0.5
+    q2 = b == x**2
 
     ns = NumericSolver(vh, [p1, p2, p3])
-    print(ns.find_assignment(q))
-    print(ns.query_invar(q))
+    print(ns.find_assignment(q1))  # find_assignment simply analyzes whether the query relation can be satisfied
+    print(ns.query_invar(q1))  # query_invar analyzes whether the query relation must hold true
+    print(ns.find_assignment(q2))  # this is satisfiable; there exists x that satisfies q2.
+    print(ns.query_invar(q2))  # this is False because q2 is not true for all possible x.
 
 def example_2():
     """
@@ -118,4 +121,4 @@ def example_3():
 
 
 if __name__ == "__main__":
-    example_3()
+    example_1()
