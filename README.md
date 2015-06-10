@@ -33,7 +33,7 @@ vh = VariableHandler()
 
 The variable handler allows us to define variables in the (first sentence):
 ```python
-x = vh.number()
+x = vh.number('x')
 A = vh.point('A')
 B = vh.point('B')
 C = vh.point('C')
@@ -41,7 +41,7 @@ AB = vh.line(A, B)
 BC = vh.line(B, C)
 CA = vh.line(C, A)
 ```
-Use `vh.number` to define a numeric variable, `vh.point` to define a point (with name as argument), and `vh.line` to define a line (with two end points as arguments).
+Use `vh.number` to define a numeric variable (with name as argument), `vh.point` to define a point (with name as argument), and `vh.line` to define a line (with two end points as arguments).
 
 Next, we define the relations (information) mentioned in the question (AB = x, BC = 3, CA = 4):
 ```python
@@ -73,4 +73,5 @@ print(ns.find_assignment(q2))
 will print out `None`.
 
 Note that you can use `q1 = x == 5` instead of `vh.apply('Equals', x, 5)`. Other operators such as <, >, +, *, -, /, ** (power) are supported as well.
+Geometric relations, such as *Perpendicular*, *Tangent*, etc., require `vh.apply` to be used. For a complete list of usable relations, refer to `geosolver.ontology.ontology_semantics` (To be updated soon!).
 
