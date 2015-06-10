@@ -20,11 +20,11 @@ def example_0():
     c = vh.apply('LengthOf', AB)
     a = vh.apply('LengthOf', BC)
     b = vh.apply('LengthOf', CA)
-    p1 = vh.apply('Equals', a, 3)
-    p2 = vh.apply('Equals', b, 4)
-    p3 = vh.apply('Equals', c, x)
-    q1 = vh.apply('Equals', x, 8)
-    q2 = vh.apply('Equals', x, 5)
+    p1 = a == 3
+    p2 = b == 4
+    p3 = c == x
+    q1 = x == 8
+    q2 = x == 5
     ns = NumericSolver(vh, [p1, p2, p3])
     print(ns.find_assignment(q1))
     print(ns.find_assignment(q2))
@@ -45,10 +45,10 @@ def example_1():
     c = vh.apply('LengthOf', AB)
     a = vh.apply('LengthOf', BC)
     b = vh.apply('LengthOf', CA)
-    p1 = vh.apply('Equals', a, 4)
-    p2 = vh.apply('Equals', c, x)
+    p1 = a == 4
+    p2 = c == x
     p3 = vh.apply('Perpendicular', AB, BC)
-    q = vh.apply('Equals', b, (x**2 + 16)**0.5)
+    q = b == (16 + x**2)**0.5
 
     ns = NumericSolver(vh, [p1, p2, p3])
     print(ns.find_assignment(q))
@@ -70,9 +70,9 @@ def example_2():
     a = vh.apply('LengthOf', AO)
     b = vh.apply('LengthOf', BO)
     o = vh.apply('LengthOf', AB)
-    p1 = vh.apply('Equals', a, 1)
-    p2 = vh.apply('Equals', b, 1)
-    p3 = vh.apply('Equals', o, np.sqrt(2))
+    p1 = a == 1
+    p2 = b == 1
+    p3 = o == np.sqrt(2)
     p4 = vh.apply('Tangent', AB, cO)
     ns = NumericSolver(vh, [p1, p2, p3, p4])
     ans = vh.apply('RadiusOf', cO)
@@ -101,8 +101,8 @@ def example_3():
     AC = vh.line(A, C)
     BD = vh.line(B, D)
     cO = vh.circle(O)
-    p1 = vh.apply('Equals', vh.apply('RadiusOf', cO), 5)  # Equals(RadiusOf(cO), 5))
-    p2 = vh.apply('Equals', vh.apply('LengthOf', CE), 2)  # Equals(LengthOf(CE), 2)
+    p1 = vh.apply('RadiusOf', cO) == 5  # Equals(RadiusOf(cO), 5))
+    p2 = vh.apply('LengthOf', CE) == 2  # Equals(LengthOf(CE), 2)
     p3 = vh.apply('IsDiameter', AC, cO)
     p4 = vh.apply('IsChord', BD, cO)
     p5 = vh.apply('Perpendicular', AC, BD)

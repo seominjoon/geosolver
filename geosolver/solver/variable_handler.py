@@ -28,21 +28,53 @@ class VariableNode(object):
         current = ontology_semantics.Add.__name__
         return VariableNode(current, [self, other])
 
+    def __radd__(self, other):
+        current = ontology_semantics.Add.__name__
+        return VariableNode(current, [other, self])
+
     def __mul__(self, other):
         current = ontology_semantics.Mul.__name__
         return VariableNode(current, [self, other])
+
+    def __rmul__(self, other):
+        current = ontology_semantics.Mul.__name__
+        return VariableNode(current, [other, self])
 
     def __sub__(self, other):
         current = ontology_semantics.Sub.__name__
         return VariableNode(current, [self, other])
 
+    def __rsub__(self, other):
+        current = ontology_semantics.Sub.__name__
+        return VariableNode(current, [other, self])
+
     def __div__(self, other):
         current = ontology_semantics.Div.__name__
         return VariableNode(current, [self, other])
 
+    def __rdiv__(self, other):
+        current = ontology_semantics.Div.__name__
+        return VariableNode(current, [other, self])
+
     def __pow__(self, power, modulo=None):
         current = ontology_semantics.Pow.__name__
         return VariableNode(current, [self, power])
+
+    def __rpow__(self, power, modulo=None):
+        current = ontology_semantics.Pow.__name__
+        return VariableNode(current, [power, self])
+
+    def __eq__(self, other):
+        current = ontology_semantics.Equals.__name__
+        return VariableNode(current, [self, other])
+
+    def __ge__(self, other):
+        current = ontology_semantics.Greater.__name__
+        return VariableNode(current, [self, other])
+
+    def __lt__(self, other):
+        current = ontology_semantics.Less.__name__
+        return VariableNode(current, [self, other])
 
 
 class VariableHandler(object):
