@@ -1,6 +1,6 @@
 import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
-    distance_between_points, intersections_between_lines, line_vector, angle_in_radian
+    distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
 
 __author__ = 'minjoon'
@@ -48,6 +48,24 @@ def Less(a, b):
     std = abs((a+b)/2.0)
     value = max(a-b, 0)
     return TruthValue(value, std)
+
+def Sqrt(x):
+    return np.sqrt(x)
+
+def Add(a, b):
+    return a + b
+
+def Sub(a, b):
+    return a - b
+
+def Mul(a, b):
+    return a * b
+
+def Div(a, b):
+    return float(a) / b
+
+def Pow(a, b):
+    return a**b
 
 def Tangent(line, circle):
     d = distance_between_line_and_point(line, circle.center)

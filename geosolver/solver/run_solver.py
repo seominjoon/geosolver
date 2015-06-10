@@ -1,4 +1,4 @@
-from geosolver.solver.numeric_solver import numeric_solver
+from geosolver.solver.numeric_solver import query, find_assignment, NumericSolver
 from geosolver.solver.variable_handler import VariableHandler
 import numpy as np
 
@@ -6,10 +6,11 @@ __author__ = 'minjoon'
 
 def example_0():
     """
-    AB = 8, BC = 3, CA = 4. Is this possible?
+    AB = x, BC = 3, CA = 4. Is an answer x=5, x=8 possible?
     :return:
     """
     vh = VariableHandler()
+    x = vh.number('x')
     A = vh.point('A')
     B = vh.point('B')
     C = vh.point('C')
@@ -21,12 +22,39 @@ def example_0():
     b = vh.apply('LengthOf', CA)
     p1 = vh.apply('Equals', a, 3)
     p2 = vh.apply('Equals', b, 4)
-    p3 = vh.apply('Equals', c, 8)
-    success, assignment = numeric_solver(vh, [p1, p2, p3], verbose=True)
-    print success
-
+    p3 = vh.apply('Equals', c, x)
+    q1 = vh.apply('Equals', x, 8)
+    q2 = vh.apply('Equals', x, 5)
+    ns = NumericSolver(vh, [p1, p2, p3])
+    print(ns.find_assignment(q1))
+    print(ns.find_assignment(q2))
 
 def example_1():
+    """
+    AB perpendicular to BC, AB = x, and BC = 4. Is CA = sqrt(x^2+16) a correct answer?
+    :return:
+    """
+    vh = VariableHandler()
+    x = vh.number('x')
+    A = vh.point('A')
+    B = vh.point('B')
+    C = vh.point('C')
+    AB = vh.line(A, B)
+    BC = vh.line(B, C)
+    CA = vh.line(C, A)
+    c = vh.apply('LengthOf', AB)
+    a = vh.apply('LengthOf', BC)
+    b = vh.apply('LengthOf', CA)
+    p1 = vh.apply('Equals', a, 4)
+    p2 = vh.apply('Equals', c, x)
+    p3 = vh.apply('Perpendicular', AB, BC)
+    q = vh.apply('Equals', b, (x**2 + 16)**0.5)
+
+    ns = NumericSolver(vh, [p1, p2, p3])
+    print(ns.find_assignment(q))
+    print(ns.query_invar(q))
+
+def example_2():
     """
     AB is tangent to circle O, AO = BO = 1 and AB = sqrt(2). What is the radius of circle O?
     :return:
@@ -46,12 +74,15 @@ def example_1():
     p2 = vh.apply('Equals', b, 1)
     p3 = vh.apply('Equals', o, np.sqrt(2))
     p4 = vh.apply('Tangent', AB, cO)
-    success, assignment = numeric_solver(vh, [p1, p2, p3, p4], verbose=False)
+    ns = NumericSolver(vh, [p1, p2, p3, p4])
     ans = vh.apply('RadiusOf', cO)
-    print ans.evaluate(assignment), 1/np.sqrt(2)  # the latter is the true answer
+    if ns.is_sat():
+        print ns.evaluate(ans), 1/np.sqrt(2)  # the latter is the true answer
+    else:
+        print("Given information is not satisfiable.")
 
 
-def example_2():
+def example_3():
     """
     Question ID: 1
     In the diagram at the right, circle O has a radius of 5, and CE = 2.
@@ -75,12 +106,16 @@ def example_2():
     p3 = vh.apply('IsDiameter', AC, cO)
     p4 = vh.apply('IsChord', BD, cO)
     p5 = vh.apply('Perpendicular', AC, BD)
-    p6 = vh.apply('PointLiesOnLine', E, AC)
+    p6 = vh.apply('PointLiesOnLine', E, AC)  # AC intersects BD at E is broken down into two atoms
     p7 = vh.apply('PointLiesOnLine', E, BD)
     ps = [p1, p2, p3, p4, p5, p6, p7]
-    success, assignment = numeric_solver(vh, ps, verbose=False)
+    ns = NumericSolver(vh, ps)
     ans = vh.apply('LengthOf', BD)
-    print ans.evaluate(assignment), 8  # the latter is the true answer
+    if ns.is_sat():
+        print ns.evaluate(ans), 8  # 8 is the answer
+    else:
+        print "Given information is not satisfiable."
+
 
 if __name__ == "__main__":
-    example_1()
+    example_3()

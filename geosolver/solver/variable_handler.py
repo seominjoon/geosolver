@@ -24,6 +24,27 @@ class VariableNode(object):
                     evaluated_args.append(arg)
             return getattr(ontology_semantics, self.current)(*evaluated_args)
 
+    def __add__(self, other):
+        current = ontology_semantics.Add.__name__
+        return VariableNode(current, [self, other])
+
+    def __mul__(self, other):
+        current = ontology_semantics.Mul.__name__
+        return VariableNode(current, [self, other])
+
+    def __sub__(self, other):
+        current = ontology_semantics.Sub.__name__
+        return VariableNode(current, [self, other])
+
+    def __div__(self, other):
+        current = ontology_semantics.Div.__name__
+        return VariableNode(current, [self, other])
+
+    def __pow__(self, power, modulo=None):
+        current = ontology_semantics.Pow.__name__
+        return VariableNode(current, [self, power])
+
+
 class VariableHandler(object):
     def __init__(self):
         self.variables = {}
