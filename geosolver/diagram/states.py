@@ -21,6 +21,9 @@ class ImageSegment(object):
     def display_segmented_image(self, block=True):
         display_image(self.segmented_image, block=block)
 
+    def display_binarized_segmented_image(self, block=True):
+        display_image(self.binarized_segmented_image, block=block)
+
     def display_pixels(self, block=True):
         image = cv2.cvtColor(self.segmented_image, cv2.COLOR_GRAY2BGR)
         for pixel in self.pixels:

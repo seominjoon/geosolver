@@ -14,7 +14,7 @@ class TruthValue(object):
         return TruthValue(self.norm + other.norm)
 
     def __repr__(self):
-        return "TruthValue(%.2f)" % self.norm
+        return "TruthValue(conf=%.2f)" % self.conf
 
 def Line(p1, p2):
     return instantiators['line'](p1, p2)

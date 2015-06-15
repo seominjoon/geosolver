@@ -25,13 +25,13 @@ HoughCircleParameters = namedtuple("HoughCircleParameters",
 
 hough_circle_parameters = HoughCircleParameters(dp=1,
                                                 minRadius=20,
-                                                maxRadius=150,
-                                                param1=50,
-                                                param2=30,
+                                                maxRadius=200,
+                                                param1=50, #50
+                                                param2=30, #30
                                                 minDist=2,
                                                 max_gap=100,
                                                 min_length=20,
-                                                max_num=20)
+                                                max_num=50)
 
 # These eps determine pixel coverage of each primitive.
 LINE_EPS = 3

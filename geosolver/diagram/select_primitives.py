@@ -93,7 +93,7 @@ def _evaluate_reward(partial_primitives, pixels_dict):
          _coherence(partial_primitives),
          _end_pixel_num(partial_primitives, pixels_dict),
          ]
-    w = [1, -0.1, -0.00, 00, -0.0]
+    w = [1, -0.1, -0.7, 00, 0.1]
     return np.dot(x, w)
 
 
@@ -155,7 +155,7 @@ def _get_pixels_near_line(pixels, line, eps):
 
 def _length_sum(partial_primitives):
     """
-    Computes the squareroot of sum of lengths squared.
+    Computes the sum of squareroot of sum of lengths.
     This way, longer lines / bigger circles are preferred.
 
     :param partial_primitives:
@@ -165,10 +165,10 @@ def _length_sum(partial_primitives):
         return 0
     total = 0
     for primitive in partial_primitives.values():
-        if isinstance(primitive, instantiators['line']):
-            total += line_length(primitive)
-        elif isinstance(primitive, instantiators['circle']):
+        if isinstance(primitive, instantiators['circle']):
             total += circumference(primitive)
+        elif isinstance(primitive, instantiators['line']):
+            pass
         else:
             raise Exception()
     return total

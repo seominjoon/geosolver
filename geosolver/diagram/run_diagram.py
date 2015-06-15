@@ -22,25 +22,22 @@ import numpy as np
 __author__ = 'minjoon'
 
 def test_parse_image_segments():
-    question = geoserver_interface.download_questions(1).values()[0]
+    question = geoserver_interface.download_questions([1070]).values()[0]
     image_segment_parse = parse_image_segments(open_image(question.diagram_path))
-    image_segment_parse.display_diagram()
-    image_segment_parse.display_labels()
+    image_segment_parse.diagram_image_segment.display_binarized_segmented_image()
 
 
 def test_parse_primitives():
-    question = geoserver_interface.download_questions([1]).values()[0]
+    question = geoserver_interface.download_questions([1070]).values()[0]
     image_segment_parse = parse_image_segments(open_image(question.diagram_path))
     primitive_parse = parse_primitives(image_segment_parse)
     primitive_parse.display_primitives()
 
 
 def test_select_primitives():
-    questions = geoserver_interface.download_questions(['development']).values()
-    print sum(len(question.words) for question in questions)
-    return
+    questions = geoserver_interface.download_questions(['test']).values()
     parses = []
-    folder_path = "/Users/minjoon/selected/"
+    folder_path = "/Users/minjoon/Desktop/selected/"
     for question in questions:
         print(question.key)
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
@@ -52,7 +49,7 @@ def test_select_primitives():
 
 
 def test_parse_diagram():
-    questions = geoserver_interface.download_questions(['test']).values()
+    questions = geoserver_interface.download_questions([975]).values()
     parses = []
     folder_path = "/Users/minjoon/images/"
     for question in questions:
