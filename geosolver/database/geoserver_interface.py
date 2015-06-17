@@ -160,4 +160,3 @@ def _decode_dict(data):
     return rv
 
 
-geoserver_interface = GeoserverInterface(settings.GEOSERVER_URL)

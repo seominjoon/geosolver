@@ -1,18 +1,13 @@
-import itertools
 import os
 import cv2
-from geosolver.database.geoserver_interface import geoserver_interface
-from geosolver.diagram.computational_geometry import distance_between_points
+from geosolver import geoserver_interface
 from geosolver.diagram.get_instances import get_instances, get_all_instances
-from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.parse_core import parse_core
 from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives
 from geosolver.diagram.select_primitives import select_primitives
-from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.utils import open_image, display_graph
-import numpy as np
 
 __author__ = 'minjoon'
 
@@ -22,6 +17,15 @@ def test_parse_image_segments():
     image_segment_parse.diagram_image_segment.display_binarized_segmented_image()
     for idx, label_image_segment in image_segment_parse.label_image_segments.iteritems():
         label_image_segment.display_segmented_image()
+
+
+def save_parse_image_segments():
+    question = geoserver_interface.download_questions(1037).values()[0]
+    image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+    image = image_segment_parse.diagram_image_segment.segmented_image
+    file_path = "/Users/minjoon/Desktop/diagram.png"
+    cv2.imwrite(file_path, image)
+    image_segment_parse.diagram_image_segment.display_binarized_segmented_image()
 
 
 def test_parse_primitives():
@@ -113,9 +117,10 @@ def test_parse_graph():
 
 if __name__ == "__main__":
     # test_parse_image_segments()
+    save_parse_image_segments()
     # test_parse_primitives()
     # test_select_primitives()
     # save_select_primitives()
     # test_parse_core()
     # save_parse_core()
-    test_parse_graph()
+    # test_parse_graph()
