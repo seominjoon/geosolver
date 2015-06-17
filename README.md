@@ -143,6 +143,6 @@ print(ns.find_assignment(q2))
 ```
 will print out `None`.
 
-Note that you can use `q1 = x == 5` instead of `vh.apply('Equals', x, 5)`. Other operators such as <, >, +, *, -, /, **** (power) are supported as well.
+Note that you can use `q1 = x == 5` instead of `vh.apply('Equals', x, 5)`. Other operators such as <, >, +, *, -, /, *** (power) are supported as well.
 Geometric relations, such as *Perpendicular*, *Tangent*, etc., require `vh.apply` to be used. For a complete list of usable relations, refer to `geosolver.ontology.ontology_semantics` (To be updated soon!).
 
