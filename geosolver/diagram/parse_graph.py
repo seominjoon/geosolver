@@ -2,7 +2,7 @@ import itertools
 from geosolver.diagram.computational_geometry import distance_between_points, distance_between_line_and_point, \
     distance_between_circle_and_point, distance_between_arc_and_point
 from geosolver.diagram.instance_exists import instance_exists
-from geosolver.diagram.states import DiagramParse, GraphParse
+from geosolver.diagram.states import CoreParse, GraphParse
 import networkx as nx
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import LINE_EPS, CIRCLE_EPS
@@ -11,7 +11,7 @@ __author__ = 'minjoon'
 
 
 def parse_graph(diagram_parse):
-    assert isinstance(diagram_parse, DiagramParse)
+    assert isinstance(diagram_parse, CoreParse)
     circle_dict = _get_circle_dict(diagram_parse)
     line_graph = _get_line_graph(diagram_parse)
     arc_graphs = {}
@@ -35,7 +35,7 @@ def _get_circle_dict(diagram_parse):
     """
     # FIXME : this needs to be changed
     eps = CIRCLE_EPS
-    assert isinstance(diagram_parse, DiagramParse)
+    assert isinstance(diagram_parse, CoreParse)
     circle_dict = {}
 
 

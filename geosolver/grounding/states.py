@@ -39,3 +39,8 @@ class GroundedSemanticTree(object):
         self.cost = cost
         self.variables = variables
 
+class Temp(object):
+    def __init__(self, graph_parse, known_labels, match_dict):
+        self.graph_parse = graph_parse
+        self.known_labels = known_labels
+        self.match_dict = match_dict

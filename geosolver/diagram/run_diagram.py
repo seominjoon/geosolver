@@ -6,7 +6,7 @@ from geosolver.diagram.get_evalf_subs import get_evalf_subs
 from geosolver.diagram.computational_geometry import distance_between_points, cartesian_angle
 from geosolver.diagram.get_instances import get_instances, get_all_instances
 from geosolver.diagram.instance_exists import instance_exists
-from geosolver.diagram.parse_diagram import parse_diagram
+from geosolver.diagram.parse_core import parse_core
 from geosolver.diagram.parse_general_diagram import parse_general_diagram
 from geosolver.diagram.parse_general_graph import parse_general_graph
 from geosolver.diagram.parse_graph import parse_graph
@@ -59,7 +59,7 @@ def test_parse_diagram():
         # primitive_parse.display_each_primitive()
         selected = select_primitives(primitive_parse)
         # selected.display_primitives()
-        diagram_parse = parse_diagram(selected)
+        diagram_parse = parse_core(selected)
         image = diagram_parse.get_image_points()
         cv2.imwrite(os.path.join(folder_path, str(question.key) + ".png"), image)
 
@@ -81,7 +81,7 @@ def test_instance_exists():
         # primitive_parse.display_each_primitive()
         selected = select_primitives(primitive_parse)
         selected.display_primitives()
-        diagram_parse = parse_diagram(selected)
+        diagram_parse = parse_core(selected)
         diagram_parse.display_points()
 
         for p0, p1, p2 in itertools.permutations(diagram_parse.intersection_points.values(), 3):
@@ -103,7 +103,7 @@ def test_parse_graph():
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         selected_primitive_parse = select_primitives(primitive_parse)
-        diagram_parse = parse_diagram(selected_primitive_parse)
+        diagram_parse = parse_core(selected_primitive_parse)
         diagram_parse.display_points()
         print("Parsing graph...")
         graph_parse = parse_graph(diagram_parse)
@@ -132,7 +132,7 @@ def test_substitute_variables():
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         selected = select_primitives(primitive_parse)
-        diagram_parse = parse_diagram(selected)
+        diagram_parse = parse_core(selected)
         general_diagram_parse = parse_general_diagram(diagram_parse)
         print(general_diagram_parse.variables)
         diagram_parse.display_points()
@@ -140,14 +140,14 @@ def test_substitute_variables():
 
 
 def test_parse_match():
-    questions = geoserver_interface.download_questions([1])
+    questions = geoserver_interface.download_questions([963])
     for pk, question in questions.iteritems():
         label_data = geoserver_interface.download_labels(pk)[pk]
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         selected_primitive_parse = select_primitives(primitive_parse)
         selected_primitive_parse.display_primitives()
-        diagram_parse = parse_diagram(selected_primitive_parse)
+        diagram_parse = parse_core(selected_primitive_parse)
         print("Parsing graph...")
         graph_parse = parse_graph(diagram_parse)
         print("Graph parsing done.")
@@ -180,10 +180,10 @@ if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
     # test_distance_between_rho_theta_pair_and_point()
-    test_select_primitives()
+    # test_select_primitives()
     # test_parse_diagram()
     # test_instance_exists()
     # test_parse_graph()
-    # test_parse_match()
+    test_parse_match()
     # test_temp()
     # test_substitute_variables()

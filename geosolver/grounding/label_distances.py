@@ -40,14 +40,12 @@ def label_distance_to_angle(label_point, angle):
     caa = cartesian_angle(angle.b, angle.a)
     cam = cartesian_angle(angle.b, label_point)
     cac = cartesian_angle(angle.b, angle.c)
-    print(caa, cam, cac)
     dm = signed_distance_between_cartesian_angles(cam, caa)
     dc = signed_distance_between_cartesian_angles(cac, caa)
     cav = caa + dc/2.0
     if cav > 2*np.pi:
         cav -= 2*np.pi
     cad = min(signed_distance_between_cartesian_angles(cam, cav), signed_distance_between_cartesian_angles(cav, cam))
-    print(cav, cad)
     dist = distance_between_points(label_point, angle.b)
     if dc > dm:
         return dist*(1+cad+dc)

@@ -1,4 +1,5 @@
 import networkx as nx
+from geosolver.ontology import ontology_semantics
 
 __author__ = 'minjoon'
 
@@ -49,10 +50,82 @@ class FunctionNode(object):
     def __init__(self, signature, children):
         self.signature = signature
         for child in children:
-            assert isinstance(child, SetNode)
+            assert isinstance(child, FunctionNode) or isinstance(child, SetNode) or isinstance(child, int) or isinstance(child, float)
         self.children = children
-
         self.return_type = signature.return_type
+
+    def is_leaf(self):
+        return len(self.children) == 0
+
+    def evaluate(self, assignment):
+        if self.is_leaf():
+            return assignment[self.signature.id]
+        else:
+            evaluated_args = []
+            for arg in self.children:
+                if isinstance(arg, FunctionNode):
+                    evaluated_args.append(arg.evaluate(assignment))
+                else:
+                    evaluated_args.append(arg)
+            return getattr(ontology_semantics, self.signature.id)(*evaluated_args)
+
+    def __add__(self, other):
+        current = function_signatures['Add']
+        return FunctionNode(current, [self, other])
+
+    def __radd__(self, other):
+        current = function_signatures['Add']
+        return FunctionNode(current, [other, self])
+
+    def __mul__(self, other):
+        current = function_signatures['Mul']
+        return FunctionNode(current, [self, other])
+
+    def __rmul__(self, other):
+        current = function_signatures['Mul']
+        return FunctionNode(current, [other, self])
+
+    def __sub__(self, other):
+        current = function_signatures['Sub']
+        return FunctionNode(current, [self, other])
+
+    def __rsub__(self, other):
+        current = function_signatures['Sub']
+        return FunctionNode(current, [other, self])
+
+    def __div__(self, other):
+        current = function_signatures['Div']
+        return FunctionNode(current, [self, other])
+
+    def __rdiv__(self, other):
+        current = function_signatures['Div']
+        return FunctionNode(current, [other, self])
+
+    def __pow__(self, power, modulo=None):
+        current = function_signatures['Pow']
+        return FunctionNode(current, [self, power])
+
+    def __rpow__(self, power, modulo=None):
+        current = function_signatures['Pow']
+        return FunctionNode(current, [power, self])
+
+    def __eq__(self, other):
+        current = function_signatures['Equals']
+        return FunctionNode(current, [self, other])
+
+    def __ge__(self, other):
+        current = function_signatures['Ge']
+        return FunctionNode(current, [self, other])
+
+    def __lt__(self, other):
+        current = ontology_semantics.Less.__name__
+        return FunctionNode(current, [self, other])
+
+    def __repr__(self):
+        if self.is_leaf():
+            return repr(self.signature)
+        else:
+            return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
 
 
 class SetNode(object):
@@ -62,7 +135,7 @@ class SetNode(object):
         if members is None:
             members = set([head])
         for member in members:
-            assert isinstance(member, FunctionNode) or isinstance(member, VariableSignature)
+            assert isinstance(member, FunctionNode)
         self.members = members
 
     def is_singular(self):
@@ -100,9 +173,20 @@ def issubtype(child_type, parent_type):
 
 function_signature_tuples = (
     ('IsLine', 'truth', ['line']),
+    ('Point', 'point', ['number', 'number']),
+    ('Line', 'line', ['point', 'point'], None, True),
+    ('Circle', 'line', ['point', 'number']),
+    ('Angle', 'angle', ['point', 'point', 'point']),
+    ('Arc', 'arc', ['circle', 'point', 'point']),
     ('IntersectionOf', 'point', ['entity', 'entity'], None, True),
     ('Is', 'truth', ['root', 'root'], None, True),
     ('Equals', 'truth', ['number', 'number']),
+    ('Add', 'number', ['number', 'number'], None, True),
+    ('Mul', 'number', ['number', 'number'], None, True),
+    ('Sub', 'number', ['number', 'number']),
+    ('Div', 'number', ['number', 'number']),
+    ('Pow', 'number', ['number', 'number']),
+    ('Ge', 'truth', ['number', 'number']),
     ('What', 'number', []),
     ('ValueOf', 'number', ['number']),
     ('IsTriangle', 'truth', ['triangle']),
@@ -119,6 +203,7 @@ function_signature_tuples = (
     ('LengthOf', 'number', ['line']),
     ('Conj', 'truth', ['root', 'root'], None, True),
     ('Same', 'truth', ['entity', 'entity'], None, True),
+    ('MeasureOf', 'number', ['angle']),
 )
 
 def get_function_signatures():

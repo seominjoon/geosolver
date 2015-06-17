@@ -2,22 +2,34 @@ import itertools
 
 from sklearn.cluster import KMeans
 
-from geosolver.diagram.states import PrimitiveParse, DiagramParse
+from geosolver.diagram.states import PrimitiveParse, CoreParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.diagram.computational_geometry import intersections_between_lines, intersections_between_circle_and_line, \
     intersections_between_circles, distance_between_points
 import geosolver.parameters as params
-
+from geosolver.text2.ontology import VariableSignature, FunctionNode
 
 __author__ = 'minjoon'
 
 
-def parse_diagram(primitive_parse):
+def parse_core(primitive_parse):
     all_intersections = _get_all_intersections(primitive_parse, params.INTERSECTION_EPS)
     clustered_intersections = _cluster_intersections(all_intersections, params.KMEANS_RADIUS_THRESHOLD)
     intersections = dict(enumerate(clustered_intersections))
+    point_variables = {}
+    for idx in intersections.keys():
+        id_ = "point_%d" % idx
+        vs = VariableSignature(id_, 'point')
+        point_variables[idx] = FunctionNode(vs, [])
     circles = _get_circles(primitive_parse, intersections)
-    diagram_parse = DiagramParse(primitive_parse, intersections, circles)
+    radius_variables = {}
+    for point_idx, d in circles.iteritems():
+        radius_variables[point_idx] = {}
+        for radius_idx in d.keys():
+            id_ = "radius_%d_%d" % (point_idx, radius_idx)
+            vs = VariableSignature(id_, 'number')
+            radius_variables[point_idx][radius_idx] = FunctionNode(vs, [])
+    diagram_parse = CoreParse(primitive_parse, intersections, point_variables, circles, radius_variables)
     return diagram_parse
 
 
