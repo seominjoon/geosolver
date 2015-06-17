@@ -25,7 +25,6 @@ def save_parse_image_segments():
     image = image_segment_parse.diagram_image_segment.segmented_image
     file_path = "/Users/minjoon/Desktop/diagram.png"
     cv2.imwrite(file_path, image)
-    image_segment_parse.diagram_image_segment.display_binarized_segmented_image()
 
 
 def test_parse_primitives():
@@ -33,6 +32,15 @@ def test_parse_primitives():
     image_segment_parse = parse_image_segments(open_image(question.diagram_path))
     primitive_parse = parse_primitives(image_segment_parse)
     primitive_parse.display_primitives()
+
+
+def save_parse_primitives():
+    question = geoserver_interface.download_questions(1037).values()[0]
+    image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+    primitive_parse = parse_primitives(image_segment_parse)
+    image = primitive_parse.get_image_primitives()
+    file_path = "/Users/minjoon/Desktop/primitives.png"
+    cv2.imwrite(file_path, image)
 
 
 def test_select_primitives():
@@ -117,8 +125,9 @@ def test_parse_graph():
 
 if __name__ == "__main__":
     # test_parse_image_segments()
-    save_parse_image_segments()
+    # save_parse_image_segments()
     # test_parse_primitives()
+    save_parse_primitives()
     # test_select_primitives()
     # save_select_primitives()
     # test_parse_core()
