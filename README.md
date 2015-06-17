@@ -108,7 +108,7 @@ It can be thought as the post-processed parse of the selected primitive parse.
 By parsing the core, we obtain:
 
 ![core]
-(https://github.com/seominjoon/geosolver/blob/master/images/selected.png)
+(https://github.com/seominjoon/geosolver/blob/master/images/core.png)
 
 in which the blue dots are the intersection points.
 
