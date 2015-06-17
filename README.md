@@ -99,7 +99,6 @@ from geosolver.diagram.select_primitives import select_primitives
 selected = select_primitives(primitive_parse)
 selected.display_primitives()
 ```
-
 This is equivalent to `geosolver.diagram.run_diagram.test_select_primitives`.
 
 ### Parsing core
@@ -119,7 +118,6 @@ from geosolver.diagram.parse_core import parse_core
 core_parse = parse_core(selected)
 core_parse.display_points()
 ```
-
 This is equivalent to `geosolver.diagram.run_diagram.test_parse_core`.
 
 ### Parsing graph
@@ -147,7 +145,6 @@ print("Displaying angles...")
 for key, angle in angles.iteritems():
   graph_parse.display_instances([angle])
 ```
-
 This is equivalent to `geosolver.diagram.run_diagram.test_parse_graph`.
 
 
