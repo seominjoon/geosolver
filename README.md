@@ -21,21 +21,21 @@ You can either define it yourself, or more easily, you can download it via GeoSe
 
 1. Make sure that `geosolver.settings.GEOSERVER_URL` has a correct URL. Note that by default this is pointing to a local server, because I am hosting a local server myself.
 2. Import the geoserver interface (an instance of `geosolver.database.geoserver_interface.GeoServerInterface`):
-  ```python
-  from geosolver import geoserver_interface
-  ```
+    ```python
+    from geosolver import geoserver_interface
+    ```
 3. To download all questions tagged 'test' and print the text of each, type:
-  ```python
-questions = geoserver_interface.download_questions('test')
-for id_, question in questions.iteritems():
-  print(question.text)
-```
-  Note that the object returned by `geoserver_interface.download_questions` is a `dict` object.
+    ```python
+    questions = geoserver_interface.download_questions('test')
+    for id_, question in questions.iteritems():
+      print(question.text)
+    ```
+    Note that the object returned by `geoserver_interface.download_questions` is a `dict` object.
 4. To download a single question with specific id (e.g. 1037), type:
-  ```python
-questions = geoserver_interface.download_questions(1037)
-print(questions.values()[0].text)
-```
+    ```python
+    questions = geoserver_interface.download_questions(1037)
+    print(questions.values()[0].text)
+    ```
   Note that, regardless of the number of questions returned by `geoserver_interface.download_questions`, the returned object is always a `dict` object (with possibly single element, like above).
 5. You can access other properties of the question by `question.words`, `question.diagram_path`, and `question.choices`. See Diagram parser section to learn how to use `question.diagram_path`, and see Text parser section to learn how to use `question.words` and `question.choices`.
 
