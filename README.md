@@ -50,11 +50,14 @@ Diagram parsing consists of five finer steps: image segment parsing, primitive p
 ### Parsing image segments
 Image segment parsing is the task of obtaining the diagram segment (and label segments) from the original image.
 For instance, given an original image
+
 ![original image]
-(https://)
+(https://github.com/seominjoon/geosolver/blob/master/images/original.png)
+
 we obtain the diagram segment
+
 ![diagram segment]
-(https://)
+(https://github.com/seominjoon/geosolver/blob/master/images/diagram.png)
 
 To do so, obtain a `Question` object (`question`) and run the following:
 ```python
@@ -68,9 +71,10 @@ This is equivalent to `geosolver.diagram.run_diagram.test_parse_image_segments`.
 ### Parsing primitives from the diagram segment
 Primitive parsing is the task of obtaining over-gernerated, noisy primitives from the diagram segment.
 For instance, given the diagram segment above, we want to obtain
+
 ![primitive parse]
-(https://)
- 
+(https://github.com/seominjoon/geosolver/blob/master/images/primitives.png)
+
 To do so:
 ```python
 image_segment_parse = parse_image_segments(open_image(question.diagram_path))
