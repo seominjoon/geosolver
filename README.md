@@ -16,16 +16,69 @@ Location: `geosolver.database`
 
 Required 3rd-party packages: requests
 
+Every question is a tuple of key, text, words, diagram path, and choices (see `geosolver.database.states.Question`).
+You can either define it yourself, or more easily, you can download it via GeoServer, a web interface for managing and displaying geosolver database. Please refer to the GeoServer repository to see how to set it up.
+
+1. Make sure that `geosolver.settings.GEOSERVER_URL` has a correct URL. Note that by default this is pointing to a local server, because I am hosting a local server myself.
+2. Import the geoserver interface (an instance of `geosolver.database.geoserver_interface.GeoServerInterface`):
+```python
+from geosolver import geoserver_interface
+```
+3. To download all questions tagged 'test' and print the text of each, type:
+```python
+questions = geoserver_interface.download_questions('test')
+for id_, question in questions.iteritems():
+  print(question.text)
+```
+Note that the object returned by `geoserver_interface.download_questions` is a `dict` object.
+4. To download a single question with specific id (e.g. 1037), type:
+```python
+questions = geoserver_interface.download_questions(1037)
+print(questions.values()[0].text)
+```
+Note that, regardless of the number of questions returned by `geoserver_interface.download_questions`, the returned object is always a `dict` object (with possibly single element, like above).
+5. You can access other properties of the question by `question.words`, `question.diagram_path`, and `question.choices`. See Diagram parser section to learn how to use `question.diagram_path`, and see Text parser section to learn how to use `question.words` and `question.choices`.
+
 
 ## Diagram parser
 Location: `geosolver.diagram`
 
 Required 3rd-party packages: numpy, OpenCV 3.0.0 or higher (cv2)
 
-Diagram parsing consists of five finer steps: image segment parsing, primitive paring, primitive selecting, core parsing, and graph parsing. We will explain each of them in detail below.
+Diagram parsing consists of five finer steps: image segment parsing, primitive paring, primitive selecting, core parsing, and graph parsing. We will explain each of them in detail below. You can also refer to `geosolver.diagram.run_diagram` module to see full examples corresponding to these.
 
 ### Parsing image segments
-To be written.
+Image segment parsing is the task of obtaining the diagram segment (and label segments) from the original image.
+For instance, given an original image
+![original image]
+(https://)
+we obtain the diagram segment
+![diagram segment]
+(https://)
+
+To do so, obtain a `Question` object (`question`) and run the following:
+```python
+image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+image_segment_parse.diagram_image_segment.display_binarized_segmented_image()
+for idx, label_image_segment in image_segment_parse.label_image_segments.iteritems():
+  label_image_segment.display_segmented_image()
+```
+This is equivalent to `geosolver.diagram.run_diagram.test_parse_image_segments`.
+
+### Parsing primitives from the diagram segment
+Primitive parsing is the task of obtaining over-gernerated, noisy primitives from the diagram segment.
+For instance, given the diagram segment above, we want to obtain
+![primitive parse]
+(https://)
+ 
+To do so:
+```python
+image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+primitive_parse = parse_primitives(image_segment_parse)
+selected = select_primitives(primitive_parse)
+selected.display_primitives()
+```
+This is equivalent to `geosolver.diagram.run_diagram.test_parse_primitives`.
 
 ## Text parser
 
