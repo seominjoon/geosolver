@@ -24,13 +24,15 @@ def instance_exists(diagram_parse, instance):
 
 
 def _line_exists(diagram_parse, line):
+    # TODO : smarter line_exists function needed (check continuity, etc.)
     eps = LINE_EPS
-    multiplier = 1
+    multiplier = 1.5
     assert isinstance(diagram_parse, CoreParse)
     pixels = diagram_parse.primitive_parse.image_segment_parse.diagram_image_segment.pixels
     near_pixels = set(pixel for pixel in pixels if distance_between_line_and_point(line, pixel) <= eps)
     length = line_length(line)
-    if len(near_pixels) < multiplier*length:
+    ratio = float(len(near_pixels))/length
+    if ratio < multiplier:
         return False
     return True
 
@@ -42,7 +44,8 @@ def _arc_exists(diagram_parse, arc):
     pixels = diagram_parse.primitive_parse.image_segment_parse.diagram_image_segment.pixels
     near_pixels = set(pixel for pixel in pixels if distance_between_arc_and_point(arc, pixel) <= eps)
     length = arc_length(arc)
-    if len(near_pixels) < multiplier*length:
+    ratio = float(len(near_pixels))/length
+    if ratio < multiplier:
         return False
     return True
 

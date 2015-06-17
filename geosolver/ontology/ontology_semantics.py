@@ -2,6 +2,9 @@ import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
+from geosolver.text2.ontology import FunctionNode
+import sys
+this = sys.modules[__name__]
 
 __author__ = 'minjoon'
 
@@ -91,3 +94,14 @@ def PointLiesOnLine(point, line):
     return Colinear(line.a, point, line.b) + Equals(LengthOf(line), distance_between_points(line.a, point) + distance_between_points(line.b, point))
 
 
+def evaluate(function_node, assignment):
+    if function_node.is_leaf():
+        return assignment[function_node.signature.id]
+    else:
+        evaluated_args = []
+        for arg in function_node.children:
+            if isinstance(arg, FunctionNode):
+                evaluated_args.append(evaluate(arg, assignment))
+            else:
+                evaluated_args.append(arg)
+        return getattr(this, function_node.signature.id)(*evaluated_args)

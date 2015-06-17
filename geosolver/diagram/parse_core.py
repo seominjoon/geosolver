@@ -58,6 +58,8 @@ def _cluster_intersections(intersections, radius_threshold):
     :param sigma_threshold:
     :return:
     """
+    if len(intersections) == 0:
+        return []
     n = 1
     while True:
         km = KMeans(n)

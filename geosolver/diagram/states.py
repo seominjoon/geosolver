@@ -33,7 +33,14 @@ class ImageSegment(object):
 
 class ImageSegmentParse(object):
     def __init__(self, original_image, diagram_image_segment, label_image_segments):
+        """
+        :param numpy.ndarray original_image:
+        :param ImageSegment diagram_image_segment:
+        :param dict label_image_segments:
+        :return:
+        """
         assert isinstance(diagram_image_segment, ImageSegment)
+        assert isinstance(label_image_segments, dict)
         self.original_image = original_image
         self.diagram_image_segment = diagram_image_segment
         self.label_image_segments = label_image_segments
@@ -117,35 +124,6 @@ class GraphParse(object):
 
     def display_instances(self, instances, block=True, **kwargs):
         self.image_segment_parse.display_instances(instances, block=block, **kwargs)
-
-
-class GeneralDiagramParse(CoreParse):
-    def __init__(self, diagram_parse, variables, values, intersection_points, circles):
-        """
-        :param diagram_parse:
-        :param intersection_points:
-        :param circles:
-        :param variables: {'points': {1: {'x': symbol('p_1_x') 'y': symbol('p_1_y')}}, 'radii': {1: {0: symbol('r_1_0')}}}
-        :return:
-        """
-        assert isinstance(diagram_parse, CoreParse)
-        self.diagram_parse = diagram_parse
-        self.intersection_points = intersection_points
-        self.circles = circles
-        self.variables = variables
-        self.values = values
-
-
-class GeneralGraphParse(GraphParse):
-    def __init__(self, general_diagram_parse, graph_parse, line_graph, circle_dict, arc_graphs):
-        assert isinstance(general_diagram_parse, GeneralDiagramParse)
-        assert isinstance(graph_parse, GraphParse)
-        self.general_diagram_parse = general_diagram_parse
-        self.graph_parse = graph_parse
-        self.line_graph = line_graph
-        self.circle_dict = circle_dict
-        self.arc_graphs = arc_graphs
-        self.intersection_points = general_diagram_parse.intersection_points
 
 
 class Label:

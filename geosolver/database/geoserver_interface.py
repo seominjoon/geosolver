@@ -14,7 +14,7 @@ class GeoserverInterface(object):
     def __init__(self, server_url):
         self.server_url = server_url
 
-    def download_questions(self, key=None):
+    def download_questions(self, *args):
         """
         key='all': download all
         key=[development,test]: download dev and test
@@ -22,10 +22,10 @@ class GeoserverInterface(object):
         :param key:
         :return:
         """
-        if key is None:
+        if len(args) == 0:
             param = 'all'
         else:
-            param = "+".join(str(x) for x in key)
+            param = "+".join(str(x) for x in args)
         sub_url = "/questions/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, sub_url)
         print "accessing: %s" % request_url

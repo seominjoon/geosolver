@@ -1,5 +1,4 @@
 import networkx as nx
-from geosolver.ontology import ontology_semantics
 
 __author__ = 'minjoon'
 
@@ -57,17 +56,6 @@ class FunctionNode(object):
     def is_leaf(self):
         return len(self.children) == 0
 
-    def evaluate(self, assignment):
-        if self.is_leaf():
-            return assignment[self.signature.id]
-        else:
-            evaluated_args = []
-            for arg in self.children:
-                if isinstance(arg, FunctionNode):
-                    evaluated_args.append(arg.evaluate(assignment))
-                else:
-                    evaluated_args.append(arg)
-            return getattr(ontology_semantics, self.signature.id)(*evaluated_args)
 
     def __add__(self, other):
         current = function_signatures['Add']
@@ -118,7 +106,7 @@ class FunctionNode(object):
         return FunctionNode(current, [self, other])
 
     def __lt__(self, other):
-        current = ontology_semantics.Less.__name__
+        current = function_signatures['Lt']
         return FunctionNode(current, [self, other])
 
     def __repr__(self):
@@ -204,6 +192,12 @@ function_signature_tuples = (
     ('Conj', 'truth', ['root', 'root'], None, True),
     ('Same', 'truth', ['entity', 'entity'], None, True),
     ('MeasureOf', 'number', ['angle']),
+    ('Perpendicular', 'truth', ['line', 'line'], None, True),
+    ('IsChord', 'truth', ['line', 'circle']),
+    ('Tangent', 'truth', ['line', 'circle']),
+    ('IsDiameter', 'truth', ['line', 'circle']),
+    ('RadiusOf', 'number', ['circle']),
+    ('PointLiesOnLine', 'truth', ['point', 'line']),
 )
 
 def get_function_signatures():

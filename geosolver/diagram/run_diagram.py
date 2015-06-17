@@ -2,19 +2,14 @@ import itertools
 import os
 import cv2
 from geosolver.database.geoserver_interface import geoserver_interface
-from geosolver.diagram.get_evalf_subs import get_evalf_subs
-from geosolver.diagram.computational_geometry import distance_between_points, cartesian_angle
+from geosolver.diagram.computational_geometry import distance_between_points
 from geosolver.diagram.get_instances import get_instances, get_all_instances
 from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.parse_core import parse_core
-from geosolver.diagram.parse_general_diagram import parse_general_diagram
-from geosolver.diagram.parse_general_graph import parse_general_graph
 from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
-from geosolver.diagram.parse_primitives import parse_primitives, _distance_between_rho_theta_pair_and_point
+from geosolver.diagram.parse_primitives import parse_primitives
 from geosolver.diagram.select_primitives import select_primitives
-from geosolver.grounding.label_distances import label_distance_to_angle
-from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.utils import open_image, display_graph
 import numpy as np
@@ -22,168 +17,105 @@ import numpy as np
 __author__ = 'minjoon'
 
 def test_parse_image_segments():
-    question = geoserver_interface.download_questions([1070]).values()[0]
+    question = geoserver_interface.download_questions(1037).values()[0]
     image_segment_parse = parse_image_segments(open_image(question.diagram_path))
     image_segment_parse.diagram_image_segment.display_binarized_segmented_image()
+    for idx, label_image_segment in image_segment_parse.label_image_segments.iteritems():
+        label_image_segment.display_segmented_image()
 
 
 def test_parse_primitives():
-    question = geoserver_interface.download_questions([1070]).values()[0]
+    question = geoserver_interface.download_questions(1037).values()[0]
     image_segment_parse = parse_image_segments(open_image(question.diagram_path))
     primitive_parse = parse_primitives(image_segment_parse)
     primitive_parse.display_primitives()
 
 
 def test_select_primitives():
-    questions = geoserver_interface.download_questions(['test']).values()
-    parses = []
-    folder_path = "/Users/minjoon/Desktop/selected/"
-    for question in questions:
-        print(question.key)
+    question_dict = geoserver_interface.download_questions('test')
+    for key in sorted(question_dict.keys()):
+        question = question_dict[key]
+        print(key)
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
-        # primitive_parse.display_each_primitive()
+        selected = select_primitives(primitive_parse)
+        selected.display_primitives()
+
+
+def save_select_primitives():
+    question_dict = geoserver_interface.download_questions('test')
+    folder_path = "/Users/minjoon/Desktop/selected/"
+    for key in sorted(question_dict.keys()):
+        question = question_dict[key]
+        print(key)
+        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
+        primitive_parse = parse_primitives(image_segment_parse)
         selected = select_primitives(primitive_parse)
         image = selected.get_image_primitives()
         cv2.imwrite(os.path.join(folder_path, "%s.png" % str(question.key)), image)
 
 
-def test_parse_diagram():
-    questions = geoserver_interface.download_questions([975]).values()
-    parses = []
-    folder_path = "/Users/minjoon/images/"
-    for question in questions:
-        print(question.key)
+def test_parse_core():
+    question_dict = geoserver_interface.download_questions('test')
+    for key in sorted(question_dict.keys()):
+        question = question_dict[key]
+        print(key)
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
-        # primitive_parse.display_each_primitive()
         selected = select_primitives(primitive_parse)
-        # selected.display_primitives()
-        diagram_parse = parse_core(selected)
-        image = diagram_parse.get_image_points()
-        cv2.imwrite(os.path.join(folder_path, str(question.key) + ".png"), image)
+        core_parse = parse_core(selected)
+        core_parse.display_points()
 
 
-
-def test_distance_between_rho_theta_pair_and_point():
-    rho_theta_pair = (1, np.pi/4)
-    point = instantiators['point'](-1, -1)
-    print(_distance_between_rho_theta_pair_and_point(rho_theta_pair, point))
-
-
-def test_instance_exists():
-    questions = geoserver_interface.download_questions(1).values()
-    parses = []
-    for question in questions[:10]:
-        print(question.key)
+def save_parse_core():
+    question_dict = geoserver_interface.download_questions('test')
+    folder_path = "/Users/minjoon/Desktop/core/"
+    for key in sorted(question_dict.keys()):
+        print(key)
+        question = question_dict[key]
+        file_path = os.path.join(folder_path, str(question.key) + ".png")
+        if os.path.isfile(file_path):
+            continue
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
-        # primitive_parse.display_each_primitive()
         selected = select_primitives(primitive_parse)
-        selected.display_primitives()
-        diagram_parse = parse_core(selected)
-        diagram_parse.display_points()
-
-        for p0, p1, p2 in itertools.permutations(diagram_parse.intersection_points.values(), 3):
-            radius1 = distance_between_points(p0, p1)
-            radius2 = distance_between_points(p0, p2)
-            if abs(radius1-radius2)/(radius1+radius2) < 0.1:
-                radius = (radius1+radius2)/2.0
-                circle = instantiators['circle'](p0, radius)
-                arc = instantiators['arc'](circle, p1, p2)
-                if instance_exists(diagram_parse, arc):
-                    diagram_parse.display_instance(arc)
-
-        parses.append(diagram_parse)
+        core_parse = parse_core(selected)
+        image = core_parse.get_image_points()
+        cv2.imwrite(file_path, image)
 
 
 def test_parse_graph():
-    questions = geoserver_interface.download_questions([1]).values()
+    questions = geoserver_interface.download_questions(1037).values()
     for question in questions:
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         selected_primitive_parse = select_primitives(primitive_parse)
         diagram_parse = parse_core(selected_primitive_parse)
         diagram_parse.display_points()
-        print("Parsing graph...")
         graph_parse = parse_graph(diagram_parse)
-        print("Graph parsing done.")
-        general_diagram_parse = parse_general_diagram(diagram_parse)
-        print(get_evalf_subs(general_diagram_parse.variables, general_diagram_parse.values))
-        general_graph_parse = parse_general_graph(general_diagram_parse, graph_parse)
-        lines = get_all_instances(graph_parse, 'line') # graph_parse can be replaced with general_graph_parse
+        lines = get_all_instances(graph_parse, 'line')
         circles = get_all_instances(graph_parse, 'circle')
         arcs = get_all_instances(graph_parse, 'arc')
         angles = get_all_instances(graph_parse, 'angle')
+        print("Displaying lines...")
         for key, line in lines.iteritems():
-            print(line)
-            print(graph_parse.line_graph[key[0]][key[1]])
-            print(general_graph_parse.line_graph[key[0]][key[1]])
             graph_parse.display_instances([line])
-        for a, b, c in itertools.combinations(graph_parse.diagram_parse.intersection_points, 3):
-            triangles = get_instances(graph_parse, 'triangle', a, b, c)
-            print(triangles)
-            graph_parse.display_instances(triangles.values())
-
-
-def test_substitute_variables():
-    questions = geoserver_interface.download_questions([1]).values()
-    for question in questions:
-        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
-        primitive_parse = parse_primitives(image_segment_parse)
-        selected = select_primitives(primitive_parse)
-        diagram_parse = parse_core(selected)
-        general_diagram_parse = parse_general_diagram(diagram_parse)
-        print(general_diagram_parse.variables)
-        diagram_parse.display_points()
-
-
-
-def test_parse_match():
-    questions = geoserver_interface.download_questions([963])
-    for pk, question in questions.iteritems():
-        label_data = geoserver_interface.download_labels(pk)[pk]
-        image_segment_parse = parse_image_segments(open_image(question.diagram_path))
-        primitive_parse = parse_primitives(image_segment_parse)
-        selected_primitive_parse = select_primitives(primitive_parse)
-        selected_primitive_parse.display_primitives()
-        diagram_parse = parse_core(selected_primitive_parse)
-        print("Parsing graph...")
-        graph_parse = parse_graph(diagram_parse)
-        print("Graph parsing done.")
-        general_diagram_parse = parse_general_diagram(diagram_parse)
-        # print(get_evalf_subs(general_diagram_parse.variables, values))
-        general_graph_parse = parse_general_graph(general_diagram_parse, graph_parse)
-        match_parse = parse_match_from_known_labels(general_graph_parse, label_data)
-        # print(match_parse.match_graph['A']['B'])
-        for label in match_parse.label_strings:
-            formula_keys = match_parse.match_graph[label].keys()
-            print(formula_keys)
-            print(label)
-            print([match_parse.formulas[key] for key in formula_keys])
-        # print(general_diagram_parse.variables)
-        diagram_parse.display_points()
-
-def test_temp():
-    pa = instantiators['point'](1,2)
-    pb = instantiators['point'](0,0)
-    pc = instantiators['point'](-2,1)
-    pp = instantiators['point'](0,2)
-    angle = instantiators['angle'](pa, pb, pc)
-    print(label_distance_to_angle(pp, angle))
-
-
-
+        print("Displaying circles...")
+        for key, circle in circles.iteritems():
+            graph_parse.display_instances([circle])
+        print("Displaying arcs...")
+        for key, arc in arcs.iteritems():
+            graph_parse.display_instances([arc])
+        print("Displaying angles...")
+        for key, angle in angles.iteritems():
+            graph_parse.display_instances([angle])
 
 
 if __name__ == "__main__":
     # test_parse_image_segments()
     # test_parse_primitives()
-    # test_distance_between_rho_theta_pair_and_point()
     # test_select_primitives()
-    # test_parse_diagram()
-    # test_instance_exists()
-    # test_parse_graph()
-    test_parse_match()
-    # test_temp()
-    # test_substitute_variables()
+    # save_select_primitives()
+    # test_parse_core()
+    # save_parse_core()
+    test_parse_graph()

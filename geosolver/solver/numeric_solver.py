@@ -1,6 +1,9 @@
 from scipy.optimize import minimize
-from geosolver.solver.variable_handler import VariableHandler, VariableNode
 import numpy as np
+
+from geosolver.ontology.ontology_semantics import evaluate
+from geosolver.solver.variable_handler import VariableHandler
+from geosolver.text2.ontology import FunctionNode
 
 __author__ = 'minjoon'
 
@@ -26,7 +29,7 @@ class NumericSolver(object):
             self.assigned = True
         if not self.assignment:
             return False
-        return query_atom.evaluate(self.assignment).norm < self.tol
+        return evaluate(query_atom, self.assignment).norm < self.tol
 
     def find_assignment(self, query_atom):
         return find_assignment(self.variable_handler, self.atoms + [query_atom], self.max_num_resets, self.tol)
@@ -37,15 +40,15 @@ class NumericSolver(object):
             self.assigned = True
 
         assert self.assignment is not None
-        return variable_node.evaluate(self.assignment)
+        return evaluate(variable_node, self.assignment)
 
 
 def query(variable_handler, prior_atoms, query_atom, max_num_resets=10, tol=10**-3, verbose=False):
     assert isinstance(variable_handler, VariableHandler)
-    assert isinstance(query_atom, VariableNode)
+    assert isinstance(query_atom, FunctionNode)
     prior_assignment, prior_sat = find_assignment(variable_handler, prior_atoms, max_num_resets, tol, verbose)
 
-    unique = prior_sat and query_atom.evaluate(prior_assignment).norm < tol
+    unique = prior_sat and evaluate(query_atom, prior_assignment).norm < tol
     all_assignment, sat = find_assignment(variable_handler, prior_atoms + [query_atom], max_num_resets, tol, verbose)
 
     if unique:
@@ -62,7 +65,7 @@ def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=False)
     init = variable_handler.dict_to_vector()
 
     def func(vector):
-        return sum(atom.evaluate(variable_handler.vector_to_dict(vector)).norm for atom in atoms)
+        return sum(evaluate(atom, variable_handler.vector_to_dict(vector)).norm for atom in atoms)
 
     for i in range(max_num_resets):
         result = minimize(func, init, method='SLSQP', options={'ftol': 10**-9, 'maxiter': 1000})
@@ -77,5 +80,3 @@ def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=False)
     if fun > tol:
         return None
     return variable_handler.vector_to_dict(result.x)
-
-

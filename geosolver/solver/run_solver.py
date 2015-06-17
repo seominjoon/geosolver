@@ -1,5 +1,5 @@
-from geosolver.solver.numeric_solver import query, find_assignment, NumericSolver
-from geosolver.solver.variable_handler import VariableHandler, TempHandler
+from geosolver.solver.numeric_solver import NumericSolver
+from geosolver.solver.variable_handler import VariableHandler
 import numpy as np
 
 __author__ = 'minjoon'
@@ -9,7 +9,7 @@ def example_0():
     AB = x, BC = 3, CA = 4. Is an answer x=5, x=8 possible?
     :return:
     """
-    vh = TempHandler()
+    vh = VariableHandler()
     x = vh.number('x')
     A = vh.point('A')
     B = vh.point('B')
@@ -123,4 +123,4 @@ def example_3():
 
 
 if __name__ == "__main__":
-    example_3()
+    example_0()
