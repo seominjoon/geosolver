@@ -5,7 +5,9 @@ from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.states import CoreParse, GraphParse
 import networkx as nx
 from geosolver.ontology.instantiator_definitions import instantiators
+from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.parameters import LINE_EPS, CIRCLE_EPS
+from geosolver.text2.ontology import FunctionNode, function_signatures
 
 __author__ = 'minjoon'
 
@@ -81,6 +83,7 @@ def _get_line_graph(diagram_parse):
             line_graph.add_edge(key0, key1, instance=line, points=points)
     return line_graph
 
+
 def _get_arc_graph(diagram_parse, circle, circle_points):
     """
     Directional arc graph.
@@ -103,3 +106,23 @@ def _get_arc_graph(diagram_parse, circle, circle_points):
             arc_graph.add_edge(key0, key1, instance=arc, points=arc_points)
     return arc_graph
 
+
+def _get_confident_variable_nodes(core_parse, line_graph):
+    assert isinstance(core_parse, CoreParse)
+    confident_variable_nodes = []
+
+    # Get point-lies-on-line function nodes
+    for from_key, to_key, data in line_graph.edges(data=True):
+        line = data['instance']
+        line_variable = FunctionNode(function_signatures['Line'],
+                                     [core_parse.point_variables[from_key], core_parse.point_variables[to_key]])
+        for mid_key, point in core_parse.intersection_points.iteritems():
+            if mid_key == from_key or mid_key == to_key:
+                continue
+            point_variable = core_parse.point_variables[mid_key]
+            function_node = FunctionNode(function_signatures['PointLiesOnLine'], [line, point])
+            variable_node = FunctionNode(function_signatures['PointLiesOnLine'], [line_variable, point_variable])
+            if evaluate(function_node, core_parse.assignment) > 0.9:
+                confident_variable_nodes.append(variable_node)
+
+    return confident_variable_nodes

@@ -20,7 +20,7 @@ def save_graph_image(graph, path):
 def get_graph_image(graph):
     """
     Returns an image of graph.
-    Currently not optimized, as it saves to a temp directory then loads it again.
+    Currently not optimized, as it saves to a parse_match_from_known_labels directory then loads it again.
     If direct conversion to image is found for pydot_graph, please implement it instead.
 
     :param nx.Graph graph:
