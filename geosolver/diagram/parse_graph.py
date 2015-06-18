@@ -122,7 +122,8 @@ def _get_confident_variable_nodes(core_parse, line_graph):
             point_variable = core_parse.point_variables[mid_key]
             function_node = FunctionNode(function_signatures['PointLiesOnLine'], [line, point])
             variable_node = FunctionNode(function_signatures['PointLiesOnLine'], [line_variable, point_variable])
-            if evaluate(function_node, core_parse.assignment) > 0.9:
+            confidence = evaluate(function_node, core_parse.assignment).conf
+            if confidence > 0.9:
                 confident_variable_nodes.append(variable_node)
 
     return confident_variable_nodes
