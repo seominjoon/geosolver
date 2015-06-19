@@ -85,7 +85,7 @@ class PrimitiveParse(object):
 
 
 class CoreParse(object):
-    def __init__(self, primitive_parse, intersection_points, point_variables, circles, radius_variables):
+    def __init__(self, primitive_parse, intersection_points, point_variables, circles, radius_variables, assignment):
         assert isinstance(primitive_parse, PrimitiveParse)
         self.image_segment_parse = primitive_parse.image_segment_parse
         self.primitive_parse = primitive_parse
@@ -93,6 +93,7 @@ class CoreParse(object):
         self.circles = circles
         self.point_variables = point_variables
         self.radius_variables = radius_variables
+        self.variable_assignment = assignment
 
     def get_image_points(self, **kwargs):
         image = self.image_segment_parse.get_colored_original_image()
@@ -110,7 +111,7 @@ class CoreParse(object):
 
 class GraphParse(object):
     # TODO :
-    def __init__(self, diagram_parse, line_graph, circle_dict, arc_graphs):
+    def __init__(self, diagram_parse, line_graph, circle_dict, arc_graphs, confident_variable_nodes):
         assert isinstance(diagram_parse, CoreParse)
         self.diagram_parse = diagram_parse
         self.primitive_parse = diagram_parse.primitive_parse
@@ -121,6 +122,7 @@ class GraphParse(object):
         self.intersection_points = diagram_parse.intersection_points
         self.point_variables = diagram_parse.point_variables
         self.radius_variables = diagram_parse.radius_variables
+        self.confident_variable_nodes = confident_variable_nodes
 
     def display_instances(self, instances, block=True, **kwargs):
         self.image_segment_parse.display_instances(instances, block=block, **kwargs)

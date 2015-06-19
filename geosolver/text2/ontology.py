@@ -48,8 +48,6 @@ class VariableSignature(Signature):
 class FunctionNode(object):
     def __init__(self, signature, children):
         self.signature = signature
-        for child in children:
-            assert isinstance(child, FunctionNode) or isinstance(child, SetNode) or isinstance(child, int) or isinstance(child, float)
         self.children = children
         self.return_type = signature.return_type
 
@@ -198,6 +196,7 @@ function_signature_tuples = (
     ('IsDiameter', 'truth', ['line', 'circle']),
     ('RadiusOf', 'number', ['circle']),
     ('PointLiesOnLine', 'truth', ['point', 'line']),
+    ('PointLiesOnCircle', 'truth', ['point', 'circle']),
 )
 
 def get_function_signatures():

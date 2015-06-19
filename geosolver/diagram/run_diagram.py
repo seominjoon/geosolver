@@ -97,14 +97,19 @@ def save_parse_core():
 
 
 def test_parse_graph():
-    questions = geoserver_interface.download_questions(1037).values()
+    questions = geoserver_interface.download_questions(973).values()
     for question in questions:
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         selected_primitive_parse = select_primitives(primitive_parse)
         diagram_parse = parse_core(selected_primitive_parse)
-        diagram_parse.display_points()
         graph_parse = parse_graph(diagram_parse)
+
+        print("Confident information in the diagram:")
+        for variable_node in graph_parse.confident_variable_nodes:
+            print variable_node
+
+        diagram_parse.display_points()
         lines = get_all_instances(graph_parse, 'line')
         circles = get_all_instances(graph_parse, 'circle')
         arcs = get_all_instances(graph_parse, 'arc')
@@ -127,9 +132,9 @@ if __name__ == "__main__":
     # test_parse_image_segments()
     # save_parse_image_segments()
     # test_parse_primitives()
-    save_parse_primitives()
+    # save_parse_primitives()
     # test_select_primitives()
     # save_select_primitives()
     # test_parse_core()
     # save_parse_core()
-    # test_parse_graph()
+    test_parse_graph()

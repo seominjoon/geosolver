@@ -16,11 +16,13 @@ def parse_core(primitive_parse):
     all_intersections = _get_all_intersections(primitive_parse, params.INTERSECTION_EPS)
     clustered_intersections = _cluster_intersections(all_intersections, params.KMEANS_RADIUS_THRESHOLD)
     intersections = dict(enumerate(clustered_intersections))
+    assignment = {}
     point_variables = {}
     for idx in intersections.keys():
         id_ = "point_%d" % idx
         vs = VariableSignature(id_, 'point')
         point_variables[idx] = FunctionNode(vs, [])
+        assignment[id_] = intersections[idx]
     circles = _get_circles(primitive_parse, intersections)
     radius_variables = {}
     for point_idx, d in circles.iteritems():
@@ -29,8 +31,9 @@ def parse_core(primitive_parse):
             id_ = "radius_%d_%d" % (point_idx, radius_idx)
             vs = VariableSignature(id_, 'number')
             radius_variables[point_idx][radius_idx] = FunctionNode(vs, [])
-    diagram_parse = CoreParse(primitive_parse, intersections, point_variables, circles, radius_variables)
-    return diagram_parse
+            assignment[id_] = circles[point_idx][radius_idx].radius
+    core_parse = CoreParse(primitive_parse, intersections, point_variables, circles, radius_variables, assignment)
+    return core_parse
 
 
 def _get_all_intersections(primitive_parse, eps):
