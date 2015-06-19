@@ -9,9 +9,11 @@ __author__ = 'minjoon'
 
 
 class NumericSolver(object):
-    def __init__(self, variable_handler, prior_atoms, max_num_resets=10, tol=10**-3):
+    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=10, tol=10**-3):
+        if variable_handler is None:
+            variable_handler = VariableHandler()
         self.variable_handler = variable_handler
-        self.atoms = prior_atoms
+        self.atoms = [variable_handler.add(prior_atom) for prior_atom in prior_atoms]
         self.max_num_resets = max_num_resets
         self.tol = tol
         self.assignment = None
@@ -24,6 +26,7 @@ class NumericSolver(object):
         return self.assignment is not None
 
     def query_invar(self, query_atom):
+        query_atom = self.variable_handler.add(query_atom)
         if not self.assigned:
             self.assignment = find_assignment(self.variable_handler, self.atoms, self.max_num_resets, self.tol)
             self.assigned = True
@@ -32,9 +35,11 @@ class NumericSolver(object):
         return evaluate(query_atom, self.assignment).norm < self.tol
 
     def find_assignment(self, query_atom):
+        query_atom = self.variable_handler.add(query_atom)
         return find_assignment(self.variable_handler, self.atoms + [query_atom], self.max_num_resets, self.tol)
 
     def evaluate(self, variable_node):
+        variable_node = self.variable_handler.add(variable_node)
         if not self.assigned:
             self.assignment = find_assignment(self.variable_handler, self.atoms, self.max_num_resets, self.tol)
             self.assigned = True

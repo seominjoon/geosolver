@@ -1,8 +1,11 @@
 from geosolver import geoserver_interface
+from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.grounding.ground_atoms import ground_atoms
 from geosolver.grounding.parse_match_atoms import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
+from geosolver.solver.numeric_solver import NumericSolver
+from geosolver.solver.variable_handler import VariableHandler
 from geosolver.text2.ontology import FunctionNode, function_signatures, VariableSignature
 from geosolver.utils import open_image
 
@@ -48,6 +51,36 @@ def test_ground_atoms():
     graph_parse = diagram_to_graph_parse(diagram)
     match_parse = parse_match_from_known_labels(graph_parse, label_data)
 
+    AB = v('AB', 'line')
+    AC = v('AC', 'line')
+    BC = v('BC', 'line')
+    ED = v('ED', 'line')
+    AE = v('AE', 'line')
+    E = v('E', 'point')
+    D = v('D', 'point')
+    x = v('x', 'number')
+    p1 = f('LengthOf', AB) == f('LengthOf', AC)
+    p2 = f('IsMidpointOf', E, AB)
+    p3 = f('IsMidpointOf', D, AC)
+    p4 = f('LengthOf', AE) == x
+    p5 = f('LengthOf', ED) == 4
+    qn = f('LengthOf', BC)
+
+    grounded_atoms = ground_atoms(match_parse, [p1, p2, p3, p4, p5, qn])
+    for grounded_atom in grounded_atoms:
+        print grounded_atom
+
+    graph_parse.core_parse.display_points()
+
+def test_solving():
+    pk = 973
+    questions = geoserver_interface.download_questions(pk)
+    question = questions.values()[0]
+
+    label_data = geoserver_interface.download_labels(pk)[pk]
+    diagram = open_image(question.diagram_path)
+    graph_parse = diagram_to_graph_parse(diagram)
+    match_parse = parse_match_from_known_labels(graph_parse, label_data)
 
     AB = v('AB', 'line')
     AC = v('AC', 'line')
@@ -58,16 +91,20 @@ def test_ground_atoms():
     D = v('D', 'point')
     x = v('x', 'number')
     p1 = f('LengthOf', AB) == f('LengthOf', AC)
+    p2 = f('IsMidpointOf', E, AB)
+    p3 = f('IsMidpointOf', D, AC)
     p4 = f('LengthOf', AE) == x
     p5 = f('LengthOf', ED) == 4
+    qn = f('LengthOf', BC)
+    confident_atoms = parse_confident_atoms(graph_parse)
+    text_atoms = ground_atoms(match_parse, [p1, p2, p3, p4, p5])
+    atoms = confident_atoms + text_atoms
+    grounded_qn = ground_atoms(match_parse, [qn])[0]
 
-    grounded_atoms = ground_atoms(match_parse, [p1, p4, p5])
-    for grounded_atom in grounded_atoms:
-        print grounded_atom
+    ns = NumericSolver(atoms)
 
-    graph_parse.core_parse.display_points()
-
+    print ns.evaluate(grounded_qn)
 
 if __name__ == "__main__":
     # test_parse_match_from_known_labels()
-    test_ground_atoms()
+    test_solving()

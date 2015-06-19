@@ -25,7 +25,7 @@ def example_0():
     p3 = c == x
     q1 = x == 8
     q2 = x == 5
-    ns = NumericSolver(vh, [p1, p2, p3])
+    ns = NumericSolver([p1, p2, p3], vh)
     print(ns.find_assignment(q1))
     print(ns.find_assignment(q2))
 
@@ -51,7 +51,7 @@ def example_1():
     q1 = b == (16 + x**2)**0.5
     q2 = b == x**2
 
-    ns = NumericSolver(vh, [p1, p2, p3])
+    ns = NumericSolver([p1, p2, p3], vh)
     print(ns.find_assignment(q1))  # find_assignment simply analyzes whether the query relation can be satisfied
     print(ns.query_invar(q1))  # query_invar analyzes whether the query relation must hold true
     print(ns.find_assignment(q2))  # this is satisfiable; there exists x that satisfies q2.
@@ -79,7 +79,7 @@ def example_2():
     p2 = b == 1
     p3 = o == np.sqrt(2)
     p4 = vh.apply('Tangent', AB, cO)
-    ns = NumericSolver(vh, [p1, p2, p3, p4])
+    ns = NumericSolver([p1, p2, p3, p4], vh)
     ans = vh.apply('RadiusOf', cO)
     if ns.is_sat():
         print ns.evaluate(ans), 1/np.sqrt(2)  # the latter is the true answer
@@ -108,13 +108,13 @@ def example_3():
     cO = vh.circle(O)
     p1 = vh.apply('RadiusOf', cO) == 5  # Equals(RadiusOf(cO), 5))
     p2 = vh.apply('LengthOf', CE) == 2  # Equals(LengthOf(CE), 2)
-    p3 = vh.apply('IsDiameter', AC, cO)
-    p4 = vh.apply('IsChord', BD, cO)
+    p3 = vh.apply('IsDiameterLineOf', AC, cO)
+    p4 = vh.apply('IsChordOf', BD, cO)
     p5 = vh.apply('Perpendicular', AC, BD)
     p6 = vh.apply('PointLiesOnLine', E, AC)  # AC intersects BD at E is broken down into two atoms
     p7 = vh.apply('PointLiesOnLine', E, BD)
     ps = [p1, p2, p3, p4, p5, p6, p7]
-    ns = NumericSolver(vh, ps)
+    ns = NumericSolver(ps, vh)
     ans = vh.apply('LengthOf', BD)
     if ns.is_sat():
         print ns.evaluate(ans), 8  # 8 is the answer
@@ -123,4 +123,4 @@ def example_3():
 
 
 if __name__ == "__main__":
-    example_0()
+    example_3()

@@ -35,7 +35,7 @@ def _ground_leaf(match_parse, leaf, return_type):
     assert isinstance(match_parse, MatchParse)
     variable_signature = leaf.signature
     if return_type == 'number':
-        return variable_signature
+        return FunctionNode(variable_signature, [])
     elif return_type == 'point':
         return match_parse.match_dict[variable_signature.id][0]
     elif return_type == 'line':

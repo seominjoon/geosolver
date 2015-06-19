@@ -74,14 +74,14 @@ def Tangent(line, circle):
     d = distance_between_line_and_point(line, circle.center)
     return Equals(d, circle.radius)
 
-def IsDiameter(line, circle):
-    return IsChord(line, circle) + Equals(LengthOf(line), 2*circle.radius)
+def IsDiameterLineOf(line, circle):
+    return IsChordOf(line, circle) + Equals(LengthOf(line), 2*circle.radius)
 
 def PointLiesOnCircle(point, circle):
     d = distance_between_points(point, circle.center)
     return Equals(d, circle.radius)
 
-def IsChord(line, circle):
+def IsChordOf(line, circle):
     return PointLiesOnCircle(line.a, circle) + PointLiesOnCircle(line.b, circle)
 
 def Perpendicular(l1, l2):
@@ -92,6 +92,11 @@ def Colinear(A, B, C):
 
 def PointLiesOnLine(point, line):
     return Colinear(line.a, point, line.b) + Equals(LengthOf(line), distance_between_points(line.a, point) + distance_between_points(line.b, point))
+
+def IsMidpointOf(point, line):
+    line_a = Line(line.a, point)
+    line_b = Line(point, line.b)
+    return Equals(LengthOf(line_a), LengthOf(line_b)) + PointLiesOnLine(point, line)
 
 
 def evaluate(function_node, assignment):
