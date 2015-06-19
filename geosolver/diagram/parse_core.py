@@ -110,7 +110,7 @@ def _get_circles(primitive_parse, intersection_points):
     A dictionary of dictionaries, where key of the top dictionary is center point.
     The bottom dictionary contains radii (if multiple circles exist with the same center).
 
-    :param diagram_parse:
+    :param core_parse:
     :return:
     """
     eps = params.CIRCLE_EPS

@@ -4,7 +4,7 @@ from geosolver.grounding.label_distances import label_distance_to_line, label_di
     label_distance_to_angle
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FunctionNode, function_signatures
+from geosolver.text2.ontology import FunctionNode, function_signatures, issubtype
 
 __author__ = 'minjoon'
 
@@ -14,6 +14,7 @@ def parse_match_from_known_labels(graph_parse, known_labels):
     match_dict = {}
     offset = graph_parse.image_segment_parse.diagram_image_segment.offset
     for idx, d in enumerate(known_labels):
+        label = d['label']
         x = d['x'] - offset[0]
         y = d['y'] - offset[1]
         label_point = instantiators['point'](x, y)
@@ -63,12 +64,11 @@ def parse_match_from_known_labels(graph_parse, known_labels):
             a_point = graph_parse.point_variables[a_key]
             b_point = graph_parse.point_variables[b_key]
             formula = FunctionNode(function_signatures['Arc'], [circle, a_point, b_point])
+        if label not in match_dict:
+            match_dict[label] = []
+        elif issubtype(formula.return_type, 'entity'):
+            raise Exception()
+        match_dict[label].append(formula)
 
-        # add edge between label and formula
-        match_dict[idx] = formula
-
-    match_parse = MatchParse(graph_parse, known_labels, match_dict)
+    match_parse = MatchParse(graph_parse, match_dict)
     return match_parse
-
-
-

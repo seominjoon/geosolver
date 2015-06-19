@@ -111,18 +111,17 @@ class CoreParse(object):
 
 class GraphParse(object):
     # TODO :
-    def __init__(self, diagram_parse, line_graph, circle_dict, arc_graphs, confident_variable_nodes):
-        assert isinstance(diagram_parse, CoreParse)
-        self.diagram_parse = diagram_parse
-        self.primitive_parse = diagram_parse.primitive_parse
-        self.image_segment_parse = diagram_parse.primitive_parse.image_segment_parse
+    def __init__(self, core_parse, line_graph, circle_dict, arc_graphs):
+        assert isinstance(core_parse, CoreParse)
+        self.core_parse = core_parse
+        self.primitive_parse = core_parse.primitive_parse
+        self.image_segment_parse = core_parse.primitive_parse.image_segment_parse
         self.line_graph = line_graph  # Undirected graph
         self.circle_dict = circle_dict
         self.arc_graphs = arc_graphs  # Directed graph
-        self.intersection_points = diagram_parse.intersection_points
-        self.point_variables = diagram_parse.point_variables
-        self.radius_variables = diagram_parse.radius_variables
-        self.confident_variable_nodes = confident_variable_nodes
+        self.intersection_points = core_parse.intersection_points
+        self.point_variables = core_parse.point_variables
+        self.radius_variables = core_parse.radius_variables
 
     def display_instances(self, instances, block=True, **kwargs):
         self.image_segment_parse.display_instances(instances, block=block, **kwargs)

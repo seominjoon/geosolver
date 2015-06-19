@@ -2,6 +2,7 @@ import os
 import cv2
 from geosolver import geoserver_interface
 from geosolver.diagram.get_instances import get_instances, get_all_instances
+from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.parse_core import parse_core
 from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
@@ -102,14 +103,14 @@ def test_parse_graph():
         image_segment_parse = parse_image_segments(open_image(question.diagram_path))
         primitive_parse = parse_primitives(image_segment_parse)
         selected_primitive_parse = select_primitives(primitive_parse)
-        diagram_parse = parse_core(selected_primitive_parse)
-        graph_parse = parse_graph(diagram_parse)
+        core_parse = parse_core(selected_primitive_parse)
+        graph_parse = parse_graph(core_parse)
 
         print("Confident information in the diagram:")
-        for variable_node in graph_parse.confident_variable_nodes:
+        for variable_node in parse_confident_atoms(graph_parse):
             print variable_node
 
-        diagram_parse.display_points()
+        core_parse.display_points()
         lines = get_all_instances(graph_parse, 'line')
         circles = get_all_instances(graph_parse, 'circle')
         arcs = get_all_instances(graph_parse, 'arc')
