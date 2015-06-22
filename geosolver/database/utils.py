@@ -1,6 +1,7 @@
 from zipfile import ZipFile
+
 from geosolver.database.states import Question
-from geosolver.utils import get_number_string
+from geosolver.utils.prep import get_number_string
 
 __author__ = 'minjoon'
 

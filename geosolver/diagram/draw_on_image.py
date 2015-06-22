@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
+
 from geosolver.diagram.computational_geometry import cartesian_angle, line_length
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.utils import round_vector
+from geosolver.utils.num import round_vector
 
 __author__ = 'minjoon'
 

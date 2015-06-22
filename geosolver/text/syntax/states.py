@@ -1,5 +1,5 @@
 from geosolver.text.syntax.misc import syntax_display_graphs, syntax_save_graphs
-from geosolver.utils import display_graph
+from geosolver.utils.prep import display_graph
 
 __author__ = 'minjoon'
 

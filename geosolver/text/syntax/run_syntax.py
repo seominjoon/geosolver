@@ -1,11 +1,12 @@
 import os
+
 from geosolver.database.geoserver_interface import geoserver_interface
 from geosolver.text.lexer.get_lexical_parses import get_lexical_parses
 from geosolver.text.lexer.string_to_tokens import string_to_tokens
 from geosolver.text.syntax.create_syntax import create_syntax
 from geosolver.text.syntax.get_syntax_paths import get_syntax_paths
 from geosolver.text.syntax.parsers import stanford_parser
-from geosolver.utils import display_graph, get_number_string
+from geosolver.utils.prep import get_number_string
 from geosolver.text.syntax.states import SyntaxTree
 
 __author__ = 'minjoon'

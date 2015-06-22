@@ -1,8 +1,7 @@
-from collections import namedtuple
 import networkx as nx
+
 from geosolver.ontology import shared
-from geosolver.ontology.instantiator_definitions import instantiator_defs
-from geosolver.utils import display_graph
+from geosolver.utils.prep import display_graph
 
 __author__ = 'minjoon'
 

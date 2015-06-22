@@ -1,14 +1,16 @@
 import os
+
 import cv2
+
 from geosolver import geoserver_interface
-from geosolver.diagram.get_instances import get_instances, get_all_instances
+from geosolver.diagram.get_instances import get_all_instances
 from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.parse_core import parse_core
 from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives
 from geosolver.diagram.select_primitives import select_primitives
-from geosolver.utils import open_image, display_graph
+from geosolver.utils.prep import open_image
 
 __author__ = 'minjoon'
 

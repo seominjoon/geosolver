@@ -1,9 +1,9 @@
 from scipy import ndimage
 import cv2
 import numpy as np
+
 from geosolver.diagram.states import ImageSegment, ImageSegmentParse
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.utils import block_display
 
 __author__ = 'minjoon'
 

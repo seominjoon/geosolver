@@ -1,7 +1,6 @@
-from geosolver.ontology.states import Function
 from geosolver.text.lexer.states import Token
-from geosolver.text.syntax.states import SyntaxTree, Syntax, SyntaxPath
-from geosolver.utils import display_graph, display_graphs
+from geosolver.text.syntax.states import Syntax, SyntaxPath
+from geosolver.utils.prep import display_graph, display_graphs
 
 __author__ = 'minjoon'
 

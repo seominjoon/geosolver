@@ -6,8 +6,7 @@ from geosolver.diagram.computational_geometry import dot_distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import hough_line_parameters as line_params
 from geosolver.parameters import hough_circle_parameters as circle_params
-from geosolver.utils import dimension_wise_non_maximum_suppression
-
+from geosolver.utils.num import dimension_wise_non_maximum_suppression
 
 __author__ = 'minjoon'
 

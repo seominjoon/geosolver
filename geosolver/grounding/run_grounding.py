@@ -5,9 +5,8 @@ from geosolver.grounding.ground_atoms import ground_atoms
 from geosolver.grounding.parse_match_atoms import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.solver.numeric_solver import NumericSolver
-from geosolver.solver.variable_handler import VariableHandler
 from geosolver.text2.ontology import FunctionNode, function_signatures, VariableSignature
-from geosolver.utils import open_image
+from geosolver.utils.prep import open_image
 
 __author__ = 'minjoon'
 

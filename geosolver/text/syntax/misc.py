@@ -2,7 +2,8 @@
 Non-important (usually for debugging) methods
 """
 import os
-from geosolver.utils import display_graph, block_display, save_graph_image, get_number_string
+
+from geosolver.utils.prep import display_graph, block_display, save_graph_image, get_number_string
 
 __author__ = 'minjoon'
 

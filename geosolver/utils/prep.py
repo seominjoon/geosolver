@@ -1,13 +1,15 @@
 """
-Contains general purpose util functions.
-Ideally, this will be made into a separate package later.
+Preprocessing utils to obtain appropriate format for question text and diagram.
 """
 import os
+import tempfile
+import re
+
 import cv2
 import networkx as nx
-import tempfile
-import numpy as np
 from PIL import Image
+import requests
+from geosolver import settings
 
 __author__ = 'minjoon'
 
@@ -98,41 +100,6 @@ def display_image(image, title="", block=True):
         block_display()
 
 
-def round_vector(vector):
-    return tuple(int(round(x)) for x in vector)
-
-
-def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distances):
-    """
-    Performs dimension-wise non maximum suppression.
-    vectors is a list of n-dimensional vectors (lists), and
-    radii is an n-dimensional vector indicating the radius for each dimension.
-    dimension_wise_distances is a function returning distance vector between two vectors.
-    Ex. Euclidean dimension-wise distance between (1,2) and (4,1) is (3,1).
-
-    :param vectors:
-    :param radii:
-    :return:
-    """
-    out_vectors = []
-    if len(vectors) == 0:
-        return out_vectors
-    assert len(vectors[0]) == len(radii)
-
-    for vector in vectors:
-        cond = True
-        for vector2 in out_vectors:
-            distance_vector = dimension_wise_distances(vector, vector2)
-            if all(x <= radii[i] for i, x in enumerate(distance_vector)):
-                cond = False
-                break
-
-        if cond:
-            out_vectors.append(vector)
-
-    return out_vectors
-
-
 def get_number_string(n, w):
     """
 
@@ -147,3 +114,80 @@ def index_by_list(data, indices):
     for index in indices:
         out = out[index]
     return out
+
+def stanford_tokenizer(paragraph, server_url=None):
+    if server_url is None:
+        server_url = settings.STANFORD_TOKENIZER_URL
+    print paragraph
+    params = {"paragraph": paragraph}
+    r = requests.get(server_url, params=params)
+    print(r.url)
+    data = r.json()
+    return {sentence_idx: {idx: str(word) for idx, word in enumerate(sentence)}
+            for sentence_idx, sentence in enumerate(data)}
+
+
+def paragraph_to_sentences(paragraph):
+    sentence_list = re.split('(?<=[.!?;]) +', paragraph)
+    return dict(enumerate(sentence_list))
+
+
+def sentence_to_words_statements_values(sentence):
+    raw_words = re.split(r'(\\[a-zA-Z]+| |, |[.!?;]$|[()\+\-\*/^=><\{}|])', sentence)
+    raw_words = [word for word in raw_words if len(word.rstrip()) > 0]
+    flags = [0]*len(raw_words)
+    for idx in range(len(flags)):
+        word = raw_words[idx]
+        if word in "({":
+            flags[idx] = 1
+            if idx < len(raw_words) - 1: flags[idx+1] = 1
+        elif word in ")}":
+            flags[idx] = 1
+            if idx > 0: flags[idx-1] = 1
+        elif word in "+-*/^=><|":
+            flags[idx] = 1
+            if idx < len(raw_words) - 1: flags[idx+1] = 1
+            if idx > 0: flags[idx-1] = 1
+        elif re.match(r'\\[a-zA-Z]+', word):
+            flags[idx] = 1
+
+    p = re.compile('.+[<>=|].+')
+
+    curr_index = 0
+    words = []
+    curr_expression = ""
+    statements = []
+    values = []
+
+    while curr_index < len(raw_words):
+        word = raw_words[curr_index]
+        if flags[curr_index] == 0:
+            if curr_index > 0 and flags[curr_index-1] == 1:
+                if p.match(curr_expression):
+                    words.extend(["@s_%d" % len(statements), "is", "true"])
+                    statements.append(curr_expression)
+                else:
+                    words.append("@v_%d" % len(values))
+                    values.append(curr_expression)
+                curr_expression = ""
+            words.append(word)
+        else:
+            curr_expression += word
+        curr_index += 1
+    if len(curr_expression) > 0:
+        if p.match(curr_expression):
+            words.extend(["@s_%d" % len(statements), "is", "true"])
+            statements.append(curr_expression)
+        else:
+            words.append("@v_%d")
+            values.append(curr_expression)
+
+    word_dict = dict(enumerate(words))
+    return word_dict, statements, values
+
+
+
+
+
+
+

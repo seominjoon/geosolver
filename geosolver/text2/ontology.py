@@ -196,7 +196,22 @@ function_signature_tuples = (
     ('RadiusOf', 'number', ['circle']),
     ('PointLiesOnLine', 'truth', ['point', 'line']),
     ('PointLiesOnCircle', 'truth', ['point', 'circle']),
+    ('Sqrt', 'number', ['number']),
+    ('Parallel', 'truth', ['line', 'line'], None, True),
 )
+
+abbreviations = {
+    '+': 'Add',
+    '-': 'Sub',
+    '*': 'Mul',
+    '/': 'Div',
+    ':': 'Div',
+    '=': 'Equals',
+    '<': 'Ge',
+    '^': 'Pow',
+    '\\sqrt': 'Sqrt',
+    '||': 'Parallel',
+}
 
 def get_function_signatures():
     local_function_signatures = {}

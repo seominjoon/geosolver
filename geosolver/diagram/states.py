@@ -1,8 +1,7 @@
 import cv2
 
-from geosolver.diagram.draw_on_image import draw_line, draw_circle, draw_point, draw_instance, draw_label
-from geosolver.utils import display_image, save_image
-
+from geosolver.diagram.draw_on_image import draw_point, draw_instance, draw_label
+from geosolver.utils.prep import display_image
 
 __author__ = 'minjoon'
 
