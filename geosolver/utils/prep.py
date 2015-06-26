@@ -138,10 +138,10 @@ def sentence_to_words_statements_values(sentence):
     flags = [0]*len(raw_words)
     for idx in range(len(flags)):
         word = raw_words[idx]
-        if word in "({":
+        if word in "{":
             flags[idx] = 1
             if idx < len(raw_words) - 1: flags[idx+1] = 1
-        elif word in ")}":
+        elif word in "}":
             flags[idx] = 1
             if idx > 0: flags[idx-1] = 1
         elif word in "+-*/^=><|":
@@ -151,24 +151,36 @@ def sentence_to_words_statements_values(sentence):
         elif re.match(r'\\[a-zA-Z]+', word):
             flags[idx] = 1
 
+    for idx in range(len(flags)):
+        if raw_words[idx] == '(':
+            if idx < len(flags) - 1 and (flags[idx+1] or raw_words[idx+1] == '('):
+                flags[idx] = True
+        elif raw_words[idx] == ')':
+            if idx > 0 and (flags[idx-1] or raw_words[idx-1] == ')'):
+                flags[idx] = True
+
+
     p = re.compile('.+[<>=|].+')
+    q = re.compile('^.+=$')
 
     curr_index = 0
     words = []
     curr_expression = ""
-    statements = []
-    values = []
+    statements = {}
+    values = {}
 
     while curr_index < len(raw_words):
         word = raw_words[curr_index]
         if flags[curr_index] == 0:
             if curr_index > 0 and flags[curr_index-1] == 1:
                 if p.match(curr_expression):
-                    words.extend(["@s_%d" % len(statements), "is", "true"])
-                    statements.append(curr_expression)
+                    key = "@s_%d" % len(statements)
+                    words.extend([key, "is", "true"])
+                    statements[key] = curr_expression
                 else:
-                    words.append("@v_%d" % len(values))
-                    values.append(curr_expression)
+                    key = "@v_%d" % len(values)
+                    words.append(key)
+                    values[key] = curr_expression
                 curr_expression = ""
             words.append(word)
         else:
@@ -176,11 +188,17 @@ def sentence_to_words_statements_values(sentence):
         curr_index += 1
     if len(curr_expression) > 0:
         if p.match(curr_expression):
-            words.extend(["@s_%d" % len(statements), "is", "true"])
-            statements.append(curr_expression)
+            key = "@s_%d" % len(statements)
+            words.extend([key, "is", "true"])
+            statements[key] = curr_expression
+        elif q.match(curr_expression):
+            key = "@s_%d" % len(statements)
+            words.extend([key, 'is', 'true'])
+            statements[key] = curr_expression + "\what"
         else:
-            words.append("@v_%d")
-            values.append(curr_expression)
+            key = "@v_%d" % len(values)
+            words.append(key)
+            values[key] = curr_expression
 
     word_dict = dict(enumerate(words))
     return word_dict, statements, values
