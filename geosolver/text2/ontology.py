@@ -42,7 +42,7 @@ class VariableSignature(Signature):
         super(VariableSignature, self).__init__(id_, return_type, 0, name=name)
 
     def __repr__(self):
-        return self.name
+        return self.return_type
 
 
 class FunctionNode(object):
@@ -158,7 +158,17 @@ def issubtype(child_type, parent_type):
     return nx.has_path(type_graph, parent_type, child_type)
 
 function_signature_tuples = (
+    ('Not', 'truth', ['truth']),
+    ('True', 'truth', ['truth']),
     ('IsLine', 'truth', ['line']),
+    ('IsPoint', 'truth', ['point']),
+    ('IsCircle', 'truth', ['circle']),
+    ('IsTriangle', 'truth', ['triangle']),
+    ('IsQuad', 'truth', ['quad']),
+    ('IsRectangle', 'truth', ['quad']),
+    ('IsTrapezoid', 'truth', ['quad']),
+    ('IsPolygon', 'truth', ['polygon']),
+    ('IsRegular', 'truth', ['polygon']),
     ('Point', 'point', ['number', 'number']),
     ('Line', 'line', ['point', 'point'], None, True),
     ('Circle', 'line', ['point', 'number']),
@@ -175,29 +185,51 @@ function_signature_tuples = (
     ('Ge', 'truth', ['number', 'number']),
     ('What', 'number', []),
     ('ValueOf', 'number', ['number']),
-    ('IsTriangle', 'truth', ['triangle']),
-    ('InscribedIn', 'truth', ['polygon', 'circle']),
+    ('IsInscribedIn', 'truth', ['polygon', 'circle']),
     ('IsCenterOf', 'truth', ['point', '2d']),
     ('IsDiameterLineOf', 'truth', ['line', 'circle']),
     ('DegreeMeasureOf', 'number', ['angle']),
     ('IsAngle', 'truth', ['angle']),
     ('Equilateral', 'truth', ['triangle']),
+    ('Isosceles', 'truth', ['triangle']),
     ('IsSquare', 'truth', ['quad']),
+    ('IsRight', 'truth', ['triangle']),
     ('AreaOf', 'number', ['2d']),
+    ('IsAreaOf', 'truth', ['number', '2d']),
+    ('IsLengthOf', 'truth', ['number', 'line']),
+    ('IsRectLengthOf', 'truth', ['number', 'quad']),
+    ('IsDiameterNumOf', 'truth', ['number', 'circle']),
+    ('IsSideOf', 'truth', ['number', 'quad']),
     ('PerimeterOf', 'number', ['polygon']),
     ('IsMidpointOf', 'truth', ['point', 'line']),
+    ('IsWidthOf', 'truth', ['number', 'quad']),
     ('LengthOf', 'number', ['line']),
-    ('Conj', 'truth', ['root', 'root'], None, True),
-    ('Same', 'truth', ['entity', 'entity'], None, True),
+    ('CC', 'truth', ['root', 'root'], None, True),
+    ('Is', 'truth', ['entity', 'entity'], None, True),
     ('MeasureOf', 'number', ['angle']),
     ('Perpendicular', 'truth', ['line', 'line'], None, True),
     ('IsChordOf', 'truth', ['line', 'circle']),
     ('Tangent', 'truth', ['line', 'circle']),
-    ('RadiusOf', 'number', ['circle']),
+    ('RadiusNumOf', 'number', ['circle']),
+    ('IsRadiusNumOf', 'truth', ['number', 'circle']),
+    ('IsRadiusLineOf', 'truth', ['line', 'circle']),
     ('PointLiesOnLine', 'truth', ['point', 'line']),
     ('PointLiesOnCircle', 'truth', ['point', 'circle']),
     ('Sqrt', 'number', ['number']),
     ('Parallel', 'truth', ['line', 'line'], None, True),
+    ('IntersectAt', 'truth', ['*line', 'point']),
+    ('Two', 'truth', ['*entity']),
+    ('Three', 'truth', ['*entity']),
+    ('Five', 'truth', ['*entity']),
+    ('Six', 'truth', ['*entity']),
+    ('BisectsAngle', 'truth', ['line', 'angle']),
+    ('WhichOf', 'root', ['*root']),
+    ('Following', '*root', []),
+    ('What', 'number', []),
+    ('AverageOf', 'number', ['*number']),
+    ('SumOf', 'number', ['*number']),
+    ('Twice', 'number', ['number']),
+    ('RatioOf', 'number', ['number', 'number']),
 )
 
 abbreviations = {

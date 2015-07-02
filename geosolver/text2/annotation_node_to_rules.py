@@ -1,15 +1,34 @@
-from geosolver.text2.get_annotation_tree import AnnotationNode
+from geosolver.text2.get_annotation_node import AnnotationNode
 from geosolver.text2.ontology import function_signatures
-from geosolver.text2.rule import UnaryRule, ImplicationRule, IsRule, ConjRule, BinaryRule
+from geosolver.text2.rule import UnaryRule, ImplicationRule, IsRule, CCRule, BinaryRule
 
 __author__ = 'minjoon'
 
-def annotation_tree_to_tag_rules(syntax_parse, annotation_tree):
-    return [annotation_node.content for annotation_node in annotation_tree
-            if annotation_node.content.span != "i"]
+def annotation_node_to_tag_rules(annotation_node):
+    return [node.content for node in annotation_node]
+
+def annotation_node_to_semantic_rules(head_node):
+    unary_rules = []
+    binary_rules = []
+    for node in head_node:
+        a_tag_rule = node.content
+        if node.valence == 1:
+            b_tag_rule = node.children[0].content
+            unary_rule = UnaryRule(a_tag_rule, b_tag_rule)
+            unary_rules.append(unary_rule)
+        elif node.valence == 2:
+            b_node, c_node = node.children
+            b_tag_rule = b_node.content
+            c_tag_rule = c_node.content
+            binary_rule = BinaryRule(a_tag_rule, b_tag_rule, c_tag_rule)
+            binary_rules.append(binary_rule)
+    return unary_rules, binary_rules
 
 
-def annotation_tree_to_semantic_rules(syntax_parse, annotation_tree):
+
+
+
+def _annotation_tree_to_semantic_rules(syntax_parse, annotation_tree):
     unary_rules = []
     binary_rules = []
     conj_rules = []
@@ -32,8 +51,8 @@ def annotation_tree_to_semantic_rules(syntax_parse, annotation_tree):
             if a_tag_rule.signature == function_signatures['Is']:
                 is_rule = IsRule(syntax_parse, b_tag_rule, c_tag_rule)
                 is_rules.append(is_rule)
-            elif a_tag_rule.signature == function_signatures['Conj']:
-                conj_rule = ConjRule(syntax_parse, b_tag_rule, c_tag_rule)
+            elif a_tag_rule.signature == function_signatures['CC']:
+                conj_rule = CCRule(syntax_parse, b_tag_rule, c_tag_rule)
                 conj_rules.append(conj_rule)
             else:
                 assert a_tag_rule.span != "i"

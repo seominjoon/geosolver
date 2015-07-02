@@ -133,7 +133,7 @@ def paragraph_to_sentences(paragraph):
 
 
 def sentence_to_words_statements_values(sentence):
-    raw_words = re.split(r'(\\[a-zA-Z]+| |, |[.!?;]$|[()\+\-\*/^=><\{}|])', sentence)
+    raw_words = re.split(r'(\\[a-zA-Z]+| |, |[.!?;]$|[()\+\-\*/^=><\{}|:])', sentence)
     raw_words = [word for word in raw_words if len(word.rstrip()) > 0]
     flags = [0]*len(raw_words)
     for idx in range(len(flags)):
@@ -144,7 +144,7 @@ def sentence_to_words_statements_values(sentence):
         elif word in "}":
             flags[idx] = 1
             if idx > 0: flags[idx-1] = 1
-        elif word in "+-*/^=><|":
+        elif word in "+-*/^=><|:":
             flags[idx] = 1
             if idx < len(raw_words) - 1: flags[idx+1] = 1
             if idx > 0: flags[idx-1] = 1
@@ -175,7 +175,7 @@ def sentence_to_words_statements_values(sentence):
             if curr_index > 0 and flags[curr_index-1] == 1:
                 if p.match(curr_expression):
                     key = "@s_%d" % len(statements)
-                    words.extend([key, "is", "true"])
+                    words.extend([key, "holds"])
                     statements[key] = curr_expression
                 else:
                     key = "@v_%d" % len(values)

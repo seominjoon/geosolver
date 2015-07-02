@@ -6,7 +6,7 @@ def _span_to_string(span):
     elif span[0] + 1 == span[1]:
         return "%d" % span[0]
     else:
-        return "%d:%d" % span
+        return "%d:%d" % (span[0], span[1]-1)
 
 class TagRule(object):
     def __init__(self, syntax_parse, span, signature):
@@ -14,16 +14,17 @@ class TagRule(object):
         self.span = span
         self.signature = signature
         self.is_implicit = self.span == "i"
+        self.string = "_".join(self.syntax_parse.words[i] for i in range(*self.span))
 
     def __repr__(self):
-        return "%s@%s" % (self.signature.name, _span_to_string(self.span))
+        return "%s@%s[%s]" % (repr(self.signature), _span_to_string(self.span), self.string)
 
 class SemanticRule(object):
     pass
 
 class UnaryRule(SemanticRule):
-    def __init__(self, syntax_parse, parent_tag_rule, child_tag_rule):
-        self.syntax_parse = syntax_parse
+    def __init__(self, parent_tag_rule, child_tag_rule):
+        self.syntax_parse = parent_tag_rule.syntax_parse
         self.parent_tag_rule = parent_tag_rule
         self.child_tag_rule = child_tag_rule
 
@@ -40,7 +41,7 @@ class IsRule(SemanticRule):
     def __repr__(self):
         return "%r~%r" % (self.a_tag_rule, self.b_tag_rule)
 
-class ConjRule(SemanticRule):
+class CCRule(SemanticRule):
     def __init__(self, syntax_parse, a_tag_rule, b_tag_rule):
         self.syntax_parse =syntax_parse
         self.a_tag_rule = a_tag_rule
@@ -51,8 +52,8 @@ class ConjRule(SemanticRule):
 
 
 class BinaryRule(SemanticRule):
-    def __init__(self, syntax_parse, parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
-        self.syntax_parse = syntax_parse
+    def __init__(self, parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
+        self.syntax_parse = parent_tag_rule.syntax_parse
         self.parent_tag_rule = parent_tag_rule
         self.child_a_tag_rule = child_a_tag_rule
         self.child_b_tag_rule = child_b_tag_rule

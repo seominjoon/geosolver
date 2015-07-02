@@ -38,13 +38,17 @@ class GeoserverInterface(object):
             temp_name = os.path.basename(urlparse.urlparse(diagram_url).path)
             temp_filepath = os.path.join(temp_dir, temp_name)
             urllib.urlretrieve(diagram_url, temp_filepath)
-            choices = {int(key): pair['choices'][key] for key in pair['choices']}
-            words = {int(index): {int(index): word for index, word in words.iteritems()} for index, words in pair['words'].iteritems()}
+            choices = {int(number): {int(index): word for index, word in words.iteritems()} for number, words in pair['choice_words'].iteritems()}
+            words = {int(number): {int(index): word for index, word in words.iteritems()} for number, words in pair['words'].iteritems()}
             question = Question(pair['pk'], pair['text'], words, temp_filepath, choices)
             questions[question.key] = question
         return questions
 
-    def download_labels(self, key="all"):
+    def download_labels(self, *args):
+        if len(args) == 0:
+            key = 'all'
+        else:
+            key = "+".join(str(x) for x in args)
         suburl = "/labels/download/%s" % str(key)
         request_url = urlparse.urljoin(self.server_url, suburl)
         r = requests.get(request_url)
@@ -56,11 +60,11 @@ class GeoserverInterface(object):
             labels[question_pk] = label_data
         return labels
 
-    def download_semantics(self, key=None):
-        if key is None:
-            param = 'annotated'
+    def download_semantics(self, *args):
+        if len(args) == 0:
+            param = 'all'
         else:
-            param = "+".join(str(x) for x in key)
+            param = "+".join(str(x) for x in args)
         suburl = "/semantics/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, suburl)
         r = requests.get(request_url)
