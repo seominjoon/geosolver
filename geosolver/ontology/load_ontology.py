@@ -10,7 +10,7 @@ __author__ = 'minjoon'
 def load_ontology(type_defs, symbol_defs):
     """
     Load basic_ontology object from type and function definitions (raw string dict).
-    First checks the sanity of the definitions, and then induce Type and FunctionNode objects.
+    First checks the sanity of the definitions, and then induce Type and FormulaNode objects.
     Lastly, construct inheritance graph for type and basic_ontology graph.
 
     :param dict type_defs:

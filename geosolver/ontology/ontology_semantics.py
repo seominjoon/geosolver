@@ -2,7 +2,7 @@ import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FunctionNode
+from geosolver.text2.ontology import FormulaNode
 import sys
 this = sys.modules[__name__]
 
@@ -30,6 +30,9 @@ def Point(x, y):
 
 def Angle(a, b, c):
     return instantiators['angle'](a, b, c)
+
+def Triangle(a, b, c):
+    return instantiators['triangle'](a, b, c)
 
 def LengthOf(line):
     return line_length(line)
@@ -105,7 +108,7 @@ def evaluate(function_node, assignment):
     else:
         evaluated_args = []
         for arg in function_node.children:
-            if isinstance(arg, FunctionNode):
+            if isinstance(arg, FormulaNode):
                 evaluated_args.append(evaluate(arg, assignment))
             else:
                 evaluated_args.append(arg)

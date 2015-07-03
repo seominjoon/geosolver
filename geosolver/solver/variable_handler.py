@@ -1,5 +1,5 @@
 import numpy as np
-from geosolver.text2.ontology import FunctionNode, VariableSignature, function_signatures
+from geosolver.text2.ontology import FormulaNode, VariableSignature, function_signatures
 
 __author__ = 'minjoon'
 
@@ -14,7 +14,7 @@ class VariableHandler(object):
         if init is None:
             init = np.random.rand()
         self.variables[name] = init
-        vn = FunctionNode(VariableSignature(name, 'number'), [])
+        vn = FormulaNode(VariableSignature(name, 'number'), [])
         self.named_entities[name] = vn
         return vn
 
@@ -42,7 +42,7 @@ class VariableHandler(object):
         return self.apply('Circle', center, r)
 
     def add(self, function_node):
-        if not isinstance(function_node, FunctionNode):
+        if not isinstance(function_node, FormulaNode):
             return function_node
 
         if function_node.is_leaf():
@@ -56,11 +56,11 @@ class VariableHandler(object):
                 raise Exception()
         else:
             children = [self.add(child) for child in function_node.children]
-            return FunctionNode(function_node.signature, children)
+            return FormulaNode(function_node.signature, children)
 
 
     def apply(self, name, *args):
-        vn = FunctionNode(function_signatures[name], args)
+        vn = FormulaNode(function_signatures[name], args)
         if name in ['Point', 'Line', 'Circle']:
             self.entities.append(vn)
         return vn

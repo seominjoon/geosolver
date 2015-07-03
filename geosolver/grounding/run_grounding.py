@@ -1,11 +1,11 @@
 from geosolver import geoserver_interface
 from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
-from geosolver.grounding.ground_atoms import ground_atoms
+from geosolver.grounding.ground_formula_nodes import ground_formula_nodes
 from geosolver.grounding.parse_match_atoms import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.solver.numeric_solver import NumericSolver
-from geosolver.text2.ontology import FunctionNode, function_signatures, VariableSignature
+from geosolver.text2.ontology import FormulaNode, function_signatures, VariableSignature
 from geosolver.utils.prep import open_image
 
 __author__ = 'minjoon'
@@ -35,10 +35,10 @@ def test_parse_match_atoms():
         graph_parse.core_parse.display_points()
 
 def f(name, *args):
-    return FunctionNode(function_signatures[name], args)
+    return FormulaNode(function_signatures[name], args)
 def v(name, return_type):
     vs = VariableSignature(name, return_type)
-    return FunctionNode(vs, [])
+    return FormulaNode(vs, [])
 
 def test_ground_atoms():
     pk = 973
@@ -65,7 +65,7 @@ def test_ground_atoms():
     p5 = f('LengthOf', ED) == 4
     qn = f('LengthOf', BC)
 
-    grounded_atoms = ground_atoms(match_parse, [p1, p2, p3, p4, p5, qn])
+    grounded_atoms = ground_formula_nodes(match_parse, [p1, p2, p3, p4, p5, qn])
     for grounded_atom in grounded_atoms:
         print grounded_atom
 
@@ -96,9 +96,9 @@ def test_solving():
     p5 = f('LengthOf', ED) == 4
     qn = f('LengthOf', BC)
     confident_atoms = parse_confident_atoms(graph_parse)
-    text_atoms = ground_atoms(match_parse, [p1, p2, p3, p4, p5])
+    text_atoms = ground_formula_nodes(match_parse, [p1, p2, p3, p4, p5])
     atoms = confident_atoms + text_atoms
-    grounded_qn = ground_atoms(match_parse, [qn])[0]
+    grounded_qn = ground_formula_nodes(match_parse, [qn])[0]
 
     ns = NumericSolver(atoms)
 

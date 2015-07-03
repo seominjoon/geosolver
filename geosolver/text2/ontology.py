@@ -19,6 +19,9 @@ class Signature(object):
         assert isinstance(other, Signature)
         return self.id == other.id
 
+    def __hash__(self):
+        return hash(self.id)
+
 class FunctionSignature(Signature):
     def __init__(self, id_, return_type, arg_types, arg_pluralities=None, is_symmetric=False, name=None):
         super(FunctionSignature, self).__init__(id_, return_type, len(arg_types), name=name)
@@ -33,19 +36,16 @@ class FunctionSignature(Signature):
         return self.name
 
 
-    def __hash__(self):
-        return hash(self.id)
-
 
 class VariableSignature(Signature):
     def __init__(self, id_, return_type, name=None):
         super(VariableSignature, self).__init__(id_, return_type, 0, name=name)
 
     def __repr__(self):
-        return self.return_type
+        return self.name
 
 
-class FunctionNode(object):
+class FormulaNode(object):
     def __init__(self, signature, children):
         self.signature = signature
         self.children = children
@@ -54,58 +54,79 @@ class FunctionNode(object):
     def is_leaf(self):
         return len(self.children) == 0
 
+    def replace_signature(self, tester, getter):
+        """
+        iterate through all formula nodes and if tester(signature) is true,
+         then replace_signature it with getter(signature).
+        :param function tester:
+        :param function getter:
+        :return:
+        """
+        new_sig = self.signature
+        args = [child.replace_signature(tester, getter) for child in self.children]
+        if tester(self.signature):
+            new_sig = getter(self.signature)
+        return FormulaNode(new_sig, args)
+
+    def replace_node(self, tester, getter):
+        if tester(self):
+            return getter(self)
+        else:
+            args = [child.replace_node(tester, getter) for child in self.children]
+            return FormulaNode(self.signature, args)
+
 
     def __add__(self, other):
         current = function_signatures['Add']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __radd__(self, other):
         current = function_signatures['Add']
-        return FunctionNode(current, [other, self])
+        return FormulaNode(current, [other, self])
 
     def __mul__(self, other):
         current = function_signatures['Mul']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __rmul__(self, other):
         current = function_signatures['Mul']
-        return FunctionNode(current, [other, self])
+        return FormulaNode(current, [other, self])
 
     def __sub__(self, other):
         current = function_signatures['Sub']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __rsub__(self, other):
         current = function_signatures['Sub']
-        return FunctionNode(current, [other, self])
+        return FormulaNode(current, [other, self])
 
     def __div__(self, other):
         current = function_signatures['Div']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __rdiv__(self, other):
         current = function_signatures['Div']
-        return FunctionNode(current, [other, self])
+        return FormulaNode(current, [other, self])
 
     def __pow__(self, power, modulo=None):
         current = function_signatures['Pow']
-        return FunctionNode(current, [self, power])
+        return FormulaNode(current, [self, power])
 
     def __rpow__(self, power, modulo=None):
         current = function_signatures['Pow']
-        return FunctionNode(current, [power, self])
+        return FormulaNode(current, [power, self])
 
     def __eq__(self, other):
         current = function_signatures['Equals']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __ge__(self, other):
         current = function_signatures['Ge']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __lt__(self, other):
         current = function_signatures['Lt']
-        return FunctionNode(current, [self, other])
+        return FormulaNode(current, [self, other])
 
     def __repr__(self):
         if self.is_leaf():
@@ -115,20 +136,25 @@ class FunctionNode(object):
 
 
 class SetNode(object):
-    def __init__(self, head, members=None):
-        self.head = head
-        self.return_type = head.return_type
-        if members is None:
-            members = set([head])
-        for member in members:
-            assert isinstance(member, FunctionNode)
-        self.members = members
+    def __init__(self, children, head_index=0):
+        self.children = children
+        self.head = children[head_index]
 
     def is_singular(self):
-        return len(self.members) == 1
+        return len(self.children) == 1
 
     def is_plural(self):
-        return len(self.members) > 1
+        return len(self.children) > 1
+
+    def __repr__(self):
+        return "{%s}" % ",".join(repr(child) for child in self.children)
+
+    def replace_node(self, tester, getter):
+        if tester(self):
+            return getter(self)
+        else:
+            args = [child.replace_node(tester, getter) for child in self.children]
+            return SetNode(self.signature, args)
 
 
 types = ('root', 'truth', 'number', 'entity', 'line', 'circle', 'triangle', 'quad', 'polygon')
@@ -173,6 +199,7 @@ function_signature_tuples = (
     ('Line', 'line', ['point', 'point'], None, True),
     ('Circle', 'line', ['point', 'number']),
     ('Angle', 'angle', ['point', 'point', 'point']),
+    ('Triangle', 'triangle', ['point', 'point', 'point']),
     ('Arc', 'arc', ['circle', 'point', 'point']),
     ('IntersectionOf', 'point', ['entity', 'entity'], None, True),
     ('Is', 'truth', ['root', 'root'], None, True),

@@ -4,7 +4,7 @@ from geosolver.grounding.label_distances import label_distance_to_line, label_di
     label_distance_to_angle
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FunctionNode, function_signatures, issubtype
+from geosolver.text2.ontology import FormulaNode, function_signatures, issubtype
 
 __author__ = 'minjoon'
 
@@ -43,9 +43,9 @@ def parse_match_from_known_labels(graph_parse, known_labels):
             a_key, b_key = argmin_key
             a_point = graph_parse.point_variables[a_key]
             b_point = graph_parse.point_variables[b_key]
-            formula = FunctionNode(function_signatures['Line'], [a_point, b_point])
+            formula = FormulaNode(function_signatures['Line'], [a_point, b_point])
             if len(arr) > 1 and arr[0] == 'length':
-                formula = FunctionNode(function_signatures['LengthOf'], [formula])
+                formula = FormulaNode(function_signatures['LengthOf'], [formula])
         elif type_ == 'point':
             formula = graph_parse.point_variables[argmin_key]
         elif type_ == 'angle':
@@ -54,16 +54,16 @@ def parse_match_from_known_labels(graph_parse, known_labels):
             a_point = graph_parse.point_variables[a_key]
             b_point = graph_parse.point_variables[b_key]
             c_point = graph_parse.point_variables[c_key]
-            formula = FunctionNode(function_signatures['Angle'], [a_point, b_point, c_point])
-            formula = FunctionNode(function_signatures['MeasureOf'], [formula])
+            formula = FormulaNode(function_signatures['Angle'], [a_point, b_point, c_point])
+            formula = FormulaNode(function_signatures['MeasureOf'], [formula])
         elif type_ == 'arc':
             (center_key, radius_key), a_key, b_key = argmin_key
             center_point = graph_parse.point_variables[center_key]
             radius = graph_parse.radius_variables[center_key][radius_key]
-            circle = FunctionNode(function_signatures['Circle'], [center_point, radius])
+            circle = FormulaNode(function_signatures['Circle'], [center_point, radius])
             a_point = graph_parse.point_variables[a_key]
             b_point = graph_parse.point_variables[b_key]
-            formula = FunctionNode(function_signatures['Arc'], [circle, a_point, b_point])
+            formula = FormulaNode(function_signatures['Arc'], [circle, a_point, b_point])
         if label not in match_dict:
             match_dict[label] = []
         elif issubtype(formula.return_type, 'entity'):

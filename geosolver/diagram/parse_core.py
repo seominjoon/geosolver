@@ -7,7 +7,7 @@ from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.diagram.computational_geometry import intersections_between_lines, intersections_between_circle_and_line, \
     intersections_between_circles, distance_between_points
 import geosolver.parameters as params
-from geosolver.text2.ontology import VariableSignature, FunctionNode
+from geosolver.text2.ontology import VariableSignature, FormulaNode
 
 __author__ = 'minjoon'
 
@@ -21,7 +21,7 @@ def parse_core(primitive_parse):
     for idx in intersections.keys():
         id_ = "point_%d" % idx
         vs = VariableSignature(id_, 'point')
-        point_variables[idx] = FunctionNode(vs, [])
+        point_variables[idx] = FormulaNode(vs, [])
         assignment[id_] = intersections[idx]
     circles = _get_circles(primitive_parse, intersections)
     radius_variables = {}
@@ -30,7 +30,7 @@ def parse_core(primitive_parse):
         for radius_idx in d.keys():
             id_ = "radius_%d_%d" % (point_idx, radius_idx)
             vs = VariableSignature(id_, 'number')
-            radius_variables[point_idx][radius_idx] = FunctionNode(vs, [])
+            radius_variables[point_idx][radius_idx] = FormulaNode(vs, [])
             assignment[id_] = circles[point_idx][radius_idx].radius
     core_parse = CoreParse(primitive_parse, intersections, point_variables, circles, radius_variables, assignment)
     return core_parse

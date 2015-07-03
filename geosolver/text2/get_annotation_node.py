@@ -1,7 +1,7 @@
 from collections import deque
 import re
 from pyparsing import *
-from geosolver.text2.ontology import function_signatures, FunctionSignature, VariableSignature
+from geosolver.text2.ontology import function_signatures, FunctionSignature, VariableSignature, FormulaNode
 from geosolver.text2.rule import TagRule
 
 __author__ = 'minjoon'
@@ -28,6 +28,11 @@ class AnnotationNode(object):
             for child in current.children:
                 queue.appendleft(child)
             yield current
+
+    def to_formula(self):
+        args = [child.to_formula() for child in self.children]
+        return FormulaNode(self.content.signature, args)
+
 
 
 def get_annotation_node(syntax_parse, annotation_string):
@@ -56,7 +61,7 @@ def get_annotation_node(syntax_parse, annotation_string):
         if s in function_signatures:
             signature = function_signatures[s]
         elif type_ == 'function' and len(children) == 0:
-            signature = FunctionSignature(local_span, s, [], name=name)
+            signature = FunctionSignature(name, s, [], name=name)
         elif type_ == 'variable' and len(children) == 0:
             signature = VariableSignature(local_span, s, name=name)
         else:

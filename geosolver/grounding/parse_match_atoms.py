@@ -1,5 +1,5 @@
 from geosolver.grounding.states import MatchParse
-from geosolver.text2.ontology import FunctionNode, issubtype, VariableSignature, function_signatures
+from geosolver.text2.ontology import FormulaNode, issubtype, VariableSignature, function_signatures
 
 __author__ = 'minjoon'
 
@@ -9,7 +9,7 @@ def parse_match_atoms(match_parse):
     match_atoms = []
     for label, terms in match_parse.match_dict.iteritems():
         for term in terms:
-            assert isinstance(term, FunctionNode)
+            assert isinstance(term, FormulaNode)
             if issubtype(term.return_type, 'entity'):
                 continue
 
@@ -18,9 +18,9 @@ def parse_match_atoms(match_parse):
                 left_term = float(label)
             except:
                 vs = VariableSignature(label, 'number')
-                left_term = FunctionNode(vs, [])
+                left_term = FormulaNode(vs, [])
 
-            atom = FunctionNode(function_signatures['Equals'], [left_term, term])
+            atom = FormulaNode(function_signatures['Equals'], [left_term, term])
             match_atoms.append(atom)
 
     return match_atoms

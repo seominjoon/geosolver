@@ -3,7 +3,7 @@ import numpy as np
 
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.variable_handler import VariableHandler
-from geosolver.text2.ontology import FunctionNode
+from geosolver.text2.ontology import FormulaNode
 
 __author__ = 'minjoon'
 
@@ -50,7 +50,7 @@ class NumericSolver(object):
 
 def query(variable_handler, prior_atoms, query_atom, max_num_resets=10, tol=10**-3, verbose=False):
     assert isinstance(variable_handler, VariableHandler)
-    assert isinstance(query_atom, FunctionNode)
+    assert isinstance(query_atom, FormulaNode)
     prior_assignment, prior_sat = find_assignment(variable_handler, prior_atoms, max_num_resets, tol, verbose)
 
     unique = prior_sat and evaluate(query_atom, prior_assignment).norm < tol
