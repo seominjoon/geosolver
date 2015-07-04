@@ -26,7 +26,7 @@ def instance_exists(diagram_parse, instance):
 def _line_exists(diagram_parse, line):
     # TODO : smarter line_exists function needed (check continuity, etc.)
     eps = LINE_EPS
-    multiplier = 1.5
+    multiplier = 1.0
     assert isinstance(diagram_parse, CoreParse)
     pixels = diagram_parse.primitive_parse.image_segment_parse.diagram_image_segment.pixels
     near_pixels = set(pixel for pixel in pixels if distance_between_line_and_point(line, pixel) <= eps)

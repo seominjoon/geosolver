@@ -204,6 +204,7 @@ function_signature_tuples = (
     ('Quad', 'quad', ['point', 'point', 'point', 'point']),
     ('Arc', 'arc', ['circle', 'point', 'point']),
     ('Polygon', 'polygon', ['*point']),
+    ('Hexagon', 'hexagon', ['point', 'point', 'point', 'point', 'point', 'point']),
     ('IntersectionOf', 'point', ['entity', 'entity'], None, True),
     ('Is', 'truth', ['root', 'root'], None, True),
     ('Equals', 'truth', ['number', 'number']),
@@ -261,6 +262,7 @@ function_signature_tuples = (
     ('Twice', 'number', ['number']),
     ('RatioOf', 'number', ['number', 'number']),
     ('Integral', 'truth', ['number']),
+    ('SquareOf', 'number', ['number']),
 )
 
 abbreviations = {

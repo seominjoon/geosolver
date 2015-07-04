@@ -11,7 +11,7 @@ __author__ = 'minjoon'
 def draw_instance(image, instance, **kwargs):
     for key, instantiator in instantiators.iteritems():
         if isinstance(instance, instantiator):
-            if key in ['triangle', 'quadrilateral']:
+            if key in ['triangle', 'quad']:
                 draw_polygon(image, instance, **kwargs)
             else:
                 eval("draw_%s(image, instance, **kwargs)" % key)

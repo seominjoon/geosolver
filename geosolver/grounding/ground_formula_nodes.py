@@ -107,9 +107,22 @@ def _ground_leaf(match_parse, leaf, return_type):
         if len(variable_signature.name) == 4:
             points = [match_parse.match_dict[label][0] for label in variable_signature.name]
             return FormulaNode(function_signatures['Quad'], points)
-        elif variable_signature.name == 'quad':
+        else:
             quads = get_all_instances(graph_parse, 'quad', True)
             return quads.values()[0]
+    elif return_type == 'quads':
+        quads = get_all_instances(graph_parse, 'quad', True)
+        for quad in get_all_instances(graph_parse, 'quad', False).values():
+            graph_parse.display_instances([quad])
+        return SetNode(quads.values())
+    elif return_type == 'hexagon':
+        if len(variable_signature.name) == 6:
+            points = [match_parse.match_dict[label][0] for label in variable_signature.name]
+            return FormulaNode(function_signatures['Hexagon'], points)
+        else:
+            quads = get_all_instances(graph_parse, 'hexagon', True)
+            return quads.values()[0]
+
     elif return_type == 'polygon':
         points = [match_parse.match_dict[label][0] for label in variable_signature.name]
         return FormulaNode(function_signatures['Polygon'], points)

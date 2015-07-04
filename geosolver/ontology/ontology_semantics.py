@@ -40,6 +40,9 @@ def Triangle(a, b, c):
 def Quad(a, b, c, d):
     return instantiators['quad'](a, b, c, d)
 
+def Hexagon(a, b, c, d, e, f):
+    return instantiators['polygon'](a, b, c, d, e, f)
+
 def Polygon(*p):
     return instantiators['polygon'](*p)
 

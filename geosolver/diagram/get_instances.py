@@ -17,9 +17,10 @@ def get_instances(graph_parse, instance_type_name, is_variable=False, *args):
 
 def get_all_instances(graph_parse, instance_type_name, is_variable=False):
     assert instance_type_name in instantiators
-    if instance_type_name in ["triangle", "quad"]:
+    if instance_type_name in ["triangle", "quad", "hexagon"]:
         if instance_type_name == 'triangle': n = 3
         elif instance_type_name == 'quad': n = 4
+        elif instance_type_name == 'hexagon': n = 6
         return _get_all_polygons(graph_parse, instance_type_name, n, is_variable)
     else:
         return eval("_get_all_%ss(graph_parse, is_variable)" % instance_type_name)
@@ -136,7 +137,6 @@ def _get_all_polygons(graph_parse, name, n, is_variable):
             angles.extend(_get_angles(graph_parse, False, keys[idx-2], keys[idx-1], key).values())
         if len(angles) < n:
             continue
-
 
         if is_variable:
             points = tuple(graph_parse.core_parse.point_variables[key] for key in keys)
