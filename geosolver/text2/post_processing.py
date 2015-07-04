@@ -53,18 +53,18 @@ def apply_trans(match_parse, formula_nodes):
     return new_formula_nodes
 
 def apply_cc(formula_nodes):
-    clusters = {}
+    graph = nx.Graph()
+    firsts = set()
     for formula_node in formula_nodes:
         if formula_node.signature.id != 'CC':
             continue
         a_node, b_node = formula_node.children
         a_sig, b_sig = a_node.signature, b_node.signature
-        if a_sig not in clusters:
-            clusters[a_sig] = []
-        clusters[a_sig].append(b_sig)
+        firsts.add(a_sig)
+        graph.add_edge(a_sig, b_sig)
 
-    tester = lambda node: node.signature in clusters
-    getter = lambda node: SetNode([node] + [FormulaNode(nbr, []) for nbr in clusters[node.signature]])
+    tester = lambda node: node.signature in firsts
+    getter = lambda node: SetNode([node] + [FormulaNode(nbr, []) for nbr in graph[node.signature]])
     new_formula_nodes = [formula_node.replace_node(tester, getter) for formula_node in formula_nodes
                          if formula_node.signature.id != 'CC']
     return new_formula_nodes
@@ -104,6 +104,7 @@ def _apply_distribution(node):
             return SetNode(children)
 
     return node
+
 
 
 

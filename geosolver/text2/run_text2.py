@@ -43,8 +43,8 @@ def test_trans():
         diagram = open_image(question.diagram_path)
         graph_parse = diagram_to_graph_parse(diagram)
         match_parse = parse_match_from_known_labels(graph_parse, label_data)
-        for number, words in question.words.iteritems():
-            syntax_parse = SyntaxParse(words, None)
+        for number, sentence_words in question.sentence_words.iteritems():
+            syntax_parse = SyntaxParse(sentence_words, None)
             nodes = [get_annotation_node(syntax_parse, annotation) for annotation in annotations[pk][number].values()]
             formulas = [node.to_formula() for node in nodes]
             new_formulas = apply_trans(None, formulas)
