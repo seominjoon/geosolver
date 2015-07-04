@@ -61,7 +61,8 @@ def get_annotation_node(syntax_parse, annotation_string):
         if s in function_signatures:
             signature = function_signatures[s]
         elif type_ == 'function' and len(children) == 0:
-            signature = FunctionSignature(name, s, [], name=name)
+            # Constant number
+            signature = FunctionSignature(name, 'number', [], name=name)
         elif type_ == 'variable' and len(children) == 0:
             signature = VariableSignature(local_span, s, name=name)
         else:

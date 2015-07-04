@@ -6,6 +6,7 @@ from geosolver.diagram.states import CoreParse, GraphParse
 import networkx as nx
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import LINE_EPS, CIRCLE_EPS
+from geosolver.text2.ontology import FormulaNode, function_signatures
 
 __author__ = 'minjoon'
 
@@ -18,75 +19,78 @@ def parse_graph(core_parse):
     for center_key, d in circle_dict.iteritems():
         for radius_key in d:
             circle = circle_dict[center_key][radius_key]['instance']
+            circle_variable = circle_dict[center_key][radius_key]['variable']
             points = circle_dict[center_key][radius_key]['points']
-            arc_graphs[(center_key, radius_key)] = _get_arc_graph(core_parse, circle, points)
+            arc_graphs[(center_key, radius_key)] = _get_arc_graph(core_parse, circle, circle_variable, points)
 
     graph_parse = GraphParse(core_parse, line_graph, circle_dict, arc_graphs)
     return graph_parse
 
 
-def _get_circle_dict(diagram_parse):
+def _get_circle_dict(core_parse):
     """
     A dictionary of dictionaries, where key of the top dictionary is center point.
     The bottom dictionary contains radii (if multiple circles exist with the same center).
 
-    :param diagram_parse:
+    :param core_parse:
     :return:
     """
     # FIXME : this needs to be changed
     eps = CIRCLE_EPS
-    assert isinstance(diagram_parse, CoreParse)
+    assert isinstance(core_parse, CoreParse)
     circle_dict = {}
 
 
-    for point_key, point in diagram_parse.intersection_points.iteritems():
+    for point_key, dd in core_parse.circles.iteritems():
         d = {}
-        radius_key = 0
-        for circle in diagram_parse.primitive_parse.circles.values():
-            if distance_between_points(point, circle.center) <= eps:
-                points = {}
-                for key in diagram_parse.intersection_points:
-                    point = diagram_parse.intersection_points[key]
-                    if distance_between_circle_and_point(circle, point) <= eps:
-                        points[key] = point
-                d[radius_key] = {'instance': circle, 'points': points}
-                radius_key += 1
+        for radius_key, circle in dd.iteritems():
+            points = {}
+            for key in core_parse.intersection_points:
+                point = core_parse.intersection_points[key]
+                if distance_between_circle_and_point(circle, point) <= eps:
+                    points[key] = point
+            center_var = core_parse.point_variables[point_key]
+            radius_var = core_parse.radius_variables[point_key][radius_key]
+            circle_var = FormulaNode(function_signatures['Circle'], [center_var, radius_var])
+            d[radius_key] = {'instance': circle, 'points': points, 'variable': circle_var}
         if len(d) > 0:
             circle_dict[point_key] = d
     return circle_dict
 
 
 
-def _get_line_graph(diagram_parse):
+def _get_line_graph(core_parse):
     """
     line graph is a non-directional graph.
     Nodes are indexed by intersection points.
     Note that angles, triangles, and quadrilaterals can be parsed from this graph.
-    :param diagram_parse:
+    :param core_parse:
     :param eps:
     :return:
     """
     eps = LINE_EPS
     line_graph = nx.Graph()
 
-    for key0, key1 in itertools.combinations(diagram_parse.intersection_points, 2):
-        p0, p1 = diagram_parse.intersection_points[key0], diagram_parse.intersection_points[key1]
+    for key0, key1 in itertools.combinations(core_parse.intersection_points, 2):
+        p0, p1 = core_parse.intersection_points[key0], core_parse.intersection_points[key1]
         line = instantiators['line'](p0, p1)
-        if instance_exists(diagram_parse, line):
+        v0, v1 = core_parse.point_variables[key0], core_parse.point_variables[key1]
+        var = FormulaNode(function_signatures['Line'], [v0, v1])
+        if instance_exists(core_parse, line):
             points = {}
-            for key in set(diagram_parse.intersection_points).difference({key0, key1}):
-                point = diagram_parse.intersection_points[key]
+            for key in set(core_parse.intersection_points).difference({key0, key1}):
+                point = core_parse.intersection_points[key]
                 if distance_between_line_and_point(line, point) <= eps:
                     points[key] = point
-            line_graph.add_edge(key0, key1, instance=line, points=points)
+            line_graph.add_edge(key0, key1, instance=line, points=points, variable=var)
     return line_graph
 
 
-def _get_arc_graph(diagram_parse, circle, circle_points):
+def _get_arc_graph(core_parse, circle, circle_variable, circle_points):
     """
     Directional arc graph.
 
-    :param diagram_parse:
+    :param core_parse:
     :param circle:
     :return:
     """
@@ -95,13 +99,15 @@ def _get_arc_graph(diagram_parse, circle, circle_points):
     for key0, key1 in itertools.permutations(circle_points, 2):
         p0, p1 = circle_points[key0], circle_points[key1]
         arc = instantiators['arc'](circle, p0, p1)
-        if instance_exists(diagram_parse, arc):
+        v0, v1 = core_parse.point_variables[key0], core_parse.point_variables[key1]
+        var = FormulaNode(function_signatures['Arc'], [circle_variable, v0, v1])
+        if instance_exists(core_parse, arc):
             arc_points = {}
             for key in set(circle_points).difference({key0, key1}):
                 point = circle_points[key]
                 if distance_between_arc_and_point(arc, point) <= eps:
                     arc_points[key] = point
-            arc_graph.add_edge(key0, key1, instance=arc, points=arc_points)
+            arc_graph.add_edge(key0, key1, instance=arc, points=arc_points, variable=var)
     return arc_graph
 
 

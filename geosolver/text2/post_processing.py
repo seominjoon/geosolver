@@ -82,15 +82,12 @@ def apply_distribution(nodes):
     return [_apply_distribution(node) for node in nodes]
 
 def _apply_distribution(node):
-    if len(node.children) == 0:
-        return node
-    if isinstance(node, SetNode):
+    if not isinstance(node, FormulaNode) or len(node.children) == 0:
         return node
     node = FormulaNode(node.signature, [_apply_distribution(child) for child in node.children])
-
     if len(node.children) == 1:
         child_node = node.children[0]
-        if isinstance(child_node, SetNode) and not node.signature.arg_types[0][0] != '*':
+        if isinstance(child_node, SetNode) and node.signature.arg_types[0][0] != '*':
             children = [FormulaNode(node.signature, [child]) for child in child_node.children]
             return SetNode(children)
     elif len(node.children) == 2:

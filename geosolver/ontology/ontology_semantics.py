@@ -22,6 +22,9 @@ class TruthValue(object):
 def Line(p1, p2):
     return instantiators['line'](p1, p2)
 
+def Arc(circle, p1, p2):
+    return instantiators['arc'](circle, p1, p2)
+
 def Circle(p, r):
     return instantiators['circle'](p, r)
 
@@ -33,6 +36,12 @@ def Angle(a, b, c):
 
 def Triangle(a, b, c):
     return instantiators['triangle'](a, b, c)
+
+def Quad(a, b, c, d):
+    return instantiators['quad'](a, b, c, d)
+
+def Polygon(*p):
+    return instantiators['polygon'](*p)
 
 def LengthOf(line):
     return line_length(line)

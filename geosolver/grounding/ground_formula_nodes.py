@@ -1,3 +1,5 @@
+import re
+from geosolver.diagram.get_instances import get_all_instances
 from geosolver.grounding.states import MatchParse
 from geosolver.text2.ontology import VariableSignature, function_signatures, FormulaNode, SetNode
 
@@ -38,14 +40,22 @@ def _infer_return_type(match_parse, atoms, variable_signature):
 def _ground_leaf(match_parse, leaf, return_type):
     assert isinstance(leaf, FormulaNode)
     assert isinstance(match_parse, MatchParse)
+    graph_parse = match_parse.graph_parse
+    core_parse = graph_parse.core_parse
     variable_signature = leaf.signature
     if return_type == 'number':
-        if len(variable_signature.name) == 1:
+        if re.match("^\d+(\.\d+)?$", variable_signature.name):
+            return leaf
+        elif len(variable_signature.name) == 1:
             return FormulaNode(variable_signature, [])
         elif len(variable_signature.name) == 2:
             return FormulaNode(function_signatures['LengthOf'], [_ground_leaf(match_parse, leaf, 'line')])
     elif return_type == 'point':
-        return match_parse.match_dict[variable_signature.name][0]
+        if variable_signature.name == 'point':
+            points = get_all_instances(graph_parse, 'point', True)
+            return points.values()[0]
+        elif len(variable_signature.name) == 1:
+            return match_parse.match_dict[variable_signature.name][0]
     elif return_type == 'line':
         if len(variable_signature.name) == 1:
             line = match_parse.match_dict[variable_signature.name][0]
@@ -55,13 +65,21 @@ def _ground_leaf(match_parse, leaf, return_type):
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
             return FormulaNode(function_signatures['Line'], [point_a, point_b])
+    elif return_type == 'lines':
+        lines = get_all_instances(graph_parse, 'line', True)
+        return SetNode(lines.values())
     elif return_type == 'circle':
-        assert len(variable_signature.name) == 1
-        center_label = variable_signature.name
-        center = match_parse.match_dict[center_label][0]
-        center_idx = int(center.signature.name.split("_")[1])
-        radius = match_parse.graph_parse.core_parse.radius_variables[center_idx][0]
-        return FormulaNode(function_signatures['Circle'], [center, radius])
+        if len(variable_signature.name) == 1:
+            center_label = variable_signature.name
+            center = match_parse.match_dict[center_label][0]
+            center_idx = int(center.signature.name.split("_")[1])
+            return graph_parse.circle_dict[center_idx][0]['variable']
+            # radius = match_parse.graph_parse.core_parse.radius_variables[center_idx][0]
+        elif variable_signature.name == 'circle':
+            circles = get_all_instances(graph_parse, 'circle', True)
+            return circles.values()[0]
+        else:
+            raise Exception()
     elif return_type == 'angle':
         # TODO :
         if len(variable_signature.name) == 3:
@@ -79,10 +97,23 @@ def _ground_leaf(match_parse, leaf, return_type):
             point_b = match_parse.match_dict[label_b][0]
             point_c = match_parse.match_dict[label_c][0]
             return FormulaNode(function_signatures['Triangle'], [point_a, point_b, point_c])
-        else:
-            raise Exception()
+        elif variable_signature.name == 'triangle':
+            triangles = get_all_instances(graph_parse, 'triangle', True)
+            return triangles.values()[0]
+    elif return_type == 'triangles':
+        triangles = get_all_instances(graph_parse, 'triangle', True)
+        return SetNode(triangles.values())
     elif return_type == 'quad':
-        pass
+        if len(variable_signature.name) == 4:
+            points = [match_parse.match_dict[label][0] for label in variable_signature.name]
+            return FormulaNode(function_signatures['Quad'], points)
+        elif variable_signature.name == 'quad':
+            quads = get_all_instances(graph_parse, 'quad', True)
+            return quads.values()[0]
+    elif return_type == 'polygon':
+        points = [match_parse.match_dict[label][0] for label in variable_signature.name]
+        return FormulaNode(function_signatures['Polygon'], points)
+    print return_type, variable_signature
 
-    raise Exception()
+    raise Exception(repr(leaf))
 

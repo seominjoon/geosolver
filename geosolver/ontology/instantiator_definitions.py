@@ -18,8 +18,12 @@ instantiator_defs = {
     'circle': (('center', 'point'), ('radius', 'number')),
     'arc': (('circle', 'circle'), ('a', 'point'), ('b', 'point')),
     'triangle': (('a', 'point'), ('b', 'point'), ('c', 'point')),
-    'quadrilateral': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
+    'quad': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
 }
+
+class Polygon(tuple):
+    def __new__(self, *points):
+        return tuple.__new__(Polygon, points)
 
 
 
@@ -27,6 +31,7 @@ instantiator_defs = {
 Initialize instantiators based on type_defs
 """
 instantiators = {}
+instantiators['polygon'] = Polygon
 for key, value in instantiator_defs.iteritems():
     args, _ = zip(*value)
     nt = namedtuple(key, ' '.join(args))

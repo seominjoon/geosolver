@@ -5,6 +5,7 @@ from geosolver.grounding.label_distances import label_distance_to_line, label_di
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.text2.ontology import FormulaNode, function_signatures, issubtype
+import logging
 
 __author__ = 'minjoon'
 
@@ -25,6 +26,10 @@ def parse_match_from_known_labels(graph_parse, known_labels):
 
         # Find closest type_ instance's key in graph_parse
         instances = get_all_instances(graph_parse, type_)
+        if len(instances) == 0:
+            logging.error("no instance found of type %s" % type_)
+            continue
+
         if len(arr) > 1 and type_ == 'line' and arr[0] == 'length':
             distances = [(key, label_distance_to_line(label_point, instance, True)) for key, instance in instances.iteritems()]
         elif type_ == 'line':
