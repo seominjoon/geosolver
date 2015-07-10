@@ -1,26 +1,16 @@
 import re
 import networkx as nx
-from geosolver.text2.ontology import FormulaNode, VariableSignature, SetNode
+from geosolver.text2.ontology import FormulaNode, VariableSignature, SetNode, issubtype
 
 __author__ = 'minjoon'
 
 
-def filter_dummies(formula_nodes):
-    """
-    Remove (filter) formula nodes that were used to determine variable types
-    e.g. IsLine, IsCircle, IsQuad, IsTriangle, etc.
-    :param formula_nodes:
-    :return:
-    """
-    dummies = ['IsLine', 'IsCircle', 'IsTriangle', 'IsQuad', 'IsAngle']
-    new_nodes = []
-    for formula_node in formula_nodes:
-        if not formula_node.signature.id in dummies:
-            new_nodes.append(formula_node)
-    return new_nodes
+def complete_text_formula_parse(text_formula_parse):
+    ised_formulas = _apply_is(text_formula_parse.is_formulas, text_formula_parse.core_formulas)
+    cced_formulas = _apply_cc(text_formula_parse.cc_formulas, ised_formulas)
+    return cced_formulas
 
-
-def apply_trans(match_parse, formula_nodes):
+def _apply_is(is_formulas, core_formulas):
     """
     Given a list of formulas, resolve transitivity by Is relation
 
@@ -29,10 +19,8 @@ def apply_trans(match_parse, formula_nodes):
     """
     graph = nx.Graph()
     explicit_sigs = set()
-    for formula_node in formula_nodes:
+    for formula_node in is_formulas:
         assert isinstance(formula_node, FormulaNode)
-        if formula_node.signature.id != "Is":
-            continue
         a_node, b_node = formula_node.children
         a_sig, b_sig = a_node.signature, b_node.signature
         if not isinstance(a_sig, VariableSignature):
@@ -48,28 +36,66 @@ def apply_trans(match_parse, formula_nodes):
 
     tester = lambda sig: sig in graph and any(nx.has_path(graph, sig, explicit_sig) for explicit_sig in explicit_sigs)
     getter = lambda sig: [explicit_sig for explicit_sig in explicit_sigs if nx.has_path(graph, sig, explicit_sig)][0]
-    new_formula_nodes = [formula_node.replace_signature(tester, getter) for formula_node in formula_nodes
-                         if formula_node.signature.id != 'Is']
+    new_formula_nodes = [formula_node.replace_signature(tester, getter) for formula_node in core_formulas]
     return new_formula_nodes
 
-def apply_cc(formula_nodes):
+def _apply_cc(cc_formulas, core_formulas):
     graph = nx.Graph()
     firsts = set()
-    for formula_node in formula_nodes:
-        if formula_node.signature.id != 'CC':
-            continue
+    for formula_node in cc_formulas:
         a_node, b_node = formula_node.children
         a_sig, b_sig = a_node.signature, b_node.signature
         firsts.add(a_sig)
         graph.add_edge(a_sig, b_sig)
 
-    tester = lambda node: node.signature in firsts
-    getter = lambda node: SetNode([node] + [FormulaNode(nbr, []) for nbr in graph[node.signature]])
-    new_formula_nodes = [formula_node.replace_node(tester, getter) for formula_node in formula_nodes
-                         if formula_node.signature.id != 'CC']
+    def tester(node):
+        if node.signature.valence == 2 and node.is_singular():
+            child_node = node.children[0]
+            if len(graph.edges(child_node.signature)) == 1:
+                nbr = graph[child_node.signature].keys()[0]
+                if is_valid_relation(node.signature, nbr, 1):
+                    nbr_node = FormulaNode(nbr, [])
+                    return FormulaNode(node.signature, [node.children[0], nbr_node])
+
+            # insert dummy variable
+            nbr = VariableSignature("dummy", node.signature.arg_types[1], name=node.signature.arg_types[1])
+            nbr_node = FormulaNode(nbr, [])
+            return FormulaNode(node.signature, [node.children[0], nbr_node])
+
+        if node.signature not in firsts:
+            return None
+        if node.parent is None:
+            raise Exception
+        if isinstance(node.parent, FormulaNode) and (node.parent.signature.valence == 1 or node.parent.is_plural()):
+            args =  [FormulaNode(nbr, []) for nbr in graph[node.signature]
+                     if is_valid_relation(node.parent.signature, nbr, node.index)]
+            if len(args) == 0:
+                return None
+            return SetNode([node] + args)
+        return None
+
+    new_formula_nodes = [formula_node.replace_node(tester) for formula_node in core_formulas]
     return new_formula_nodes
 
-def apply_distribution(nodes):
+
+def is_valid_relation(parent_signature, child_signature, index):
+    return issubtype(child_signature.return_type, parent_signature.arg_types[index])
+
+def filter_dummies(formula_nodes):
+    """
+    Remove (filter) formula nodes that were used to determine variable types
+    e.g. IsLine, IsCircle, IsQuad, IsTriangle, etc.
+    :param formula_nodes:
+    :return:
+    """
+    dummies = ['IsLine', 'IsCircle', 'IsTriangle', 'IsQuad', 'IsAngle']
+    new_nodes = []
+    for formula_node in formula_nodes:
+        if not formula_node.signature.id in dummies:
+            new_nodes.append(formula_node)
+    return new_nodes
+
+def _apply_distribution(nodes):
     """
     If unary: just expand!
     If binary and same length: respectively
@@ -79,12 +105,12 @@ def apply_distribution(nodes):
     :param formula_nodes:
     :return:
     """
-    return [_apply_distribution(node) for node in nodes]
+    return [_apply_distribution_helper(node) for node in nodes]
 
-def _apply_distribution(node):
+def _apply_distribution_helper(node):
     if not isinstance(node, FormulaNode) or len(node.children) == 0:
         return node
-    node = FormulaNode(node.signature, [_apply_distribution(child) for child in node.children])
+    node = FormulaNode(node.signature, [_apply_distribution_helper(child) for child in node.children])
     if len(node.children) == 1:
         child_node = node.children[0]
         if isinstance(child_node, SetNode) and node.signature.arg_types[0][0] != '*':

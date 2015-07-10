@@ -1,5 +1,5 @@
 from geosolver.text2.get_annotation_node import AnnotationNode
-from geosolver.text2.ontology import function_signatures
+from geosolver.text2.ontology import signatures
 from geosolver.text2.rule import UnaryRule, ImplicationRule, IsRule, CCRule, BinaryRule
 
 __author__ = 'minjoon'
@@ -48,10 +48,10 @@ def _annotation_tree_to_semantic_rules(syntax_parse, annotation_tree):
             b_node, c_node = annotation_node.children
             b_tag_rule = b_node.content
             c_tag_rule = c_node.content
-            if a_tag_rule.signature == function_signatures['Is']:
+            if a_tag_rule.signature == signatures['Is']:
                 is_rule = IsRule(syntax_parse, b_tag_rule, c_tag_rule)
                 is_rules.append(is_rule)
-            elif a_tag_rule.signature == function_signatures['CC']:
+            elif a_tag_rule.signature == signatures['CC']:
                 conj_rule = CCRule(syntax_parse, b_tag_rule, c_tag_rule)
                 conj_rules.append(conj_rule)
             else:

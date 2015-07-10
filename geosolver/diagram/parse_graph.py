@@ -6,7 +6,7 @@ from geosolver.diagram.states import CoreParse, GraphParse
 import networkx as nx
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import LINE_EPS, CIRCLE_EPS
-from geosolver.text2.ontology import FormulaNode, function_signatures
+from geosolver.text2.ontology import FormulaNode, signatures
 
 __author__ = 'minjoon'
 
@@ -51,7 +51,7 @@ def _get_circle_dict(core_parse):
                     points[key] = point
             center_var = core_parse.point_variables[point_key]
             radius_var = core_parse.radius_variables[point_key][radius_key]
-            circle_var = FormulaNode(function_signatures['Circle'], [center_var, radius_var])
+            circle_var = FormulaNode(signatures['Circle'], [center_var, radius_var])
             d[radius_key] = {'instance': circle, 'points': points, 'variable': circle_var}
         if len(d) > 0:
             circle_dict[point_key] = d
@@ -75,7 +75,7 @@ def _get_line_graph(core_parse):
         p0, p1 = core_parse.intersection_points[key0], core_parse.intersection_points[key1]
         line = instantiators['line'](p0, p1)
         v0, v1 = core_parse.point_variables[key0], core_parse.point_variables[key1]
-        var = FormulaNode(function_signatures['Line'], [v0, v1])
+        var = FormulaNode(signatures['Line'], [v0, v1])
         if instance_exists(core_parse, line):
             points = {}
             for key in set(core_parse.intersection_points).difference({key0, key1}):
@@ -100,7 +100,7 @@ def _get_arc_graph(core_parse, circle, circle_variable, circle_points):
         p0, p1 = circle_points[key0], circle_points[key1]
         arc = instantiators['arc'](circle, p0, p1)
         v0, v1 = core_parse.point_variables[key0], core_parse.point_variables[key1]
-        var = FormulaNode(function_signatures['Arc'], [circle_variable, v0, v1])
+        var = FormulaNode(signatures['Arc'], [circle_variable, v0, v1])
         if instance_exists(core_parse, arc):
             arc_points = {}
             for key in set(circle_points).difference({key0, key1}):

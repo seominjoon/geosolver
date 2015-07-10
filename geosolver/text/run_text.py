@@ -70,7 +70,7 @@ def get_models():
                 unary_rules.extend(local_unary_rules)
                 binary_rules.extend(local_binary_rules)
 
-    # localities = {function_signatures['add']: 1}
+    # localities = {signatures['add']: 1}
     impliable_signatures = rules_to_impliable_signatures(unary_rules + binary_rules)
     uff1 = generate_unary_feature_function(unary_rules)
     bff1 = generate_binary_feature_function(binary_rules)

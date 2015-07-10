@@ -62,7 +62,7 @@ def node_to_semantic_rules(words, syntax_tree, tags, node, lift_index=False):
     binary_rules = []
     """
     if issubtype(node.function_signature.return_type, 'truth'):
-        start_rule = UnaryRule(words, syntax_tree, tags, None, function_signatures['StartTruth'], node.index, node.function_signature)
+        start_rule = UnaryRule(words, syntax_tree, tags, None, signatures['StartTruth'], node.index, node.function_signature)
     else:
         print node.function_signature
         start_rule = None

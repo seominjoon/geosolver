@@ -1,3 +1,4 @@
+import itertools
 import networkx as nx
 
 __author__ = 'minjoon'
@@ -44,15 +45,50 @@ class VariableSignature(Signature):
     def __repr__(self):
         return self.name
 
-
-class FormulaNode(object):
-    def __init__(self, signature, children):
-        self.signature = signature
+class Node(object):
+    def __init__(self, children, parent=None, index=None):
+        self.parent = parent
+        self.index = index
         self.children = children
-        self.return_type = signature.return_type
+        for idx, child in enumerate(children):
+            if isinstance(child, Node):
+                child.parent = self
+                child.index = idx
 
     def is_leaf(self):
         return len(self.children) == 0
+
+    def replace_node(self, tester, getter=None):
+        args = [child.replace_node(tester, getter) for child in self.children]
+        out = self.__class__(args, self.parent, self.index)
+        test = tester(out)
+        if bool(test):
+            if getter is None:
+                return test
+            return getter(out)
+        return out
+
+    def __iter__(self):
+        yield self
+        for x in itertools.chain(*[iter(child) for child in self.children]):
+            yield x
+
+    def is_singular(self):
+        return len(self.children) == 1
+
+    def is_plural(self):
+        return len(self.children) > 1
+
+    def has_signature(self, id_):
+        return any(child.has_signature(id_) for child in self.children)
+
+
+class FormulaNode(Node):
+    def __init__(self, signature, children, parent=None, index=None):
+        self.signature = signature
+        super(FormulaNode, self).__init__(children, parent, index)
+        self.return_type = signature.return_type
+
 
     def replace_signature(self, tester, getter):
         """
@@ -68,64 +104,67 @@ class FormulaNode(object):
             new_sig = getter(self.signature)
         return FormulaNode(new_sig, args)
 
-    def replace_node(self, tester, getter):
-        if tester(self):
-            return getter(self)
-        else:
-            args = [child.replace_node(tester, getter) for child in self.children]
-            return FormulaNode(self.signature, args)
+    def replace_node(self, tester, getter=None):
+        args = [child.replace_node(tester, getter) for child in self.children]
+        out = self.__class__(self.signature, args, self.parent, self.index)
+        test = tester(out)
+        if bool(test):
+            if getter is None:
+                return test
+            return getter(out)
+        return out
 
 
     def __add__(self, other):
-        current = function_signatures['Add']
+        current = signatures['Add']
         return FormulaNode(current, [self, other])
 
     def __radd__(self, other):
-        current = function_signatures['Add']
+        current = signatures['Add']
         return FormulaNode(current, [other, self])
 
     def __mul__(self, other):
-        current = function_signatures['Mul']
+        current = signatures['Mul']
         return FormulaNode(current, [self, other])
 
     def __rmul__(self, other):
-        current = function_signatures['Mul']
+        current = signatures['Mul']
         return FormulaNode(current, [other, self])
 
     def __sub__(self, other):
-        current = function_signatures['Sub']
+        current = signatures['Sub']
         return FormulaNode(current, [self, other])
 
     def __rsub__(self, other):
-        current = function_signatures['Sub']
+        current = signatures['Sub']
         return FormulaNode(current, [other, self])
 
     def __div__(self, other):
-        current = function_signatures['Div']
+        current = signatures['Div']
         return FormulaNode(current, [self, other])
 
     def __rdiv__(self, other):
-        current = function_signatures['Div']
+        current = signatures['Div']
         return FormulaNode(current, [other, self])
 
     def __pow__(self, power, modulo=None):
-        current = function_signatures['Pow']
+        current = signatures['Pow']
         return FormulaNode(current, [self, power])
 
     def __rpow__(self, power, modulo=None):
-        current = function_signatures['Pow']
+        current = signatures['Pow']
         return FormulaNode(current, [power, self])
 
     def __eq__(self, other):
-        current = function_signatures['Equals']
+        current = signatures['Equals']
         return FormulaNode(current, [self, other])
 
     def __ge__(self, other):
-        current = function_signatures['Ge']
+        current = signatures['Ge']
         return FormulaNode(current, [self, other])
 
     def __lt__(self, other):
-        current = function_signatures['Lt']
+        current = signatures['Lt']
         return FormulaNode(current, [self, other])
 
     def __repr__(self):
@@ -134,30 +173,25 @@ class FormulaNode(object):
         else:
             return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
 
+    def has_signature(self, id_):
+        if self.signature.id == id_:
+            return True
+        return any(child.has_signature(id_) for child in self.children)
 
-class SetNode(object):
+
+
+class SetNode(Node):
     def __init__(self, children, head_index=0):
-        self.children = children
+        super(SetNode, self).__init__(children)
         self.head = children[head_index]
-
-    def is_singular(self):
-        return len(self.children) == 1
-
-    def is_plural(self):
-        return len(self.children) > 1
 
     def __repr__(self):
         return "{%s}" % ",".join(repr(child) for child in self.children)
 
-    def replace_node(self, tester, getter):
-        if tester(self):
-            return getter(self)
-        else:
-            args = [child.replace_node(tester, getter) for child in self.children]
-            return SetNode(self.signature, args)
 
 
-types = ('root', 'truth', 'number', 'entity', 'line', 'circle', 'triangle', 'quad', 'polygon')
+
+types = ('root', 'truth', 'number', 'entity', 'point', 'line', 'angle', 'circle', 'triangle', 'quad', 'polygon')
 type_inheritances = (
     ('root', 'truth'),
     ('root', 'number'),
@@ -182,6 +216,12 @@ for parent, child in type_inheritances:
 
 def issubtype(child_type, parent_type):
     return nx.has_path(type_graph, parent_type, child_type)
+
+def is_singular(type_):
+    return type_ in types
+
+def is_plural(type_):
+    return type_[:-1] in types and type_[-1] == 's'
 
 function_signature_tuples = (
     ('Not', 'truth', ['truth']),
@@ -290,4 +330,5 @@ def get_function_signatures():
         local_function_signatures[id_] = function_signature
     return local_function_signatures
 
-function_signatures = get_function_signatures()
+signatures = get_function_signatures()
+signatures['What'] = VariableSignature('What', 'number')

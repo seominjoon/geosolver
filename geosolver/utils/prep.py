@@ -203,9 +203,3 @@ def sentence_to_words_statements_values(sentence):
     word_dict = dict(enumerate(words))
     return word_dict, statements, values
 
-
-
-
-
-
-

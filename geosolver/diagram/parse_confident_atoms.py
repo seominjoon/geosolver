@@ -1,4 +1,4 @@
-from geosolver.text2.ontology import FormulaNode, function_signatures
+from geosolver.text2.ontology import FormulaNode, signatures
 
 __author__ = 'minjoon'
 
@@ -9,23 +9,23 @@ def parse_confident_atoms(graph_parse):
     confident_variable_nodes = []
 
     for from_key, to_key, data in line_graph.edges(data=True):
-        line_variable = FormulaNode(function_signatures['Line'],
+        line_variable = FormulaNode(signatures['Line'],
                                      [core_parse.point_variables[from_key], core_parse.point_variables[to_key]])
         points = data['points']
         for point_key, point in points.iteritems():
             point_variable = core_parse.point_variables[point_key]
-            variable_node = FormulaNode(function_signatures['PointLiesOnLine'], [point_variable, line_variable])
+            variable_node = FormulaNode(signatures['PointLiesOnLine'], [point_variable, line_variable])
             confident_variable_nodes.append(variable_node)
 
     for center_key, d in circle_dict.iteritems():
         for radius_key, dd in d.iteritems():
-            circle_variable = FormulaNode(function_signatures['Circle'],
+            circle_variable = FormulaNode(signatures['Circle'],
                                            [core_parse.point_variables[center_key],
                                             core_parse.radius_variables[center_key][radius_key]])
             points = dd['points']
             for point_key, point in points.iteritems():
                 point_variable = core_parse.point_variables[point_key]
-                variable_node = FormulaNode(function_signatures['PointLiesOnCircle'], [point_variable, circle_variable])
+                variable_node = FormulaNode(signatures['PointLiesOnCircle'], [point_variable, circle_variable])
                 confident_variable_nodes.append(variable_node)
 
     return confident_variable_nodes

@@ -2,8 +2,10 @@ import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FormulaNode
+from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature
 import sys
+from geosolver.utils.num import is_number
+
 this = sys.modules[__name__]
 
 __author__ = 'minjoon'
@@ -14,7 +16,15 @@ class TruthValue(object):
         self.conf = np.exp(-self.norm)
 
     def __add__(self, other):
-        return TruthValue(self.norm + other.norm)
+        if isinstance(other, TruthValue):
+            return TruthValue(self.norm + other.norm)
+        elif isinstance(other, int) or isinstance(other, float):
+            return TruthValue(self.norm + other)
+        else:
+            raise Exception()
+
+    def __radd__(self, other):
+        return self.__add__(other)
 
     def __repr__(self):
         return "TruthValue(conf=%.2f)" % self.conf
@@ -113,10 +123,31 @@ def IsMidpointOf(point, line):
     line_b = Line(point, line.b)
     return Equals(LengthOf(line_a), LengthOf(line_b)) + PointLiesOnLine(point, line)
 
+def IsTriangle(triangle):
+    if isinstance(triangle, instantiators['triangle']):
+        return TruthValue(0)
+    else:
+        return TruthValue(-np.inf)
+
+def IsAngle(angle):
+    if isinstance(angle, instantiators['angle']):
+        return TruthValue(0)
+    else:
+        return TruthValue(-np.inf)
+
+def IsInscribedIn(triangle, circle):
+    return sum(PointLiesOnCircle(point, circle) for point in triangle)
+
+def IsCenterOf(point, circle):
+    return Equals(point[0], circle.center[0]) + Equals(point[1], circle.center[1])
+
+
 
 def evaluate(function_node, assignment):
-    if function_node.is_leaf():
+    if isinstance(function_node.signature, VariableSignature):
         return assignment[function_node.signature.id]
+    elif is_number(function_node.signature.id):
+        return float(function_node.signature.id)
     else:
         evaluated_args = []
         for arg in function_node.children:

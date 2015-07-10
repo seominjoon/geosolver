@@ -38,3 +38,11 @@ def dimension_wise_non_maximum_suppression(vectors, radii, dimension_wise_distan
             out_vectors.append(vector)
 
     return out_vectors
+
+
+def is_number(string):
+    try:
+        float(string)
+        return True
+    except:
+        return False

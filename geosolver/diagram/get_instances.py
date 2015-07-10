@@ -2,7 +2,7 @@ import itertools
 from geosolver.diagram.computational_geometry import angle_in_radian
 from geosolver.diagram.states import GraphParse
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FormulaNode, function_signatures
+from geosolver.text2.ontology import FormulaNode, signatures
 
 __author__ = 'minjoon'
 

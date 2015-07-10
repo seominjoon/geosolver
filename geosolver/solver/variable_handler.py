@@ -1,5 +1,5 @@
 import numpy as np
-from geosolver.text2.ontology import FormulaNode, VariableSignature, function_signatures
+from geosolver.text2.ontology import FormulaNode, VariableSignature, signatures
 
 __author__ = 'minjoon'
 
@@ -60,7 +60,7 @@ class VariableHandler(object):
 
 
     def apply(self, name, *args):
-        vn = FormulaNode(function_signatures[name], args)
+        vn = FormulaNode(signatures[name], args)
         if name in ['Point', 'Line', 'Circle']:
             self.entities.append(vn)
         return vn

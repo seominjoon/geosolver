@@ -1,4 +1,4 @@
-from geosolver.text2.ontology import FormulaNode, VariableSignature, abbreviations, function_signatures
+from geosolver.text2.ontology import FormulaNode, VariableSignature, abbreviations, signatures
 
 __author__ = 'minjoon'
 
@@ -14,5 +14,5 @@ def prefix_to_formula(prefix):
         except:
             return FormulaNode(VariableSignature(prefix, 'root'), [])
     else:
-        return FormulaNode(function_signatures[abbreviations[prefix[0]]],
+        return FormulaNode(signatures[abbreviations[prefix[0]]],
                             [prefix_to_formula(child) for child in prefix[1:]])

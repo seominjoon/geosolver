@@ -1,7 +1,7 @@
 from collections import deque
 import re
 from pyparsing import *
-from geosolver.text2.ontology import function_signatures, FunctionSignature, VariableSignature, FormulaNode
+from geosolver.text2.ontology import signatures, FunctionSignature, VariableSignature, FormulaNode
 from geosolver.text2.rule import TagRule
 
 __author__ = 'minjoon'
@@ -58,8 +58,8 @@ def get_annotation_node(syntax_parse, annotation_string):
         children = c[2:]
         type_, s = c[0]
         name = "_".join(words[idx] for idx in range(*local_span))
-        if s in function_signatures:
-            signature = function_signatures[s]
+        if s in signatures:
+            signature = signatures[s]
         elif type_ == 'function' and len(children) == 0:
             # Constant number
             signature = FunctionSignature(name, 'number', [], name=name)

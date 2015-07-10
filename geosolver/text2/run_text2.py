@@ -1,10 +1,11 @@
 from geosolver import geoserver_interface
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
-from geosolver.grounding.ground_formula_nodes import ground_formula_nodes
+from geosolver.grounding.ground_formula_nodes import ground_formula_node
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.text2.annotation_node_to_rules import annotation_node_to_tag_rules, annotation_node_to_semantic_rules
+from geosolver.text2.annotation_nodes_to_text_formula_parse import annotation_nodes_to_text_formula_parse
 from geosolver.text2.get_annotation_node import get_annotation_node, is_valid_annotation
-from geosolver.text2.post_processing import apply_trans, filter_dummies, apply_cc, apply_distribution
+from geosolver.text2.complete_text_formula_parse import complete_text_formula_parse
 from geosolver.text2.syntax_parser import SyntaxParse
 from geosolver.utils.prep import open_image
 
@@ -37,7 +38,7 @@ def test_validity():
 def test_trans():
     query = 968
     questions = geoserver_interface.download_questions(query)
-    annotations = geoserver_interface.download_semantics(query)
+    all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():
         label_data = geoserver_interface.download_labels(pk)[pk]
         diagram = open_image(question.diagram_path)
@@ -45,15 +46,14 @@ def test_trans():
         match_parse = parse_match_from_known_labels(graph_parse, label_data)
         for number, sentence_words in question.sentence_words.iteritems():
             syntax_parse = SyntaxParse(sentence_words, None)
-            nodes = [get_annotation_node(syntax_parse, annotation) for annotation in annotations[pk][number].values()]
-            formulas = [node.to_formula() for node in nodes]
-            new_formulas = apply_trans(None, formulas)
-            new_formulas = filter_dummies(new_formulas)
-            new_formulas = apply_cc(new_formulas)
-            new_formulas = ground_formula_nodes(match_parse, new_formulas)
-            new_formulas = apply_distribution(new_formulas)
-            for new_formula in new_formulas:
-                print new_formula
+            annotation_nodes = [get_annotation_node(syntax_parse, annotation)
+                                for annotation in all_annotations[pk][number].values()]
+            text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
+            completed_formulas = complete_text_formula_parse(text_formula_parse)
+            for formula in completed_formulas:
+                grounded_formula = ground_formula_node(match_parse, formula)
+                print grounded_formula
+
         graph_parse.core_parse.display_points()
 
 
