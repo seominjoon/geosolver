@@ -171,7 +171,8 @@ def angle_in_radian(angle, smaller=True):
     a = line_length(instantiators['line'](angle.b, angle.c))
     b = line_length(instantiators['line'](angle.c, angle.a))
     c = line_length(instantiators['line'](angle.a, angle.b))
-    smaller_angle = np.sqrt((a**2 + b**2 - c**2) / (2*a*b))
+    value = (c**2 + a**2 - b**2) / (2*c*a)
+    smaller_angle = np.arccos(value)
     if smaller:
         return smaller_angle
 

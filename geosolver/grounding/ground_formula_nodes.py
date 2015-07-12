@@ -3,7 +3,7 @@ import itertools
 from geosolver.diagram.get_instances import get_all_instances
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_semantics import evaluate
-from geosolver.text2.ontology import VariableSignature, signatures, FormulaNode, SetNode, types, is_singular
+from geosolver.text2.ontology import VariableSignature, signatures, FormulaNode, SetNode, types, is_singular, Node
 import numpy as np
 
 __author__ = 'minjoon'
@@ -20,24 +20,22 @@ def ground_formula_node(match_parse, formula_node):
             grounded_node_sets.append(grounded_node.children)
     scores = []
     combinations = list(itertools.product(*grounded_node_sets))
-    grounded_formulas = []
+    final_formulas = []
     for combination in combinations:
         var_dict = {variable_node.signature: combination[idx]
                     for idx, variable_node in enumerate(singular_variable_nodes)}
         grounded_formula = _assign_variables(formula_node, var_dict)
-        grounded_formulas.append(grounded_formula)
-        if grounded_formula.has_signature("What"):
-            score = -np.inf
-        elif isinstance(grounded_formula, FormulaNode):
-            score = evaluate(grounded_formula, core_parse.variable_assignment)
-        elif isinstance(grounded_formula, SetNode):
-            local_scores = [evaluate(formula, core_parse.variable_assignment) for formula in grounded_formula.children]
-            score = np.mean(local_scores)
+        final_formula = _apply_distribution(grounded_formula)
+        final_formulas.append(final_formula)
+        if final_formula.has_signature("What"):
+            score = 1
+        elif isinstance(final_formula, Node):
+            score = evaluate(final_formula, core_parse.variable_assignment).conf
         else:
             raise Exception()
         scores.append(score)
 
-    pairs = zip(scores, grounded_formulas)
+    pairs = zip(scores, final_formulas)
     argmax_grounded_formula = max(pairs, key=lambda pair: pair[0])[1]
     return argmax_grounded_formula
 
@@ -102,7 +100,8 @@ def _ground_leaf(match_parse, leaf):
         elif len(variable_signature.name) == 1:
             return FormulaNode(variable_signature, [])
         elif len(variable_signature.name) == 2:
-            return FormulaNode(signatures['LengthOf'], [_ground_leaf(match_parse, leaf, 'line')])
+            new_leaf = FormulaNode(VariableSignature(leaf.signature.id, "line", name=leaf.signature.name), [])
+            return FormulaNode(signatures['LengthOf'], [_ground_leaf(match_parse, new_leaf)])
     elif return_type == 'point':
         if variable_signature.name == 'point':
             points = get_all_instances(graph_parse, 'point', True)
@@ -110,7 +109,10 @@ def _ground_leaf(match_parse, leaf):
         elif len(variable_signature.name) == 1:
             return match_parse.match_dict[variable_signature.name][0]
     elif return_type == 'line':
-        if len(variable_signature.name) == 1:
+        if variable_signature.name == 'line':
+            lines = get_all_instances(graph_parse, 'line', True)
+            return SetNode(lines.values())
+        elif len(variable_signature.name) == 1:
             line = match_parse.match_dict[variable_signature.name][0]
             return line
         elif len(variable_signature.name) == 2:
@@ -181,4 +183,28 @@ def _ground_leaf(match_parse, leaf):
         return FormulaNode(signatures['Polygon'], points)
 
     raise Exception(repr(leaf))
+
+def _apply_distribution(node):
+    if not isinstance(node, FormulaNode) or len(node.children) == 0:
+        return node
+    node = FormulaNode(node.signature, [_apply_distribution(child) for child in node.children])
+    if len(node.children) == 1:
+        child_node = node.children[0]
+        if isinstance(child_node, SetNode) and node.signature.arg_types[0][0] != '*':
+            children = [FormulaNode(node.signature, [child]) for child in child_node.children]
+            return SetNode(children)
+    elif len(node.children) == 2:
+        a_node, b_node = node.children
+        if isinstance(a_node, SetNode) and node.signature.arg_types[0][0] != '*' and isinstance(b_node, SetNode) and node.signature.arg_types[1][0] != '*':
+            assert len(a_node.children) == len(b_node.children)
+            children = [FormulaNode(node.signature, [a_node.children[index], b_node.children[index]]) for index in range(len(a_node.children))]
+            return SetNode(children)
+        elif isinstance(a_node, SetNode) and node.signature.arg_types[0][0] != '*' and isinstance(b_node, FormulaNode):
+            children = [FormulaNode(node.signature, [child, b_node]) for child in a_node.children]
+            return SetNode(children)
+        elif isinstance(a_node, FormulaNode) and isinstance(b_node, SetNode) and node.signature.arg_types[1][0] != '*':
+            children = [FormulaNode(node.signature, [a_node, child]) for child in b_node.children]
+            return SetNode(children)
+
+    return node
 

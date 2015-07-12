@@ -1,33 +1,55 @@
+import itertools
 import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
-    distance_between_points
+    distance_between_points, angle_in_radian
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature
+from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature, issubtype, SetNode
 import sys
 from geosolver.utils.num import is_number
+import operator
+
 
 this = sys.modules[__name__]
 
 __author__ = 'minjoon'
 
 class TruthValue(object):
-    def __init__(self, value, std=None):
+    def __init__(self, value, std=1):
         self.norm = value
-        self.conf = np.exp(-self.norm)
+        self.std = std
+        if std == 0:
+            self.conf = 0
+        else:
+            self.conf = 1-min(1, value/std)
 
-    def __add__(self, other):
+    def __and__(self, other):
         if isinstance(other, TruthValue):
-            return TruthValue(self.norm + other.norm)
-        elif isinstance(other, int) or isinstance(other, float):
-            return TruthValue(self.norm + other)
+            if self.conf > other.conf:
+                return other
+            return self
+        elif other is True:
+            return self
         else:
             raise Exception()
 
-    def __radd__(self, other):
-        return self.__add__(other)
+    def __or__(self, other):
+        if isinstance(other, TruthValue):
+            if self.conf > other.conf:
+                return self
+            return other
+        elif other is False:
+            return self
+        else:
+            raise Exception()
+
+    def __rand__(self, other):
+        return self.__and__(other)
+
+    def __ror__(self, other):
+        return self.__or__(other)
 
     def __repr__(self):
-        return "TruthValue(conf=%.2f)" % self.conf
+        return "TV(conf=%.2f)" % self.conf
 
 def Line(p1, p2):
     return instantiators['line'](p1, p2)
@@ -65,7 +87,8 @@ def RadiusOf(circle):
 def Equals(a, b):
     std = abs((a+b)/2.0)
     value = abs(a-b)
-    return TruthValue(value, std)
+    out = TruthValue(value, std)
+    return out
 
 def Greater(a, b):
     std = abs((a+b)/2.0)
@@ -95,55 +118,137 @@ def Div(a, b):
 def Pow(a, b):
     return a**b
 
+def Or(a, b):
+    if a.conf > b.conf:
+        return a
+    return b
+
 def Tangent(line, circle):
     d = distance_between_line_and_point(line, circle.center)
     return Equals(d, circle.radius)
 
 def IsDiameterLineOf(line, circle):
-    return IsChordOf(line, circle) + Equals(LengthOf(line), 2*circle.radius)
+    return IsChordOf(line, circle) & Equals(LengthOf(line), 2*circle.radius)
 
 def PointLiesOnCircle(point, circle):
     d = distance_between_points(point, circle.center)
     return Equals(d, circle.radius)
 
 def IsChordOf(line, circle):
-    return PointLiesOnCircle(line.a, circle) + PointLiesOnCircle(line.b, circle)
+    return PointLiesOnCircle(line.a, circle) & PointLiesOnCircle(line.b, circle)
 
 def Perpendicular(l1, l2):
     return Equals((l1.b.y-l1.a.y)*(l2.b.y-l2.a.y), (l1.a.x-l1.b.x)*(l2.b.x-l2.a.x))
 
 def Colinear(A, B, C):
-    return Equals((B.y - A.y) * (C.x - B.x), (B.x - A.x) * (C.y - B.y))
+    l = (B.y - A.y) * (C.x - B.x)
+    r = (B.x - A.x) * (C.y - B.y)
+    o = Equals(l, r)
+    return o
 
 def PointLiesOnLine(point, line):
-    return Colinear(line.a, point, line.b) + Equals(LengthOf(line), distance_between_points(line.a, point) + distance_between_points(line.b, point))
+    if point == line[0] or point == line[1]:
+        return TruthValue(0)
+    return Colinear(line.a, point, line.b) & Equals(LengthOf(line), distance_between_points(line.a, point) + \
+        distance_between_points(line.b, point))
 
 def IsMidpointOf(point, line):
     line_a = Line(line.a, point)
     line_b = Line(point, line.b)
-    return Equals(LengthOf(line_a), LengthOf(line_b)) + PointLiesOnLine(point, line)
+    e = Equals(LengthOf(line_a), LengthOf(line_b))
+    l = PointLiesOnLine(point, line)
+    return e & l
 
 def IsTriangle(triangle):
     if isinstance(triangle, instantiators['triangle']):
         return TruthValue(0)
     else:
-        return TruthValue(-np.inf)
+        return TruthValue(np.inf)
+
+def IsLine(line):
+    if isinstance(line, instantiators['line']):
+        return TruthValue(0)
+    else:
+        return TruthValue(np.inf)
 
 def IsAngle(angle):
     if isinstance(angle, instantiators['angle']):
         return TruthValue(0)
     else:
-        return TruthValue(-np.inf)
+        return TruthValue(np.inf)
+
+def IsPoint(point):
+    if isinstance(point, instantiators['point']):
+        return TruthValue(0)
+    else:
+        return TruthValue(np.inf)
 
 def IsInscribedIn(triangle, circle):
-    return sum(PointLiesOnCircle(point, circle) for point in triangle)
+    out = reduce(operator.__and__, (PointLiesOnCircle(point, circle) for point in triangle), True)
+    return out
 
 def IsCenterOf(point, circle):
-    return Equals(point[0], circle.center[0]) + Equals(point[1], circle.center[1])
+    return Equals(point[0], circle.center[0]) & Equals(point[1], circle.center[1])
 
+def IntersectAt(entities, point):
+    return TruthValue(0)
 
+def Equilateral(triangle):
+    lines = [instantiators['line'](triangle[index-1], point) for index, point in enumerate(triangle)]
+    return Equals(LengthOf(lines[0]), LengthOf(lines[1])) & Equals(LengthOf(lines[1]), LengthOf(lines[2]))
+
+def IsSquare(quad):
+    lines = [instantiators['line'](quad[index-1], point) for index, point in enumerate(quad)]
+    return Equals(LengthOf(lines[0]), LengthOf(lines[1])) & \
+           Equals(LengthOf(lines[1]), LengthOf(lines[2])) & Equals(LengthOf(lines[2]), LengthOf(lines[3]))
+
+def AreaOf(twod):
+    name = twod.__class__.__name__
+    assert issubtype(name, 'twod')
+    if name == "circle":
+        center, radius = twod
+        area = np.pi * radius ** 2
+    elif issubtype(name, 'polygon'):
+        # http://mathworld.wolfram.com/PolygonArea.html
+        area = sum(twod[index-1][0]*p[1]-p[0]*twod[index-1][1] for index, p in enumerate(twod))
+    else:
+        raise Exception()
+    return area
+
+def MeasureOf(angle):
+    return angle_in_radian(angle)
+
+def IsAreaOf(number, twod):
+    return Equals(number, AreaOf(twod))
+
+def IsLengthOf(number, line):
+    return Equals(number, LengthOf(line))
+
+def IsPolygon(polygon):
+    return TruthValue(0)
+
+def Isosceles(triangle):
+    sides = [distance_between_points(triangle[index-1], point) for index, point in enumerate(triangle)]
+    combs = itertools.combinations(sides, 2)
+
+    out = reduce(operator.__or__, (Equals(a, b) for a, b in combs), False)
+    return out
+
+def BisectsAngle(line, angle):
+    on = PointLiesOnLine(angle[1], line)
+    distant_point = line[0]
+    if distant_point == angle[1]:
+        distant_point = line[1]
+    a0 = instantiators['angle'](angle[0], angle[1], distant_point)
+    a1 = instantiators['angle'](distant_point, angle[1], angle[2])
+    eq = Equals(MeasureOf(a0), MeasureOf(a1))
+    return on & eq
 
 def evaluate(function_node, assignment):
+    if isinstance(function_node, SetNode):
+        out = reduce(operator.__and__, (evaluate(child, assignment) for child in function_node.children), True)
+        return out
+    assert isinstance(function_node, FormulaNode)
     if isinstance(function_node.signature, VariableSignature):
         return assignment[function_node.signature.id]
     elif is_number(function_node.signature.id):

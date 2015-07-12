@@ -14,11 +14,11 @@ def add_function_signature(signatures, signature_tuple):
 def issubtype(child, parent):
     if child == 'variable' and parent == 'number':
         return True
-    if child in ['triangle', 'quad'] and parent == 'polygon':
+    if child in ['triangle', 'quad'] and parent == 'get_polygon':
         return True
     if child in ['line', 'circle', 'triangle', 'quad'] and parent == 'entity':
         return True
-    if child in ['circle', 'triangle', 'quad'] and parent == 'circle+polygon':
+    if child in ['circle', 'triangle', 'quad'] and parent == 'circle+get_polygon':
         return True
     return child == parent
 
@@ -69,14 +69,14 @@ tuples = (
     ('all', 'modifier', []),
     ('IsRhombus', 'truth', ['quad']),
     ('Quad', 'quad', ['modifier']),
-    ('PerimeterOf', 'number', ['polygon']),
+    ('PerimeterOf', 'number', ['get_polygon']),
     ('IsRight', 'truth', ['triangle']),
     ('IsHypotenuse', 'truth', ['line', 'triangle']),
     ('Intersects', 'truth', ['entity', 'entity'], True),
     ('IsMidpoint', 'truth', ['point', 'line']),
     ('Equilateral', 'truth', ['triangle']),
     ('Isosceles', 'truth', ['triangle']),
-    ('AreaOf', 'number', ['circle+polygon']),
+    ('AreaOf', 'number', ['circle+get_polygon']),
     ('IsSquare', 'truth', ['quad']),
     ('IsParallelogram', 'truth', ['quad']),
 )

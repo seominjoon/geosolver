@@ -23,10 +23,10 @@ type_defs = [
     {'name': 'line', 'supertype': 'entity'},
     {'name': 'arc', 'supertype': 'entity'},
     {'name': 'angle', 'supertype': 'entity'},
-    {'name': 'polygon', 'supertype': 'entity'},
+    {'name': 'get_polygon', 'supertype': 'entity'},
     {'name': 'circle', 'supertype': 'entity'},
-    {'name': 'triangle', 'supertype': 'polygon'},
-    {'name': 'quadrilateral', 'supertype': 'polygon'},
+    {'name': 'triangle', 'supertype': 'get_polygon'},
+    {'name': 'quadrilateral', 'supertype': 'get_polygon'},
 
     # unknown
     {'name': 'uNumber'},
@@ -50,9 +50,9 @@ function_defs = [
     {'name': 'angleOf_arc', 'arg_types': ['arc'], 'return_type': 'number'},
     {'name': 'radiusOf', 'arg_types': ['circle'], 'return_type': 'number'},
     {'name': 'diameterOf', 'arg_types': ['circle'], 'return_type': 'number'},
-    {'name': 'areaOf_polygon', 'arg_types': ['polygon'], 'return_type': 'number'},
+    {'name': 'areaOf_polygon', 'arg_types': ['get_polygon'], 'return_type': 'number'},
     {'name': 'areaOf_circle', 'arg_types': ['circle'], 'return_type': 'number'},
-    {'name': 'perimeterOf', 'arg_types': ['polygon'], 'return_type': 'number'},
+    {'name': 'perimeterOf', 'arg_types': ['get_polygon'], 'return_type': 'number'},
     {'name': 'circumferenceOf', 'arg_types': ['circle'], 'return_type': 'number'},
 
     # functions mapping to entities

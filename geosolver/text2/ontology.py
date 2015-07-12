@@ -181,8 +181,8 @@ class FormulaNode(Node):
 
 
 class SetNode(Node):
-    def __init__(self, children, head_index=0):
-        super(SetNode, self).__init__(children)
+    def __init__(self, children, parent=None, index=None, head_index=0):
+        super(SetNode, self).__init__(children, parent, index)
         self.head = children[head_index]
 
     def __repr__(self):
@@ -191,24 +191,25 @@ class SetNode(Node):
 
 
 
-types = ('root', 'truth', 'number', 'entity', 'point', 'line', 'angle', 'circle', 'triangle', 'quad', 'polygon')
 type_inheritances = (
     ('root', 'truth'),
     ('root', 'number'),
     ('root', 'entity'),
     ('entity', 'point'),
     ('entity', '1d'),
-    ('1d', 'line'),
-    ('1d', 'angle'),
-    ('1d', 'arc'),
-    ('entity', '2d'),
-    ('2d', 'polygon'),
-    ('2d', 'circle'),
+    ('oned', 'line'),
+    ('oned', 'angle'),
+    ('oned', 'arc'),
+    ('entity', 'twod'),
+    ('twod', 'polygon'),
+    ('twod', 'circle'),
     ('polygon', 'triangle'),
     ('polygon', 'quad'),
     ('polygon', 'hexagon'),
-
 )
+
+types = set().union(*[set(inheritance) for inheritance in type_inheritances])
+
 type_graph = nx.DiGraph()
 for parent, child in type_inheritances:
     type_graph.add_edge(parent, child)

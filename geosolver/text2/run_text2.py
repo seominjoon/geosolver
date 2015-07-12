@@ -2,6 +2,7 @@ from geosolver import geoserver_interface
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.grounding.ground_formula_nodes import ground_formula_node
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
+from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.text2.annotation_node_to_rules import annotation_node_to_tag_rules, annotation_node_to_semantic_rules
 from geosolver.text2.annotation_nodes_to_text_formula_parse import annotation_nodes_to_text_formula_parse
 from geosolver.text2.get_annotation_node import get_annotation_node, is_valid_annotation
@@ -36,7 +37,7 @@ def test_validity():
                     print annotation
 
 def test_trans():
-    query = 968
+    query = 963
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():
@@ -52,7 +53,11 @@ def test_trans():
             completed_formulas = complete_text_formula_parse(text_formula_parse)
             for formula in completed_formulas:
                 grounded_formula = ground_formula_node(match_parse, formula)
-                print grounded_formula
+                if not grounded_formula.has_signature("What") and not grounded_formula.has_signature("Following"):
+                    score = evaluate(grounded_formula, graph_parse.core_parse.variable_assignment)
+                else:
+                    score = None
+                print grounded_formula, score
 
         graph_parse.core_parse.display_points()
 

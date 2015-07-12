@@ -21,9 +21,9 @@ instantiator_defs = {
     'quad': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
 }
 
-class Polygon(tuple):
+class polygon(tuple):
     def __new__(self, *points):
-        return tuple.__new__(Polygon, points)
+        return tuple.__new__(polygon, points)
 
 
 
@@ -31,14 +31,14 @@ class Polygon(tuple):
 Initialize instantiators based on type_defs
 """
 instantiators = {}
-instantiators['polygon'] = Polygon
+instantiators['polygon'] = polygon
 for key, value in instantiator_defs.iteritems():
     args, _ = zip(*value)
     nt = namedtuple(key, ' '.join(args))
     instantiators[key] = nt
 
 
-def polygon(*args):
+def get_polygon(*args):
     if len(args) == 3:
         return instantiators['triangle'](*args)
     elif len(args) == 4:
@@ -46,4 +46,4 @@ def polygon(*args):
     else:
         raise Exception()
 
-# instantiators['polygon'] = polygon
+# instantiators['get_polygon'] = get_polygon

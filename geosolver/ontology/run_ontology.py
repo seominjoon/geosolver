@@ -21,7 +21,7 @@ def test_load_ontology():
     o = basic_ontology
     print(o.inheritance_graph.edges())
     print(o.ontology_graph.edges(data=True))
-    print(o.isinstance(o.types['triangle'], o.types['polygon']))
+    print(o.isinstance(o.types['triangle'], o.types['get_polygon']))
     # o.display_ontology_graph()
     t = o.types['number']
     print(o.isinstance(t, t))

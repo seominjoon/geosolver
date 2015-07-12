@@ -51,7 +51,7 @@ def _apply_cc(cc_formulas, core_formulas):
     def tester(node):
         if node.signature.valence == 2 and node.is_singular():
             child_node = node.children[0]
-            if len(graph.edges(child_node.signature)) == 1:
+            if child_node.signature in graph.nodes() and len(graph.edges(child_node.signature)) == 1:
                 nbr = graph[child_node.signature].keys()[0]
                 if is_valid_relation(node.signature, nbr, 1):
                     nbr_node = FormulaNode(nbr, [])
@@ -79,7 +79,15 @@ def _apply_cc(cc_formulas, core_formulas):
 
 
 def is_valid_relation(parent_signature, child_signature, index):
-    return issubtype(child_signature.return_type, parent_signature.arg_types[index])
+    parent_type = parent_signature.arg_types[index]
+    child_type = child_signature.return_type
+    if parent_type[0] != "*" and child_type == "*":
+        return False
+    if parent_type[0] == "*":
+        parent_type = parent_type[1:]
+    if child_type[0] == "*":
+        child_type = child_type[1:]
+    return issubtype(child_type, parent_type)
 
 def filter_dummies(formula_nodes):
     """
