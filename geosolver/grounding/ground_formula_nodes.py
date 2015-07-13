@@ -24,10 +24,11 @@ def ground_formula_node(match_parse, formula_node):
     for combination in combinations:
         var_dict = {variable_node.signature: combination[idx]
                     for idx, variable_node in enumerate(singular_variable_nodes)}
-        grounded_formula = _assign_variables(formula_node, var_dict)
-        final_formula = _apply_distribution(grounded_formula)
+        singular_grouded_formula = _assign_variables(formula_node, var_dict)
+        plural_grounded_formula = _ground_formula_node(match_parse, singular_grouded_formula)
+        final_formula = _apply_distribution(plural_grounded_formula)
         final_formulas.append(final_formula)
-        if final_formula.has_signature("What"):
+        if not final_formula.is_grounded(core_parse.variable_assignment.keys()):
             score = 1
         elif isinstance(final_formula, Node):
             score = evaluate(final_formula, core_parse.variable_assignment).conf
@@ -39,6 +40,7 @@ def ground_formula_node(match_parse, formula_node):
     argmax_grounded_formula = max(pairs, key=lambda pair: pair[0])[1]
     return argmax_grounded_formula
 
+
 def _assign_variables(formula_node, var_dict):
     tester = lambda node: isinstance(node, FormulaNode) and node.is_leaf() and node.signature in var_dict
     getter = lambda node: var_dict[node.signature]
@@ -47,27 +49,16 @@ def _assign_variables(formula_node, var_dict):
     return out_node
 
 
-
-
-
-
-def _ground_formula_node_helper(match_parse, formula_node):
-    if not isinstance(formula_node, FormulaNode) and not isinstance(formula_node, SetNode):
-        return formula_node
-    elif isinstance(formula_node, FormulaNode) and formula_node.is_leaf():
-        if formula_node.signature.id in signatures:
+def _ground_formula_node(match_parse, formula_node):
+    if formula_node.is_leaf():
+        if formula_node.is_grounded(match_parse.graph_parse.core_parse.variable_assignment.keys()):
             return formula_node
-        return _ground_leaf(match_parse, formula_node, formula_node.return_type)
-    elif isinstance(formula_node, FormulaNode):
-        children = [_ground_formula_node_helper(match_parse, child) for child in formula_node.children]
-        return FormulaNode(formula_node.signature, children)
-    elif isinstance(formula_node, SetNode):
-        members = [_ground_formula_node_helper(match_parse, member) for member in formula_node.children]
-        return SetNode(members)
+        return _ground_leaf(match_parse, formula_node)
+    children = [_ground_formula_node(match_parse, child) for child in formula_node.children]
+    if isinstance(formula_node, SetNode):
+        return SetNode(children)
+    return FormulaNode(formula_node.signature, children)
 
-
-def _infer_return_type(match_parse, atoms, variable_signature):
-    pass
 
 def _get_singular_variable_nodes(formula_node):
     singular_variable_nodes = []

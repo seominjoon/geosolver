@@ -116,7 +116,8 @@ def _get_polygons(graph_parse, name, is_variable, *args):
             points = tuple(graph_parse.core_parse.point_variables[key] for key in args)
         else:
             points = tuple(graph_parse.intersection_points[key] for key in args)
-        polygon = instantiators[name](*points)
+        # polygon = instantiators[name](*points)
+        polygon = FormulaNode(signatures[name.capitalize()], points)
         polygon_key = tuple(args)
         return {polygon_key: polygon}
     else:
@@ -142,7 +143,8 @@ def _get_all_polygons(graph_parse, name, n, is_variable):
             points = tuple(graph_parse.core_parse.point_variables[key] for key in keys)
         else:
             points = tuple(graph_parse.intersection_points[key] for key in keys)
-        polygon = instantiators[name](*points)
+        # polygon = instantiators[name](*points)
+        polygon = FormulaNode(signatures[name.capitalize()], points)
         polygon_key = tuple(keys)
         polygons[polygon_key] = polygon
         frozensets.add(frozenset(keys))

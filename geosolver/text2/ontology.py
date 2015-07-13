@@ -82,6 +82,10 @@ class Node(object):
     def has_signature(self, id_):
         return any(child.has_signature(id_) for child in self.children)
 
+    def is_grounded(self, ids):
+        return all(child.is_grounded(ids) for child in self.children)
+
+
 
 class FormulaNode(Node):
     def __init__(self, signature, children, parent=None, index=None):
@@ -168,7 +172,7 @@ class FormulaNode(Node):
         return FormulaNode(current, [self, other])
 
     def __repr__(self):
-        if self.is_leaf():
+        if isinstance(self.signature, VariableSignature):
             return repr(self.signature)
         else:
             return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
@@ -178,6 +182,17 @@ class FormulaNode(Node):
             return True
         return any(child.has_signature(id_) for child in self.children)
 
+    def is_grounded(self, names):
+        """
+        Determines if the formula's variables are only made of names
+        :param core_parse:
+        :return:
+        """
+        if self.is_leaf():
+            if isinstance(self.signature, VariableSignature):
+                return self.signature.id in names
+            return True
+        return all(child.is_grounded(names) for child in self.children)
 
 
 class SetNode(Node):
@@ -187,8 +202,6 @@ class SetNode(Node):
 
     def __repr__(self):
         return "{%s}" % ",".join(repr(child) for child in self.children)
-
-
 
 
 type_inheritances = (
@@ -333,3 +346,4 @@ def get_function_signatures():
 
 signatures = get_function_signatures()
 signatures['What'] = VariableSignature('What', 'number')
+signatures['Following'] = VariableSignature('Following', 'entity')

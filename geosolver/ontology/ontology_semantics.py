@@ -3,7 +3,7 @@ import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points, angle_in_radian
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature, issubtype, SetNode
+from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature, issubtype, SetNode, Node
 import sys
 from geosolver.utils.num import is_number
 import operator
@@ -141,16 +141,12 @@ def Perpendicular(l1, l2):
     return Equals((l1.b.y-l1.a.y)*(l2.b.y-l2.a.y), (l1.a.x-l1.b.x)*(l2.b.x-l2.a.x))
 
 def Colinear(A, B, C):
-    l = (B.y - A.y) * (C.x - B.x)
-    r = (B.x - A.x) * (C.y - B.y)
-    o = Equals(l, r)
-    return o
+    line = instantiators['line'](A, C)
+    eq = Equals(LengthOf(line), distance_between_points(line.a, B) + distance_between_points(line.b, B))
+    return eq
 
 def PointLiesOnLine(point, line):
-    if point == line[0] or point == line[1]:
-        return TruthValue(0)
-    return Colinear(line.a, point, line.b) & Equals(LengthOf(line), distance_between_points(line.a, point) + \
-        distance_between_points(line.b, point))
+    return Colinear(line[0], point, line[1])
 
 def IsMidpointOf(point, line):
     line_a = Line(line.a, point)
@@ -190,8 +186,10 @@ def IsInscribedIn(triangle, circle):
 def IsCenterOf(point, circle):
     return Equals(point[0], circle.center[0]) & Equals(point[1], circle.center[1])
 
-def IntersectAt(entities, point):
-    return TruthValue(0)
+def IntersectAt(lines, point):
+    assert isinstance(lines, SetNode)
+    out = reduce(operator.__and__, (PointLiesOnLine(point, line) for line in lines.children), True)
+    return out
 
 def Equilateral(triangle):
     lines = [instantiators['line'](triangle[index-1], point) for index, point in enumerate(triangle)]
@@ -244,11 +242,22 @@ def BisectsAngle(line, angle):
     eq = Equals(MeasureOf(a0), MeasureOf(a1))
     return on & eq
 
+def Three(entities):
+    if len(entities.children) == 3:
+        return TruthValue(0)
+    return TruthValue(np.inf)
+
+def Two(entities):
+    if len(entities.children) == 2:
+        return TruthValue(0)
+    return TruthValue(np.inf)
+
 def evaluate(function_node, assignment):
     if isinstance(function_node, SetNode):
+        assert function_node.head.return_type == 'truth'
         out = reduce(operator.__and__, (evaluate(child, assignment) for child in function_node.children), True)
         return out
-    assert isinstance(function_node, FormulaNode)
+
     if isinstance(function_node.signature, VariableSignature):
         return assignment[function_node.signature.id]
     elif is_number(function_node.signature.id):
@@ -258,6 +267,8 @@ def evaluate(function_node, assignment):
         for arg in function_node.children:
             if isinstance(arg, FormulaNode):
                 evaluated_args.append(evaluate(arg, assignment))
+            elif isinstance(arg, SetNode):
+                evaluated_args.append(SetNode([evaluate(arg_arg, assignment) for arg_arg in arg.children]))
             else:
                 evaluated_args.append(arg)
         return getattr(this, function_node.signature.id)(*evaluated_args)

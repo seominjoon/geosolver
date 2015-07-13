@@ -37,7 +37,7 @@ def test_validity():
                     print annotation
 
 def test_trans():
-    query = 963
+    query = 995
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():
@@ -53,7 +53,7 @@ def test_trans():
             completed_formulas = complete_text_formula_parse(text_formula_parse)
             for formula in completed_formulas:
                 grounded_formula = ground_formula_node(match_parse, formula)
-                if not grounded_formula.has_signature("What") and not grounded_formula.has_signature("Following"):
+                if grounded_formula.is_grounded(graph_parse.core_parse.variable_assignment.keys()):
                     score = evaluate(grounded_formula, graph_parse.core_parse.variable_assignment)
                 else:
                     score = None
