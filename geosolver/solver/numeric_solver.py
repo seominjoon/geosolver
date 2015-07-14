@@ -9,7 +9,7 @@ __author__ = 'minjoon'
 
 
 class NumericSolver(object):
-    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=10, tol=10**-3):
+    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=10, tol=10**-4):
         if variable_handler is None:
             variable_handler = VariableHandler()
         self.variable_handler = variable_handler

@@ -15,19 +15,22 @@ this = sys.modules[__name__]
 __author__ = 'minjoon'
 
 class TruthValue(object):
-    def __init__(self, value, std=1):
-        self.norm = value
-        self.std = std
-        if std == 0:
-            self.conf = 0
+    def __init__(self, norm, std=None, conf=None):
+        if std is not None:
+            norm /= std
+        self.norm = norm
+        if conf is None:
+            self.conf = min(0, 1-norm)
         else:
-            self.conf = 1-min(1, value/std)
+            self.conf = conf
 
     def __and__(self, other):
         if isinstance(other, TruthValue):
+            conf = self.conf
             if self.conf > other.conf:
-                return other
-            return self
+                conf = other.conf
+            norm = (self.norm + other.norm)/2.0
+            return TruthValue(norm, conf=conf)
         elif other is True:
             return self
         else:
@@ -35,10 +38,12 @@ class TruthValue(object):
 
     def __or__(self, other):
         if isinstance(other, TruthValue):
-            if self.conf > other.conf:
-                return self
-            return other
-        elif other is False:
+            conf = self.conf
+            if self.conf < other.conf:
+                conf = other.conf
+            norm = self.norm * other.norm
+            return TruthValue(norm, conf=conf)
+        elif other is True:
             return self
         else:
             raise Exception()
@@ -50,8 +55,9 @@ class TruthValue(object):
         return self.__or__(other)
 
     def flip(self):
-        new_norm = self.conf*self.std
-        out = TruthValue(new_norm, self.std)
+        norm = 1-self.norm
+        conf = 1-self.conf
+        out = TruthValue(norm, conf=conf)
         return out
 
     def __repr__(self):
@@ -240,7 +246,7 @@ def AreaOf(twod):
     return area
 
 def MeasureOf(angle):
-    return angle_in_radian(angle)
+    return angle_in_radian(angle, False)
 
 def IsAreaOf(number, twod):
     return Equals(number, AreaOf(twod))
@@ -311,6 +317,9 @@ def IsRectangle(quad):
     angles = (Angle(quad[index-2], quad[index-1], point) for index, point in enumerate(quad))
     out = reduce(operator.__and__, (Equals(MeasureOf(angle), np.pi/2) for angle in angles), True)
     return out
+
+def ValueOf(number):
+    return number
 
 def _polygon_to_lines(polygon):
     return [Line(polygon[index-1], point) for index, point in enumerate(polygon)]

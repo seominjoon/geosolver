@@ -86,15 +86,18 @@ def _ground_leaf(match_parse, leaf):
 
     if variable_signature.id in signatures:
         return leaf
-    if variable_signature.id in match_parse.graph_parse.core_parse.variable_assignment.keys():
+    elif variable_signature.id in match_parse.graph_parse.core_parse.variable_assignment.keys():
+        # pass point_0, point_1, etc.
         return leaf
     elif isinstance(variable_signature, VariableSignature) and variable_signature.is_ref():
+        # @v_1, etc.
         return leaf
     elif return_type == 'number':
         if is_number(variable_signature.name):
             return leaf
         elif len(variable_signature.name) == 1:
-            return FormulaNode(variable_signature, [])
+            # x, y, z, etc. Need to redefine id (id shouldn't be tuple).
+            return FormulaNode(VariableSignature(variable_signature.name, return_type), [])
         elif len(variable_signature.name) == 2 and variable_signature.name.isupper():
             new_leaf = FormulaNode(VariableSignature(leaf.signature.id, "line", name=leaf.signature.name), [])
             return FormulaNode(signatures['LengthOf'], [_ground_leaf(match_parse, new_leaf)])
@@ -183,7 +186,7 @@ def _ground_leaf(match_parse, leaf):
         circles = get_all_instances(graph_parse, 'circle', True)
         return SetNode(triangles.values() + quads.values() + hexagons.values() + circles.values())
 
-    print leaf.signature.name, leaf.return_type
+    print leaf.signature.id, leaf.signature.name, leaf.return_type
     raise Exception(repr(leaf))
 
 def _apply_distribution(node):

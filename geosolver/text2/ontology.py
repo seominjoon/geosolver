@@ -1,5 +1,6 @@
 import itertools
 import networkx as nx
+from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'
 
@@ -90,10 +91,18 @@ class Node(object):
         return len(self.children) > 1
 
     def has_signature(self, id_):
-        return any(child.has_signature(id_) for child in self.children)
+        return any(not is_number(child) and child.has_signature(id_) for child in self.children)
 
     def is_grounded(self, ids):
         return all(child.is_grounded(ids) for child in self.children)
+
+    def get_nodes(self, tester):
+        out = []
+        for node in self:
+            if tester(node):
+                out.append(node)
+        return out
+
 
 
 
@@ -182,15 +191,14 @@ class FormulaNode(Node):
         return FormulaNode(current, [self, other])
 
     def __repr__(self):
-        if self.is_leaf():
+        if isinstance(self.signature, VariableSignature):
             return repr(self.signature)
-        else:
-            return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
+        return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
 
     def has_signature(self, id_):
         if self.signature.id == id_:
             return True
-        return any(child.has_signature(id_) for child in self.children)
+        return any(not is_number(child) and child.has_signature(id_) for child in self.children)
 
     def is_grounded(self, names):
         """
@@ -305,7 +313,7 @@ function_signature_tuples = (
     ('Perpendicular', 'truth', ['line', 'line'], None, True),
     ('IsChordOf', 'truth', ['line', 'circle']),
     ('Tangent', 'truth', ['line', 'twod']),
-    ('RadiusNumOf', 'number', ['circle']),
+    ('RadiusOf', 'number', ['circle']),
     ('IsRadiusNumOf', 'truth', ['number', 'circle']),
     ('IsRadiusLineOf', 'truth', ['line', 'circle']),
     ('PointLiesOnLine', 'truth', ['point', 'line']),

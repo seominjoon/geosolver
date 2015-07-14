@@ -168,6 +168,7 @@ def intersections_between_circles(circle0, circle1):
 
 
 def angle_in_radian(angle, smaller=True):
+    """
     a = line_length(instantiators['line'](angle.b, angle.c))
     b = line_length(instantiators['line'](angle.c, angle.a))
     c = line_length(instantiators['line'](angle.a, angle.b))
@@ -175,7 +176,17 @@ def angle_in_radian(angle, smaller=True):
     smaller_angle = np.arccos(value)
     if smaller:
         return smaller_angle
-
+    else:
+        a0 = cartesian_angle(angle.b, angle.a)
+        a1 = cartesian_angle(angle.b, angle.c)
+        return signed_distance_between_cartesian_angles(a0, a1)
+    """
+    a0 = cartesian_angle(angle.b, angle.a)
+    a1 = cartesian_angle(angle.b, angle.c)
+    diff = signed_distance_between_cartesian_angles(a0, a1)
+    if smaller and diff > np.pi:
+        return 2*np.pi - diff
+    return diff
 
 def angle_in_degree(angle, smaller=True):
     return 180*angle_in_radian(angle, smaller=smaller)/np.pi

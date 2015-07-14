@@ -1,5 +1,5 @@
 import numpy as np
-from geosolver.text2.ontology import FormulaNode, VariableSignature, signatures
+from geosolver.text2.ontology import FormulaNode, VariableSignature, signatures, FunctionSignature
 
 __author__ = 'minjoon'
 
@@ -46,7 +46,9 @@ class VariableHandler(object):
             return function_node
 
         if function_node.is_leaf():
-            if function_node.signature.id in self.named_entities:
+            if isinstance(function_node.signature, FunctionSignature):
+                return function_node
+            elif function_node.signature.id in self.named_entities:
                 return self.named_entities[function_node.signature.id]
             elif function_node.return_type == "point":
                 return self.point(function_node.signature.id)
@@ -56,7 +58,11 @@ class VariableHandler(object):
                 raise Exception()
         else:
             children = [self.add(child) for child in function_node.children]
-            return FormulaNode(function_node.signature, children)
+            formula = FormulaNode(function_node.signature, children)
+            if function_node.signature.id in ['Line', 'Circle']:
+                self.entities.append(formula)
+            return formula
+
 
 
     def apply(self, name, *args):
