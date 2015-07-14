@@ -1,6 +1,10 @@
 from geosolver import geoserver_interface
+from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
+from geosolver.expression.expression_parser import expression_parser
+from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula_nodes import ground_formula_node
+from geosolver.grounding.parse_match_atoms import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.text2.annotation_node_to_rules import annotation_node_to_tag_rules, annotation_node_to_semantic_rules
@@ -37,7 +41,7 @@ def test_validity():
                     print annotation
 
 def test_trans():
-    query = 1058
+    query = 963
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():
@@ -49,9 +53,13 @@ def test_trans():
             syntax_parse = SyntaxParse(sentence_words, None)
             annotation_nodes = [get_annotation_node(syntax_parse, annotation)
                                 for annotation in all_annotations[pk][number].values()]
+            expr_formulas = [prefix_to_formula(expression_parser.parse_prefix(expression))
+                             for expression in question.sentence_expressions[number].values()]
             text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
             completed_formulas = complete_text_formula_parse(text_formula_parse)
-            for formula in completed_formulas:
+            match_formulas = parse_match_atoms(match_parse)
+            diagram_formulas = parse_confident_atoms(graph_parse)
+            for formula in completed_formulas + match_formulas + expr_formulas + diagram_formulas:
                 grounded_formula = ground_formula_node(match_parse, formula)
                 if grounded_formula.is_grounded(graph_parse.core_parse.variable_assignment.keys()):
                     score = evaluate(grounded_formula, graph_parse.core_parse.variable_assignment)

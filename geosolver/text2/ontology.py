@@ -219,7 +219,7 @@ type_inheritances = (
     ('root', 'number'),
     ('root', 'entity'),
     ('entity', 'point'),
-    ('entity', '1d'),
+    ('entity', 'oned'),
     ('oned', 'line'),
     ('oned', 'angle'),
     ('oned', 'arc'),

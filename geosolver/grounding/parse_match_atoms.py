@@ -1,5 +1,5 @@
 from geosolver.grounding.states import MatchParse
-from geosolver.text2.ontology import FormulaNode, issubtype, VariableSignature, signatures
+from geosolver.text2.ontology import FormulaNode, issubtype, VariableSignature, signatures, FunctionSignature
 
 __author__ = 'minjoon'
 
@@ -15,7 +15,8 @@ def parse_match_atoms(match_parse):
 
             # FIXME : to be obtained by tag model
             try:
-                left_term = float(label)
+                num = float(label)
+                left_term = FormulaNode(FunctionSignature(label, "number", []))
             except:
                 vs = VariableSignature(label, 'number')
                 left_term = FormulaNode(vs, [])

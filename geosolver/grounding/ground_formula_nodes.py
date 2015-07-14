@@ -86,6 +86,8 @@ def _ground_leaf(match_parse, leaf):
 
     if variable_signature.id in signatures:
         return leaf
+    if variable_signature.id in match_parse.graph_parse.core_parse.variable_assignment.keys():
+        return leaf
     elif isinstance(variable_signature, VariableSignature) and variable_signature.is_ref():
         return leaf
     elif return_type == 'number':
@@ -93,7 +95,7 @@ def _ground_leaf(match_parse, leaf):
             return leaf
         elif len(variable_signature.name) == 1:
             return FormulaNode(variable_signature, [])
-        elif len(variable_signature.name) == 2:
+        elif len(variable_signature.name) == 2 and variable_signature.name.isupper():
             new_leaf = FormulaNode(VariableSignature(leaf.signature.id, "line", name=leaf.signature.name), [])
             return FormulaNode(signatures['LengthOf'], [_ground_leaf(match_parse, new_leaf)])
     elif return_type == 'point':

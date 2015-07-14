@@ -1,4 +1,5 @@
-from geosolver.text2.ontology import FormulaNode, VariableSignature, abbreviations, signatures
+from geosolver.text2.ontology import FormulaNode, VariableSignature, abbreviations, signatures, FunctionSignature
+from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'
 
@@ -9,10 +10,10 @@ def prefix_to_formula(prefix):
     :return FormulaNode:
     """
     if isinstance(prefix, str):
-        try:
-            return float(prefix)
-        except:
-            return FormulaNode(VariableSignature(prefix, 'root'), [])
+        if is_number(prefix):
+            return FormulaNode(FunctionSignature(prefix, 'number', []), [])
+        else:
+            return FormulaNode(VariableSignature(prefix, 'number'), [])
     else:
         return FormulaNode(signatures[abbreviations[prefix[0]]],
                             [prefix_to_formula(child) for child in prefix[1:]])
