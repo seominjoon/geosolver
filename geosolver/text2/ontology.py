@@ -43,7 +43,17 @@ class VariableSignature(Signature):
         super(VariableSignature, self).__init__(id_, return_type, 0, name=name)
 
     def __repr__(self):
-        return self.name
+        return "$%s" % self.name
+
+    def is_ref(self):
+        """
+        starts with '@'
+        :return:
+        """
+        if isinstance(self.name, str):
+            return self.name.startswith("@")
+        return False
+
 
 class Node(object):
     def __init__(self, children, parent=None, index=None):
@@ -172,7 +182,7 @@ class FormulaNode(Node):
         return FormulaNode(current, [self, other])
 
     def __repr__(self):
-        if isinstance(self.signature, VariableSignature):
+        if self.is_leaf():
             return repr(self.signature)
         else:
             return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
@@ -271,7 +281,7 @@ function_signature_tuples = (
     ('What', 'number', []),
     ('ValueOf', 'number', ['number']),
     ('IsInscribedIn', 'truth', ['polygon', 'circle']),
-    ('IsCenterOf', 'truth', ['point', '2d']),
+    ('IsCenterOf', 'truth', ['point', 'twod']),
     ('IsDiameterLineOf', 'truth', ['line', 'circle']),
     ('DegreeMeasureOf', 'number', ['angle']),
     ('IsAngle', 'truth', ['angle']),
@@ -279,8 +289,8 @@ function_signature_tuples = (
     ('Isosceles', 'truth', ['triangle']),
     ('IsSquare', 'truth', ['quad']),
     ('IsRight', 'truth', ['triangle']),
-    ('AreaOf', 'number', ['2d']),
-    ('IsAreaOf', 'truth', ['number', '2d']),
+    ('AreaOf', 'number', ['twod']),
+    ('IsAreaOf', 'truth', ['number', 'twod']),
     ('IsLengthOf', 'truth', ['number', 'line']),
     ('IsRectLengthOf', 'truth', ['number', 'quad']),
     ('IsDiameterNumOf', 'truth', ['number', 'circle']),
@@ -294,7 +304,7 @@ function_signature_tuples = (
     ('MeasureOf', 'number', ['angle']),
     ('Perpendicular', 'truth', ['line', 'line'], None, True),
     ('IsChordOf', 'truth', ['line', 'circle']),
-    ('Tangent', 'truth', ['line', 'circle']),
+    ('Tangent', 'truth', ['line', 'twod']),
     ('RadiusNumOf', 'number', ['circle']),
     ('IsRadiusNumOf', 'truth', ['number', 'circle']),
     ('IsRadiusLineOf', 'truth', ['line', 'circle']),

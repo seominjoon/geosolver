@@ -5,6 +5,7 @@ from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.text2.ontology import VariableSignature, signatures, FormulaNode, SetNode, types, is_singular, Node
 import numpy as np
+from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'
 
@@ -85,8 +86,10 @@ def _ground_leaf(match_parse, leaf):
 
     if variable_signature.id in signatures:
         return leaf
+    elif isinstance(variable_signature, VariableSignature) and variable_signature.is_ref():
+        return leaf
     elif return_type == 'number':
-        if re.match("^\d+(\.\d+)?$", variable_signature.name):
+        if is_number(variable_signature.name):
             return leaf
         elif len(variable_signature.name) == 1:
             return FormulaNode(variable_signature, [])
@@ -100,7 +103,7 @@ def _ground_leaf(match_parse, leaf):
         elif len(variable_signature.name) == 1:
             return match_parse.match_dict[variable_signature.name][0]
     elif return_type == 'line':
-        if variable_signature.name == 'line':
+        if not variable_signature.name.isupper():
             lines = get_all_instances(graph_parse, 'line', True)
             return SetNode(lines.values())
         elif len(variable_signature.name) == 1:
@@ -150,7 +153,7 @@ def _ground_leaf(match_parse, leaf):
         triangles = get_all_instances(graph_parse, 'triangle', True)
         return SetNode(triangles.values())
     elif return_type == 'quad':
-        if len(variable_signature.name) == 4:
+        if variable_signature.name.isupper():
             points = [match_parse.match_dict[label][0] for label in variable_signature.name]
             return FormulaNode(signatures['Quad'], points)
         else:
@@ -168,11 +171,17 @@ def _ground_leaf(match_parse, leaf):
         else:
             quads = get_all_instances(graph_parse, 'hexagon', True)
             return SetNode(quads.values())
-
     elif return_type == 'polygon':
         points = [match_parse.match_dict[label][0] for label in variable_signature.name]
         return FormulaNode(signatures['Polygon'], points)
+    elif return_type == 'twod':
+        triangles = get_all_instances(graph_parse, 'triangle', True)
+        quads = get_all_instances(graph_parse, 'quad', True)
+        hexagons = get_all_instances(graph_parse, 'hexagon', True)
+        circles = get_all_instances(graph_parse, 'circle', True)
+        return SetNode(triangles.values() + quads.values() + hexagons.values() + circles.values())
 
+    print leaf.signature.name, leaf.return_type
     raise Exception(repr(leaf))
 
 def _apply_distribution(node):

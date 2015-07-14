@@ -37,7 +37,7 @@ def test_validity():
                     print annotation
 
 def test_trans():
-    query = 995
+    query = 1058
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():

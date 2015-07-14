@@ -1,7 +1,8 @@
 import itertools
 import numpy as np
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
-    distance_between_points, angle_in_radian
+    distance_between_points, angle_in_radian, cartesian_angle, signed_distance_between_cartesian_angles, \
+    horizontal_angle
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature, issubtype, SetNode, Node
 import sys
@@ -47,6 +48,11 @@ class TruthValue(object):
 
     def __ror__(self, other):
         return self.__or__(other)
+
+    def flip(self):
+        new_norm = self.conf*self.std
+        out = TruthValue(new_norm, self.std)
+        return out
 
     def __repr__(self):
         return "TV(conf=%.2f)" % self.conf
@@ -123,9 +129,15 @@ def Or(a, b):
         return a
     return b
 
-def Tangent(line, circle):
-    d = distance_between_line_and_point(line, circle.center)
-    return Equals(d, circle.radius)
+def Tangent(line, twod):
+    name = twod.__class__.__name__
+    if name == "circle":
+        d = distance_between_line_and_point(line, twod.center)
+        return Equals(d, twod.radius)
+    elif issubtype(name, 'polygon'):
+        out = reduce(operator.__or__, (PointLiesOnLine(point, line) for point in twod), False)
+        return out
+    raise Exception()
 
 def IsDiameterLineOf(line, circle):
     return IsChordOf(line, circle) & Equals(LengthOf(line), 2*circle.radius)
@@ -179,12 +191,26 @@ def IsPoint(point):
     else:
         return TruthValue(np.inf)
 
+def IsQuad(quad):
+    if quad.__class__.__name__ == 'quad':
+        return TruthValue(0)
+    return TruthValue(np.inf)
+
 def IsInscribedIn(triangle, circle):
     out = reduce(operator.__and__, (PointLiesOnCircle(point, circle) for point in triangle), True)
     return out
 
-def IsCenterOf(point, circle):
-    return Equals(point[0], circle.center[0]) & Equals(point[1], circle.center[1])
+def IsCenterOf(point, twod):
+    name = twod.__class__.__name__
+    if name == 'circle':
+        return Equals(point[0], twod.center[0]) & Equals(point[1], twod.center[1])
+    elif issubtype(name, 'polygon'):
+        distances = [distance_between_points(point, each) for each in twod]
+        reg = IsRegular(twod)
+        out = reduce(operator.__and__, (Equals(distances[index-1], distance) for index, distance in enumerate(distances)), True)
+        return reg & out
+    else:
+        raise Exception()
 
 def IntersectAt(lines, point):
     assert isinstance(lines, SetNode)
@@ -251,6 +277,43 @@ def Two(entities):
     if len(entities.children) == 2:
         return TruthValue(0)
     return TruthValue(np.inf)
+
+def Five(entities):
+    if len(entities.children) == 5:
+        return TruthValue(0)
+    return TruthValue(np.inf)
+
+def Not(truth):
+    return truth.flip()
+
+
+def SumOf(set_node):
+    assert isinstance(set_node,SetNode)
+    return sum(child for child in set_node.children)
+
+def Parallel(line_0, line_1):
+    a0 = cartesian_angle(*line_0)
+    a1 = cartesian_angle(*line_1)+np.pi/2
+    da = horizontal_angle(signed_distance_between_cartesian_angles(a0, a1))
+    return Equals(da, np.pi/2)
+
+def IsTrapezoid(quad):
+    lines = _polygon_to_lines(quad)
+    out = Parallel(lines[0], lines[2]) | Parallel(lines[1], lines[3])
+    return out
+
+def IsRegular(polygon):
+    lines = _polygon_to_lines(polygon)
+    out = reduce(operator.__and__, (Equals(LengthOf(lines[index-1]), LengthOf(line)) for index, line in enumerate(lines)))
+    return out
+
+def IsRectangle(quad):
+    angles = (Angle(quad[index-2], quad[index-1], point) for index, point in enumerate(quad))
+    out = reduce(operator.__and__, (Equals(MeasureOf(angle), np.pi/2) for angle in angles), True)
+    return out
+
+def _polygon_to_lines(polygon):
+    return [Line(polygon[index-1], point) for index, point in enumerate(polygon)]
 
 def evaluate(function_node, assignment):
     if isinstance(function_node, SetNode):

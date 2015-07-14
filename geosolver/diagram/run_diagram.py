@@ -3,6 +3,7 @@ import os
 import cv2
 
 from geosolver import geoserver_interface
+from geosolver.diagram.computational_geometry import normalize_angle, horizontal_angle
 from geosolver.diagram.get_instances import get_all_instances
 from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.parse_core import parse_core
@@ -11,6 +12,7 @@ from geosolver.diagram.parse_image_segments import parse_image_segments
 from geosolver.diagram.parse_primitives import parse_primitives
 from geosolver.diagram.select_primitives import select_primitives
 from geosolver.utils.prep import open_image
+import numpy as np
 
 __author__ = 'minjoon'
 
@@ -130,6 +132,10 @@ def test_parse_graph():
         for key, angle in angles.iteritems():
             graph_parse.display_instances([angle])
 
+def test_computational_geometry():
+    print normalize_angle(0.1)
+    print horizontal_angle(np.pi+1)
+
 
 if __name__ == "__main__":
     # test_parse_image_segments()
@@ -140,4 +146,5 @@ if __name__ == "__main__":
     # save_select_primitives()
     # test_parse_core()
     # save_parse_core()
-    test_parse_graph()
+    # test_parse_graph()
+    test_computational_geometry()

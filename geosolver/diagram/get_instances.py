@@ -16,7 +16,6 @@ def get_instances(graph_parse, instance_type_name, is_variable=False, *args):
 
 
 def get_all_instances(graph_parse, instance_type_name, is_variable=False):
-    assert instance_type_name in instantiators
     if instance_type_name in ["triangle", "quad", "hexagon"]:
         if instance_type_name == 'triangle': n = 3
         elif instance_type_name == 'quad': n = 4

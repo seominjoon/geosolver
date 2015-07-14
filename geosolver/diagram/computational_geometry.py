@@ -211,3 +211,19 @@ def arc_midpoint(arc):
     cam = (caa+cab)/2.0
     mp = instantiators['point'](radius*np.cos(cam), radius*np.sin(cam))
     return mp
+
+
+def normalize_angle(angle):
+    if angle < 0:
+        return angle+np.ceil(-angle/(2*np.pi))*2*np.pi
+    elif angle > 2*np.pi:
+        return angle-(np.ceil(angle/(2*np.pi))-1)*2*np.pi
+    return angle
+
+
+def horizontal_angle(angle):
+    angle = normalize_angle(angle)
+    if angle > np.pi:
+        return min(angle-np.pi, 2*np.pi-angle)
+    else:
+        return min(angle, np.pi-angle)

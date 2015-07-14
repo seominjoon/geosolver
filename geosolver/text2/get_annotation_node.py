@@ -3,6 +3,7 @@ import re
 from pyparsing import *
 from geosolver.text2.ontology import signatures, FunctionSignature, VariableSignature, FormulaNode
 from geosolver.text2.rule import TagRule
+from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'
 
@@ -48,7 +49,7 @@ def get_annotation_node(syntax_parse, annotation_string):
 
     def tag_f(a, b, c):
         assert len(c) == 1
-        if c[0][0].isupper() or re.match('^\d+(\.\d+)?', c[0][0]):
+        if c[0][0].isupper() or is_number(c[0]):
             return 'function', c[0]
         else:
             return 'variable', c[0]
