@@ -1,12 +1,14 @@
+import logging
+
+import numpy as np
+
 from geosolver.diagram.get_instances import get_all_instances
 from geosolver.diagram.states import GraphParse
 from geosolver.grounding.label_distances import label_distance_to_line, label_distance_to_point, label_distance_to_arc, \
     label_distance_to_angle
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FormulaNode, signatures, issubtype
-import logging
-import numpy as np
+from geosolver.ontology.ontology_definitions import FormulaNode, signatures, issubtype
 
 __author__ = 'minjoon'
 

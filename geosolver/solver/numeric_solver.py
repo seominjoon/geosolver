@@ -3,7 +3,7 @@ import numpy as np
 
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.variable_handler import VariableHandler
-from geosolver.text2.ontology import FormulaNode
+from geosolver.ontology.ontology_definitions import FormulaNode
 
 __author__ = 'minjoon'
 

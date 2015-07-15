@@ -1,6 +1,8 @@
 import re
+
 import networkx as nx
-from geosolver.text2.ontology import FormulaNode, VariableSignature, SetNode, issubtype
+
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, SetNode, issubtype
 
 __author__ = 'minjoon'
 

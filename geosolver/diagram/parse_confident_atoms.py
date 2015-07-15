@@ -1,4 +1,4 @@
-from geosolver.text2.ontology import FormulaNode, signatures
+from geosolver.ontology.ontology_definitions import FormulaNode, signatures
 
 __author__ = 'minjoon'
 

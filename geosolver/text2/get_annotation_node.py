@@ -1,7 +1,8 @@
 from collections import deque
-import re
+
 from pyparsing import *
-from geosolver.text2.ontology import signatures, FunctionSignature, VariableSignature, FormulaNode
+
+from geosolver.ontology.ontology_definitions import signatures, FunctionSignature, VariableSignature, FormulaNode
 from geosolver.text2.rule import TagRule
 from geosolver.utils.num import is_number
 

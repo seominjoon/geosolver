@@ -1,5 +1,5 @@
 from geosolver.text2.get_annotation_node import AnnotationNode
-from geosolver.text2.ontology import signatures
+from geosolver.ontology.ontology_definitions import signatures
 from geosolver.text2.rule import UnaryRule, ImplicationRule, IsRule, CCRule, BinaryRule
 
 __author__ = 'minjoon'

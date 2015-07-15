@@ -6,16 +6,14 @@ from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula_nodes import ground_formula_node
 from geosolver.grounding.parse_match_atoms import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
-from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
-from geosolver.solver.variable_handler import VariableHandler
 from geosolver.text2.annotation_node_to_rules import annotation_node_to_tag_rules, annotation_node_to_semantic_rules
 from geosolver.text2.annotation_nodes_to_text_formula_parse import annotation_nodes_to_text_formula_parse
 from geosolver.text2.get_annotation_node import get_annotation_node, is_valid_annotation
 from geosolver.text2.complete_text_formula_parse import complete_text_formula_parse
 from geosolver.text2.syntax_parser import SyntaxParse
-from geosolver.text2.utils import filter_formulas
-from geosolver.text2.utils import flatten_formulas
+from geosolver.ontology.utils import filter_formulas
+from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
 
 __author__ = 'minjoon'

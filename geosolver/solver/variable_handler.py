@@ -1,5 +1,6 @@
 import numpy as np
-from geosolver.text2.ontology import FormulaNode, VariableSignature, signatures, FunctionSignature
+
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, signatures, FunctionSignature
 
 __author__ = 'minjoon'
 

@@ -1,4 +1,4 @@
-from geosolver.text2.ontology import FormulaNode, VariableSignature, abbreviations, signatures, FunctionSignature
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, abbreviations, signatures, FunctionSignature
 from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'

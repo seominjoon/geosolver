@@ -1,7 +1,6 @@
 from geosolver.solver.display_entities import display_entities
 from geosolver.solver.numeric_solver import NumericSolver
-from geosolver.solver.variable_handler import VariableHandler
-from geosolver.text2.ontology import FormulaNode
+from geosolver.ontology.ontology_definitions import FormulaNode
 
 __author__ = 'minjoon'
 

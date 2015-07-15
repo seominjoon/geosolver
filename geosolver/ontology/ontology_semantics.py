@@ -1,14 +1,14 @@
-import itertools
 import numpy as np
+
+import itertools
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points, angle_in_radian, cartesian_angle, signed_distance_between_cartesian_angles, \
     horizontal_angle
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature, issubtype, SetNode, Node
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype, SetNode
 import sys
 from geosolver.utils.num import is_number
 import operator
-
 
 this = sys.modules[__name__]
 

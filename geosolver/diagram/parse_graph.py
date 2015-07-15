@@ -1,12 +1,13 @@
+import networkx as nx
+
 import itertools
-from geosolver.diagram.computational_geometry import distance_between_points, distance_between_line_and_point, \
+from geosolver.diagram.computational_geometry import distance_between_line_and_point, \
     distance_between_circle_and_point, distance_between_arc_and_point
 from geosolver.diagram.instance_exists import instance_exists
 from geosolver.diagram.states import CoreParse, GraphParse
-import networkx as nx
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.parameters import LINE_EPS, CIRCLE_EPS
-from geosolver.text2.ontology import FormulaNode, signatures
+from geosolver.ontology.ontology_definitions import FormulaNode, signatures
 
 __author__ = 'minjoon'
 

@@ -1,4 +1,4 @@
-from geosolver.text2.ontology import SetNode
+from geosolver.ontology.ontology_definitions import SetNode
 
 __author__ = 'minjoon'
 

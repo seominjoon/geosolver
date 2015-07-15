@@ -1,13 +1,12 @@
-import itertools
-
 from sklearn.cluster import KMeans
 
+import itertools
 from geosolver.diagram.states import PrimitiveParse, CoreParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.diagram.computational_geometry import intersections_between_lines, intersections_between_circle_and_line, \
     intersections_between_circles, distance_between_points
 import geosolver.parameters as params
-from geosolver.text2.ontology import VariableSignature, FormulaNode
+from geosolver.ontology.ontology_definitions import VariableSignature, FormulaNode
 
 __author__ = 'minjoon'
 

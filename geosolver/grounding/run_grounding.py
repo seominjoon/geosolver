@@ -5,7 +5,7 @@ from geosolver.grounding.ground_formula_nodes import ground_formula_nodes
 from geosolver.grounding.parse_match_atoms import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.solver.numeric_solver import NumericSolver
-from geosolver.text2.ontology import FormulaNode, signatures, VariableSignature
+from geosolver.ontology.ontology_definitions import FormulaNode, signatures, VariableSignature
 from geosolver.utils.prep import open_image
 
 __author__ = 'minjoon'

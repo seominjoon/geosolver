@@ -1,10 +1,8 @@
-import re
 import itertools
 from geosolver.diagram.get_instances import get_all_instances
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_semantics import evaluate
-from geosolver.text2.ontology import VariableSignature, signatures, FormulaNode, SetNode, types, is_singular, Node
-import numpy as np
+from geosolver.ontology.ontology_definitions import VariableSignature, signatures, FormulaNode, SetNode, is_singular, Node
 from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'

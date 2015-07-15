@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
+
 from geosolver.solver.numeric_solver import NumericSolver
-from geosolver.text2.ontology import FormulaNode
+from geosolver.ontology.ontology_definitions import FormulaNode
 
 __author__ = 'minjoon'
 

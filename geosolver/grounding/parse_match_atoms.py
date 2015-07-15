@@ -1,5 +1,5 @@
 from geosolver.grounding.states import MatchParse
-from geosolver.text2.ontology import FormulaNode, issubtype, VariableSignature, signatures, FunctionSignature
+from geosolver.ontology.ontology_definitions import FormulaNode, issubtype, VariableSignature, signatures, FunctionSignature
 
 __author__ = 'minjoon'
 
