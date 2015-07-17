@@ -44,7 +44,7 @@ class VariableSignature(Signature):
         super(VariableSignature, self).__init__(id_, return_type, 0, name=name)
 
     def __repr__(self):
-        return "$%s" % self.name
+        return "$%s:%s" % (self.name, self.return_type)
 
     def is_ref(self):
         """
@@ -93,7 +93,7 @@ class Node(object):
     def has_signature(self, id_):
         return any(not is_number(child) and child.has_signature(id_) for child in self.children)
 
-    def is_grounded(self, ids):
+    def is_grounded(self, ids=[]):
         return all(child.is_grounded(ids) for child in self.children)
 
     def get_nodes(self, tester):
@@ -128,7 +128,12 @@ class FormulaNode(Node):
         return FormulaNode(new_sig, args)
 
     def replace_node(self, tester, getter=None):
-        args = [child.replace_node(tester, getter) for child in self.children]
+        args = []
+        for child in self.children:
+            if isinstance(child, Node):
+                args.append(child.replace_node(tester, getter))
+            else:
+                args.append(child)
         out = self.__class__(self.signature, args, self.parent, self.index)
         test = tester(out)
         if bool(test):
@@ -200,17 +205,17 @@ class FormulaNode(Node):
             return True
         return any(not is_number(child) and child.has_signature(id_) for child in self.children)
 
-    def is_grounded(self, names):
+    def is_grounded(self, ids=[]):
         """
-        Determines if the formula's variables are only made of names
+        Determines if the formula's variables are only made of ids
         :param core_parse:
         :return:
         """
         if self.is_leaf():
             if isinstance(self.signature, VariableSignature):
-                return self.signature.id in names
+                return self.signature.id in ids
             return True
-        return all(child.is_grounded(names) for child in self.children)
+        return all(not isinstance(child, Node) or child.is_grounded(ids) for child in self.children)
 
 
 class SetNode(Node):

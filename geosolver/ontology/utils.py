@@ -1,8 +1,8 @@
-from geosolver.ontology.ontology_definitions import SetNode
+from geosolver.ontology.ontology_definitions import SetNode, VariableSignature, FormulaNode
 
 __author__ = 'minjoon'
 
-CRITERIA = ['IsPoint', 'IsLine', 'IsCircle', 'IsPolygon', 'IsTriangle', 'IsQuad', 'IsHexagon', 'IntersectAt']
+CRITERIA = ['Three', 'IsAngle', 'IsPoint', 'IsLine', 'IsCircle', 'IsPolygon', 'IsTriangle', 'IsQuad', 'IsHexagon', 'IntersectAt']
 
 def flatten_formulas(formulas):
     out = []
@@ -21,3 +21,28 @@ def filter_formulas(formulas, criteria=None):
         if not formula.signature.id in criteria:
             out.append(formula)
     return out
+
+def reduce_formulas(formulas):
+    """
+    Equals(m, 5), Equals(m, l) --> Equals(5, l)
+    Idea: if we find something like m = 40, we replace m with 40 for every formula
+    :param formulas:
+    :return:
+    """
+    variable_values = {}
+    for formula in formulas:
+        if formula.signature.id != "Equals":
+            continue
+        left, right = formula.children
+        if left.is_grounded(['What', 'Following']):
+            left, right = right, left
+
+        if isinstance(left.signature, VariableSignature) and right.is_grounded(['What', 'Following']):
+            variable_values[left.signature] = right
+
+    tester = lambda node: isinstance(node, FormulaNode) and node.signature in variable_values
+    getter = lambda node: variable_values[node.signature]
+    replaced_formulas = [formula.replace_node(tester, getter) for formula in formulas]
+    filtered_formulas = [formula for formula in replaced_formulas if not formula.is_grounded()]
+    return filtered_formulas
+

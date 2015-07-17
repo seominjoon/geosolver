@@ -121,6 +121,9 @@ def example_3():
     else:
         print "Given information is not satisfiable."
 
+def test_pyipopt():
+    pass
+
 
 if __name__ == "__main__":
     example_3()

@@ -9,6 +9,7 @@ from geosolver.grounding.label_distances import label_distance_to_line, label_di
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, signatures, issubtype
+from geosolver.ontology.ontology_semantics import evaluate
 
 __author__ = 'minjoon'
 

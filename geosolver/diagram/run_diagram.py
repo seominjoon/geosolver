@@ -3,7 +3,7 @@ import os
 import cv2
 
 from geosolver import geoserver_interface
-from geosolver.diagram.computational_geometry import normalize_angle, horizontal_angle
+from geosolver.diagram.computational_geometry import normalize_angle, horizontal_angle, area_of_polygon
 from geosolver.diagram.get_instances import get_all_instances
 from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
 from geosolver.diagram.parse_core import parse_core
@@ -133,8 +133,8 @@ def test_parse_graph():
             graph_parse.display_instances([angle])
 
 def test_computational_geometry():
-    print normalize_angle(0.1)
-    print horizontal_angle(np.pi+1)
+    ans = area_of_polygon([(0,0), (1,0), (1,1), (0,1)])
+    print ans
 
 
 if __name__ == "__main__":

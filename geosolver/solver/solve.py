@@ -4,7 +4,7 @@ from geosolver.ontology.ontology_definitions import FormulaNode
 
 __author__ = 'minjoon'
 
-def solve(given_formulas, choice_formulas):
+def solve(given_formulas, choice_formulas, assignment=None):
     """
 
     :param list true_formulas:
@@ -25,18 +25,22 @@ def solve(given_formulas, choice_formulas):
     if query_formula is None:
         raise Exception("No query formula.")
 
-    for formula in true_formulas: print formula
+    temp = NumericSolver(true_formulas)
+    if temp.is_sat():
+        ans = temp.evaluate(query_formula.children[1])
+        print ans
+        display_entities(temp)
+        return ans
+    else:
+        return None
 
     if query_formula.has_signature("What"):
-        tester = lambda node: node.signature.id == "What"
+        tester = lambda node: isinstance(node, FormulaNode) and node.signature.id == "What"
         result = {}
         for choice, choice_formula in choice_formulas.iteritems():
             getter = lambda node: choice_formula
             replaced_formula = query_formula.replace_node(tester, getter)
             all_formulas = true_formulas + [replaced_formula]
-            temp = NumericSolver(true_formulas)
-            if temp.is_sat():
-                print temp.evaluate(replaced_formula.children[1])
             ns = NumericSolver(all_formulas)
             result[choice] = ns.is_sat()
             print result[choice]

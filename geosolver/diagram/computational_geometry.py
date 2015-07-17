@@ -167,7 +167,7 @@ def intersections_between_circles(circle0, circle1):
     return []
 
 
-def angle_in_radian(angle, smaller=True):
+def angle_in_radian(angle, smaller=False):
     """
     a = line_length(instantiators['line'](angle.b, angle.c))
     b = line_length(instantiators['line'](angle.c, angle.a))
@@ -183,7 +183,7 @@ def angle_in_radian(angle, smaller=True):
     """
     a0 = cartesian_angle(angle.b, angle.a)
     a1 = cartesian_angle(angle.b, angle.c)
-    diff = signed_distance_between_cartesian_angles(a0, a1)
+    diff = signed_distance_between_cartesian_angles(a1, a0)
     if smaller and diff > np.pi:
         return 2*np.pi - diff
     return diff
@@ -194,14 +194,7 @@ def angle_in_degree(angle, smaller=True):
 
 def cartesian_angle(center, point):
     vector = point.x-center.x, point.y-center.y
-    if vector[0] == 0:
-        angle = np.pi/2
-        if vector[1] < 0:
-            angle = -np.pi/2
-    else:
-        angle = np.arctan(float(vector[1])/vector[0])
-    if vector[0] < 0:
-        angle += np.pi
+    angle = np.arctan2(vector[1], vector[0])
     if angle < 0:
         angle += 2*np.pi
     return angle
@@ -238,3 +231,16 @@ def horizontal_angle(angle):
         return min(angle-np.pi, 2*np.pi-angle)
     else:
         return min(angle, np.pi-angle)
+
+def polygon_is_convex(points):
+    angles = [instantiators['angle'](points[index-2], points[index-1], point) for index, point in enumerate(points)]
+    calc = sum(angle_in_radian(angle, False) for angle in angles)
+    ans = 180*(len(points)-2)
+    if calc > ans + 10:
+        return False
+    return True
+
+def area_of_polygon(points):
+    area = 0.5*sum(points[index-1][0]*p[1]-p[0]*points[index-1][1] for index, p in enumerate(points))
+    return area
+

@@ -3,7 +3,7 @@ import numpy as np
 import itertools
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points, angle_in_radian, cartesian_angle, signed_distance_between_cartesian_angles, \
-    horizontal_angle
+    horizontal_angle, area_of_polygon
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype, SetNode
 import sys
@@ -15,12 +15,11 @@ this = sys.modules[__name__]
 __author__ = 'minjoon'
 
 class TruthValue(object):
-    def __init__(self, norm, std=None, conf=None):
-        if std is not None:
-            norm /= std
+    def __init__(self, norm, std=1.0, conf=None):
+        assert norm >= 0
         self.norm = norm
         if conf is None:
-            self.conf = min(0, 1-norm)
+            self.conf = max(0, 1-norm/std)
         else:
             self.conf = conf
 
@@ -41,9 +40,9 @@ class TruthValue(object):
             conf = self.conf
             if self.conf < other.conf:
                 conf = other.conf
-            norm = self.norm * other.norm
+            norm = np.sqrt(self.norm * other.norm)
             return TruthValue(norm, conf=conf)
-        elif other is True:
+        elif other is False:
             return self
         else:
             raise Exception()
@@ -61,7 +60,7 @@ class TruthValue(object):
         return out
 
     def __repr__(self):
-        return "TV(conf=%.2f)" % self.conf
+        return "TV(norm=%.3f, conf=%.2f)" % (self.norm, self.conf)
 
 def Line(p1, p2):
     return instantiators['line'](p1, p2)
@@ -101,16 +100,6 @@ def Equals(a, b):
     value = abs(a-b)
     out = TruthValue(value, std)
     return out
-
-def Greater(a, b):
-    std = abs((a+b)/2.0)
-    value = max(b-a, 0)
-    return TruthValue(value, std)
-
-def Less(a, b):
-    std = abs((a+b)/2.0)
-    value = max(a-b, 0)
-    return TruthValue(value, std)
 
 def Sqrt(x):
     return np.sqrt(x)
@@ -155,8 +144,12 @@ def PointLiesOnCircle(point, circle):
 def IsChordOf(line, circle):
     return PointLiesOnCircle(line.a, circle) & PointLiesOnCircle(line.b, circle)
 
-def Perpendicular(l1, l2):
-    return Equals((l1.b.y-l1.a.y)*(l2.b.y-l2.a.y), (l1.a.x-l1.b.x)*(l2.b.x-l2.a.x))
+def Perpendicular(l0, l1):
+    # return Equals((l0.b.y-l0.a.y)*(l1.b.y-l1.a.y), (l0.a.x-l0.b.x)*(l1.b.x-l1.a.x))
+    a0 = cartesian_angle(*l0)
+    a1 = cartesian_angle(*l1)
+    da = horizontal_angle(signed_distance_between_cartesian_angles(a0, a1))
+    return Equals(da, np.pi/2)
 
 def Colinear(A, B, C):
     line = instantiators['line'](A, C)
@@ -164,7 +157,9 @@ def Colinear(A, B, C):
     return eq
 
 def PointLiesOnLine(point, line):
-    return Colinear(line[0], point, line[1])
+    angle = instantiators['angle'](line[0], point, line[1])
+    return Equals(MeasureOf(angle), np.pi)
+    #return Colinear(line[0], point, line[1])
 
 def IsMidpointOf(point, line):
     line_a = Line(line.a, point)
@@ -227,10 +222,13 @@ def Equilateral(triangle):
     lines = [instantiators['line'](triangle[index-1], point) for index, point in enumerate(triangle)]
     return Equals(LengthOf(lines[0]), LengthOf(lines[1])) & Equals(LengthOf(lines[1]), LengthOf(lines[2]))
 
-def IsSquare(quad):
+def IsRhombus(quad):
     lines = [instantiators['line'](quad[index-1], point) for index, point in enumerate(quad)]
     return Equals(LengthOf(lines[0]), LengthOf(lines[1])) & \
            Equals(LengthOf(lines[1]), LengthOf(lines[2])) & Equals(LengthOf(lines[2]), LengthOf(lines[3]))
+
+def IsSquare(quad):
+    return IsRegular(quad)
 
 def AreaOf(twod):
     name = twod.__class__.__name__
@@ -240,7 +238,7 @@ def AreaOf(twod):
         area = np.pi * radius ** 2
     elif issubtype(name, 'polygon'):
         # http://mathworld.wolfram.com/PolygonArea.html
-        area = sum(twod[index-1][0]*p[1]-p[0]*twod[index-1][1] for index, p in enumerate(twod))
+        area = area_of_polygon(twod)
     else:
         raise Exception()
     return area
@@ -265,14 +263,13 @@ def Isosceles(triangle):
     return out
 
 def BisectsAngle(line, angle):
-    on = PointLiesOnLine(angle[1], line)
     distant_point = line[0]
     if distant_point == angle[1]:
         distant_point = line[1]
     a0 = instantiators['angle'](angle[0], angle[1], distant_point)
     a1 = instantiators['angle'](distant_point, angle[1], angle[2])
     eq = Equals(MeasureOf(a0), MeasureOf(a1))
-    return on & eq
+    return eq
 
 def Three(entities):
     if len(entities.children) == 3:
@@ -310,25 +307,39 @@ def IsTrapezoid(quad):
 
 def IsRegular(polygon):
     lines = _polygon_to_lines(polygon)
-    out = reduce(operator.__and__, (Equals(LengthOf(lines[index-1]), LengthOf(line)) for index, line in enumerate(lines)))
-    return out
+    l = reduce(operator.__and__, (Equals(LengthOf(lines[index-1]), LengthOf(line)) for index, line in enumerate(lines)), True)
+    angles = _polygon_to_angles(polygon)
+    ans = np.pi*(len(polygon)-2)/len(polygon)
+    a = reduce(operator.__and__, (Equals(MeasureOf(angle), ans) for angle in angles), True)
+    return a & l
 
 def IsRectangle(quad):
-    angles = (Angle(quad[index-2], quad[index-1], point) for index, point in enumerate(quad))
-    out = reduce(operator.__and__, (Equals(MeasureOf(angle), np.pi/2) for angle in angles), True)
+    lines = _polygon_to_lines(quad)
+    out = reduce(operator.__and__, (Perpendicular(lines[index-1], line) for index, line in enumerate(lines)), True)
     return out
 
 def ValueOf(number):
     return number
 
+def AverageOf(set_node):
+    return np.mean(set_node.children)
+
+def PerimeterOf(polygon):
+    lines = _polygon_to_lines(polygon)
+    return sum(LengthOf(line) for line in lines)
+
 def _polygon_to_lines(polygon):
     return [Line(polygon[index-1], point) for index, point in enumerate(polygon)]
 
+def _polygon_to_angles(polygon):
+    return [Angle(polygon[index-2], polygon[index-1], point) for index, point in enumerate(polygon)]
+
 def evaluate(function_node, assignment):
     if isinstance(function_node, SetNode):
-        assert function_node.head.return_type == 'truth'
-        out = reduce(operator.__and__, (evaluate(child, assignment) for child in function_node.children), True)
-        return out
+        if function_node.head.return_type == 'truth':
+            out = reduce(operator.__and__, (evaluate(child, assignment) for child in function_node.children), True)
+            return out
+        return function_node
 
     if isinstance(function_node.signature, VariableSignature):
         return assignment[function_node.signature.id]

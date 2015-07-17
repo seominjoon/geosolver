@@ -1,4 +1,5 @@
 import itertools
+from geosolver.diagram.computational_geometry import polygon_is_convex
 from geosolver.diagram.states import GraphParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, signatures
@@ -110,11 +111,14 @@ def _get_polygons(graph_parse, name, is_variable, *args):
     assert isinstance(graph_parse, GraphParse)
     line_graph = graph_parse.line_graph
     if all(line_graph.has_edge(args[idx-1], arg) for idx, arg in enumerate(args)):
+        convex = polygon_is_convex(tuple(graph_parse.intersection_points[key] for key in args))
+
         if is_variable:
-            points = tuple(graph_parse.core_parse.point_variables[key] for key in args)
+            points = list(graph_parse.core_parse.point_variables[key] for key in args)
         else:
-            points = tuple(graph_parse.intersection_points[key] for key in args)
-        # polygon = instantiators[name](*points)
+            points = list(graph_parse.intersection_points[key] for key in args)
+        if not convex:
+            points.reverse()
         polygon = FormulaNode(signatures[name.capitalize()], points)
         polygon_key = tuple(args)
         return {polygon_key: polygon}

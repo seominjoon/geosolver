@@ -1,5 +1,9 @@
-from scipy.optimize import minimize
+import functools
+import algopy
+import pyipopt
+from scipy.optimize import minimize, newton_krylov, basinhopping
 import numpy as np
+from scipy.optimize.nonlin import NoConvergence
 
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.variable_handler import VariableHandler
@@ -9,11 +13,11 @@ __author__ = 'minjoon'
 
 
 class NumericSolver(object):
-    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=10, tol=10**-4):
+    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=10, tol=10**-3, assignment=None):
         if variable_handler is None:
             variable_handler = VariableHandler()
         self.variable_handler = variable_handler
-        self.atoms = [variable_handler.add(prior_atom) for prior_atom in prior_atoms]
+        self.atoms = [variable_handler.add(prior_atom, assignment=assignment) for prior_atom in prior_atoms]
         self.max_num_resets = max_num_resets
         self.tol = tol
         self.assignment = None
@@ -66,22 +70,66 @@ def query(variable_handler, prior_atoms, query_atom, max_num_resets=10, tol=10**
     return assignment, sat, unique
 
 
-def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=False):
+def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=True):
     init = variable_handler.dict_to_vector()
 
     def func(vector):
         return sum(evaluate(atom, variable_handler.vector_to_dict(vector)).norm for atom in atoms)
 
+    x = None
     for i in range(max_num_resets):
-        result = minimize(func, init, method='SLSQP', options={'ftol': 10**-9, 'maxiter': 1000})
+        """
+        try:
+            x = newton_krylov(modfunc, init)
+        except NoConvergence:
+            init = np.random.rand(len(init))
+        """
+
+        options = {'ftol': tol**2}
+        minimizer_kwargs = {"method": "SLSQP", "options": options}
+        #result = minimize(func, init, method='SLSQP', options={'ftol': 10**-9, 'maxiter': 1000})
+        result = basinhopping(func, init, minimizer_kwargs=minimizer_kwargs)
         if verbose:
             print("iteration %d:" % (i+1))
             print(result)
         fun = result.fun
-        if fun < tol:
+        if fun < 1:
+            x = result.x
             break
         init = np.random.rand(len(init))
 
-    if fun > tol:
+    if x is None:
         return None
-    return variable_handler.vector_to_dict(result.x)
+    return variable_handler.vector_to_dict(x)
+
+def _find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=False):
+    init = np.array(variable_handler.dict_to_vector())
+
+    def func(vector):
+        print "dim:", np.shape(vector), vector
+        d = variable_handler.vector_to_dict(vector)
+        return sum(evaluate(atom, d).norm for atom in atoms)
+
+    def grad(f, theta):
+        theta = algopy.UTPM.init_jacobian(theta)
+        return algopy.UTPM.extract_jacobian(f(theta))
+
+    def hess(f, theta):
+        theta = algopy.UTPM.init_hessian(theta)
+        return algopy.UTPM.extract_hessian(len(theta), f(theta))
+
+    x = None
+    for i in range(max_num_resets):
+        results = pyipopt.fmin_unconstrained(func, init, functools.partial(grad, func))
+        if verbose:
+            print("iteration %d:" % (i+1))
+            print(results)
+        val, zl, zu, constraint_multipliers, obj, status = results
+        if obj < tol:
+            x = val
+            break
+        init = np.random.rand(len(init))
+
+    if x is None:
+        return None
+    return variable_handler.vector_to_dict(x)
