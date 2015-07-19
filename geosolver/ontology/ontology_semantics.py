@@ -328,6 +328,12 @@ def PerimeterOf(polygon):
     lines = _polygon_to_lines(polygon)
     return sum(LengthOf(line) for line in lines)
 
+def Pi():
+    return np.pi
+
+def Degree():
+    return np.pi/180
+
 def _polygon_to_lines(polygon):
     return [Line(polygon[index-1], point) for index, point in enumerate(polygon)]
 
@@ -355,3 +361,4 @@ def evaluate(function_node, assignment):
             else:
                 evaluated_args.append(arg)
         return getattr(this, function_node.signature.id)(*evaluated_args)
+

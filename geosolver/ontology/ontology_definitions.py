@@ -93,15 +93,25 @@ class Node(object):
     def has_signature(self, id_):
         return any(not is_number(child) and child.has_signature(id_) for child in self.children)
 
-    def is_grounded(self, ids=[]):
+    def is_grounded(self, ids=()):
         return all(child.is_grounded(ids) for child in self.children)
 
     def get_nodes(self, tester):
-        out = []
-        for node in self:
-            if tester(node):
-                out.append(node)
-        return out
+        return [node for node in self if tester(node)]
+
+    def get_grounded_subformula(self, ids=()):
+        """
+        Since at most bianry, there exists at most single biggest grouded subformula.
+        Returns None if it doesn't exist
+
+        :param ids:
+        :return:
+        """
+        if self.is_grounded(ids):
+            return self
+        for child in self.children:
+            return child.get_grounded_subformula(ids)
+        return None
 
 
 
@@ -340,6 +350,8 @@ function_signature_tuples = (
     ('RatioOf', 'number', ['number', 'number']),
     ('Integral', 'truth', ['number']),
     ('SquareOf', 'number', ['number']),
+    ('Degree', 'number', []),
+    ('Pi', 'number', []),
 )
 
 abbreviations = {
@@ -351,7 +363,9 @@ abbreviations = {
     '=': 'Equals',
     '<': 'Ge',
     '^': 'Pow',
-    '\\sqrt': 'Sqrt',
+    r'\sqrt': 'Sqrt',
+    r'\pi': 'Pi',
+    r'\degree': 'Degree',
     '||': 'Parallel',
 }
 

@@ -5,7 +5,7 @@ from scipy.optimize import minimize, newton_krylov, basinhopping
 import numpy as np
 from scipy.optimize.nonlin import NoConvergence
 
-from geosolver.ontology.ontology_semantics import evaluate
+from geosolver.ontology.ontology_semantics import evaluate, TruthValue
 from geosolver.solver.variable_handler import VariableHandler
 from geosolver.ontology.ontology_definitions import FormulaNode
 
@@ -13,7 +13,7 @@ __author__ = 'minjoon'
 
 
 class NumericSolver(object):
-    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=10, tol=10**-3, assignment=None):
+    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=2, tol=10**-3, assignment=None):
         if variable_handler is None:
             variable_handler = VariableHandler()
         self.variable_handler = variable_handler
@@ -22,52 +22,36 @@ class NumericSolver(object):
         self.tol = tol
         self.assignment = None
         self.assigned = False
+        self.confidence = None
 
-    def is_sat(self):
+    def solve(self):
+        self.assignment, self.confidence = find_assignment(self.variable_handler, self.atoms, self.max_num_resets, self.tol)
+        self.assigned = True
+
+    def is_sat(self, th=None):
+        if th is None:
+            th = self.tol
         if not self.assigned:
-            self.assignment = find_assignment(self.variable_handler, self.atoms, self.max_num_resets, self.tol)
-            self.assigned = True
-        return self.assignment is not None
+            self.solve()
+        return self.confidence < th
 
-    def query_invar(self, query_atom):
+    def query_invar(self, query_atom, th=None):
         query_atom = self.variable_handler.add(query_atom)
-        if not self.assigned:
-            self.assignment = find_assignment(self.variable_handler, self.atoms, self.max_num_resets, self.tol)
-            self.assigned = True
-        if not self.assignment:
+        if self.is_sat(th):
+            return evaluate(query_atom, self.assignment).norm < self.tol
+        else:
             return False
-        return evaluate(query_atom, self.assignment).norm < self.tol
 
     def find_assignment(self, query_atom):
         query_atom = self.variable_handler.add(query_atom)
         return find_assignment(self.variable_handler, self.atoms + [query_atom], self.max_num_resets, self.tol)
 
-    def evaluate(self, variable_node):
+    def evaluate(self, variable_node, th=None):
         variable_node = self.variable_handler.add(variable_node)
-        if not self.assigned:
-            self.assignment = find_assignment(self.variable_handler, self.atoms, self.max_num_resets, self.tol)
-            self.assigned = True
-
-        assert self.assignment is not None
-        return evaluate(variable_node, self.assignment)
-
-
-def query(variable_handler, prior_atoms, query_atom, max_num_resets=10, tol=10**-3, verbose=False):
-    assert isinstance(variable_handler, VariableHandler)
-    assert isinstance(query_atom, FormulaNode)
-    prior_assignment, prior_sat = find_assignment(variable_handler, prior_atoms, max_num_resets, tol, verbose)
-
-    unique = prior_sat and evaluate(query_atom, prior_assignment).norm < tol
-    all_assignment, sat = find_assignment(variable_handler, prior_atoms + [query_atom], max_num_resets, tol, verbose)
-
-    if unique:
-        # If unique answer exists, then enforce satisfiability. Just in case of numerical errors.
-        sat = True
-        assignment = prior_assignment
-    else:
-        assignment = all_assignment
-
-    return assignment, sat, unique
+        if self.is_sat(th):
+            return evaluate(variable_node, self.assignment)
+        else:
+            raise Exception()
 
 
 def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=True):
@@ -76,31 +60,25 @@ def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=True):
     def func(vector):
         return sum(evaluate(atom, variable_handler.vector_to_dict(vector)).norm for atom in atoms)
 
-    x = None
+    xs = []
+    fs = []
+    options = {'ftol': tol**2}
+    minimizer_kwargs = {"method": "SLSQP", "options": options}
     for i in range(max_num_resets):
-        """
-        try:
-            x = newton_krylov(modfunc, init)
-        except NoConvergence:
-            init = np.random.rand(len(init))
-        """
-
-        options = {'ftol': tol**2}
-        minimizer_kwargs = {"method": "SLSQP", "options": options}
-        #result = minimize(func, init, method='SLSQP', options={'ftol': 10**-9, 'maxiter': 1000})
         result = basinhopping(func, init, minimizer_kwargs=minimizer_kwargs)
         if verbose:
             print("iteration %d:" % (i+1))
             print(result)
-        fun = result.fun
-        if fun < 1:
-            x = result.x
+        xs.append(result.x)
+        fs.append(result.fun)
+        if result.fun < tol:
             break
         init = np.random.rand(len(init))
 
-    if x is None:
-        return None
-    return variable_handler.vector_to_dict(x)
+    min_idx = min(enumerate(fs), key=lambda pair: pair[1])[0]
+    assignment = variable_handler.vector_to_dict(xs[min_idx])
+    norm = fs[min_idx]
+    return assignment, norm
 
 def _find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=False):
     init = np.array(variable_handler.dict_to_vector())

@@ -46,12 +46,11 @@ def test_validity():
                     print annotation
 
 def test_trans():
-    query = 1020
+    query = 1043
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():
-        choice_formulas = None #get_choice_formulas(question)
-
+        choice_formulas = get_choice_formulas(question)
         label_data = geoserver_interface.download_labels(pk)[pk]
         diagram = open_image(question.diagram_path)
         graph_parse = diagram_to_graph_parse(diagram)
@@ -88,11 +87,24 @@ def test_trans():
 
 
 def get_choice_formulas(question):
+    """
+    Temporary; will be replaced by text parser
+    :param question:
+    :return:
+    """
     choice_formulas = {}
-    for number, choice_words in question.choice_words.iteritems():
-        expr_formulas = [prefix_to_formula(expression_parser.parse_prefix(expression))
-                         for expression in choice_words.values()]
-        choice_formulas[number] = expr_formulas[0]
+    for number, choice_expressions in question.choice_expressions.iteritems():
+        choice_words = question.choice_words[number]
+        if len(choice_expressions) == 1:
+            string = choice_expressions.values()[0]
+        elif len(choice_expressions) == 0:
+            string = choice_words.values()[0]
+        else:
+            return None
+        expr_formula = prefix_to_formula(expression_parser.parse_prefix(string))
+        choice_formulas[number] = expr_formula
+    if len(choice_formulas) == 0:
+        return None
     return choice_formulas
 
 

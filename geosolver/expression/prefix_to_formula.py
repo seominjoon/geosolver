@@ -10,7 +10,9 @@ def prefix_to_formula(prefix):
     :return FormulaNode:
     """
     if isinstance(prefix, str):
-        if is_number(prefix):
+        if prefix in abbreviations:
+            return FormulaNode(signatures[abbreviations[prefix]], [])
+        elif is_number(prefix):
             return FormulaNode(FunctionSignature(prefix, 'number', []), [])
         else:
             return FormulaNode(VariableSignature(prefix, 'number'), [])

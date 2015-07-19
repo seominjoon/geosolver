@@ -156,5 +156,12 @@ class ExpressionParser(object):
 
         return recurse(1)
 
+    def is_valid(self, string):
+        try:
+            self.parse(string)
+            return True
+        except:
+            return False
+
 expression_parser = ExpressionParser()
 
