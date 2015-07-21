@@ -5,7 +5,7 @@ import cv2
 from geosolver import geoserver_interface
 from geosolver.diagram.computational_geometry import normalize_angle, horizontal_angle, area_of_polygon
 from geosolver.diagram.get_instances import get_all_instances
-from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
+from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.parse_core import parse_core
 from geosolver.diagram.parse_graph import parse_graph
 from geosolver.diagram.parse_image_segments import parse_image_segments
@@ -49,7 +49,7 @@ def save_parse_primitives():
 
 
 def test_select_primitives():
-    question_dict = geoserver_interface.download_questions('test')
+    question_dict = geoserver_interface.download_questions(1037)
     for key in sorted(question_dict.keys()):
         question = question_dict[key]
         print(key)
@@ -73,7 +73,7 @@ def save_select_primitives():
 
 
 def test_parse_core():
-    question_dict = geoserver_interface.download_questions('test')
+    question_dict = geoserver_interface.download_questions(1037)
     for key in sorted(question_dict.keys()):
         question = question_dict[key]
         print(key)
@@ -111,7 +111,7 @@ def test_parse_graph():
         graph_parse = parse_graph(core_parse)
 
         print("Confident information in the diagram:")
-        for variable_node in parse_confident_atoms(graph_parse):
+        for variable_node in parse_confident_formulas(graph_parse):
             print variable_node
 
         core_parse.display_points()
@@ -142,9 +142,9 @@ if __name__ == "__main__":
     # save_parse_image_segments()
     # test_parse_primitives()
     # save_parse_primitives()
-    # test_select_primitives()
+    test_select_primitives()
     # save_select_primitives()
     # test_parse_core()
     # save_parse_core()
     # test_parse_graph()
-    test_computational_geometry()
+    # test_computational_geometry()

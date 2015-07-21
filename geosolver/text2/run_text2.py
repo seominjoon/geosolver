@@ -1,5 +1,5 @@
 from geosolver import geoserver_interface
-from geosolver.diagram.parse_confident_atoms import parse_confident_atoms
+from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.expression.expression_parser import expression_parser
 from geosolver.expression.prefix_to_formula import prefix_to_formula
@@ -46,7 +46,7 @@ def test_validity():
                     print annotation
 
 def test_trans():
-    query = 1043
+    query = 1037
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     for pk, question in questions.iteritems():
@@ -57,7 +57,7 @@ def test_trans():
         core_parse = graph_parse.core_parse
         match_parse = parse_match_from_known_labels(graph_parse, label_data)
         match_formulas = parse_match_atoms(match_parse)
-        diagram_formulas = parse_confident_atoms(graph_parse)
+        diagram_formulas = parse_confident_formulas(graph_parse)
         all_formulas = match_formulas + diagram_formulas
         for number, sentence_words in question.sentence_words.iteritems():
             syntax_parse = SyntaxParse(sentence_words, None)
@@ -98,7 +98,11 @@ def get_choice_formulas(question):
         if len(choice_expressions) == 1:
             string = choice_expressions.values()[0]
         elif len(choice_expressions) == 0:
-            string = choice_words.values()[0]
+            if len(choice_words) == 1:
+                string = choice_words.values()[0]
+            else:
+                continue
+                # string = r"\none"
         else:
             return None
         expr_formula = prefix_to_formula(expression_parser.parse_prefix(string))

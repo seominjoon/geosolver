@@ -1,3 +1,4 @@
+import time
 from geosolver.ontology.ontology_semantics import evaluate, Equals
 from geosolver.solver.display_entities import display_entities
 from geosolver.solver.numeric_solver import NumericSolver
@@ -12,6 +13,8 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
     :param dict choice_formulas:
     :return:
     """
+    start_time = time.time()
+    out = {}
     #1. Find query formula in true formulas
     true_formulas = []
     query_formula = None
@@ -29,31 +32,36 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
     elif query_formula.has_signature("What"):
         ns = NumericSolver(true_formulas)
         ns.solve()
-        out = {}
         if choice_formulas is None:
             # No choice given; need to find the answer!
             sf = query_formula.children[1]
             if sf.has_signature("What"):
                 sf = query_formula.children[0]
             out = ns.evaluate(sf)
-            return out
         for key, choice_formula in choice_formulas.iteritems():
+            # print query_formula.children[1], ns.evaluate(query_formula.children[1])
+            # print choice_formula, ns.evaluate(choice_formula)
             tester = lambda node: node.signature.id == "What"
             getter = lambda node: choice_formula
             replaced_formula = query_formula.replace_node(tester, getter)
+            # print replaced_formula
             out[key] = ns.evaluate(replaced_formula)
-        return out
 
     elif query_formula.has_signature("WhichOf"):
         tester = lambda node: isinstance(node, FormulaNode) and node.signature.id == "WhichOf"
-        result = {}
         for choice, choice_formula in choice_formulas.iteritems():
             getter = lambda node: choice_formula
             replaced_formula = query_formula.replace_node(tester, getter)
             all_formulas = true_formulas + [replaced_formula]
             ns = NumericSolver(all_formulas)
-            result[choice] = ns.evaluate(replaced_formula)
-            print result[choice]
-            if result[choice]:
+            out[choice] = ns.evaluate(replaced_formula)
+            print out[choice]
+            if out[choice]:
                 display_entities(ns)
-        return result
+    else:
+        raise Exception()
+
+    end_time = time.time()
+    delta_time = end_time - start_time
+    print "%.2f seconds" % delta_time
+    return out

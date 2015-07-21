@@ -106,17 +106,17 @@ def _ground_leaf(match_parse, leaf):
         elif len(variable_signature.name) == 1:
             return match_parse.match_dict[variable_signature.name][0]
     elif return_type == 'line':
-        if not variable_signature.name.isupper():
-            lines = get_all_instances(graph_parse, 'line', True)
-            return SetNode(lines.values())
-        elif len(variable_signature.name) == 1:
+        if len(variable_signature.name) == 1 and variable_signature.name in match_parse.match_dict:
             line = match_parse.match_dict[variable_signature.name][0]
             return line
-        elif len(variable_signature.name) == 2:
+        elif len(variable_signature.name) == 2 and variable_signature.name.isupper():
             label_a, label_b = variable_signature.name
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
             return FormulaNode(signatures['Line'], [point_a, point_b])
+        else:
+            lines = get_all_instances(graph_parse, 'line', True)
+            return SetNode(lines.values())
     elif return_type == 'lines':
         lines = get_all_instances(graph_parse, 'line', True)
         return SetNode(lines.values())
@@ -184,6 +184,7 @@ def _ground_leaf(match_parse, leaf):
         circles = get_all_instances(graph_parse, 'circle', True)
         return SetNode(triangles.values() + quads.values() + hexagons.values() + circles.values())
 
+    print variable_signature.name in match_parse.match_dict
     print leaf.signature.id, leaf.signature.name, leaf.return_type
     raise Exception(repr(leaf))
 

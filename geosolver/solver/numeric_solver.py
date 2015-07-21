@@ -4,6 +4,7 @@ import pyipopt
 from scipy.optimize import minimize, newton_krylov, basinhopping
 import numpy as np
 from scipy.optimize.nonlin import NoConvergence
+import time
 
 from geosolver.ontology.ontology_semantics import evaluate, TruthValue
 from geosolver.solver.variable_handler import VariableHandler
@@ -13,7 +14,7 @@ __author__ = 'minjoon'
 
 
 class NumericSolver(object):
-    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=2, tol=10**-3, assignment=None):
+    def __init__(self, prior_atoms, variable_handler=None, max_num_resets=1, tol=10**-3, assignment=None):
         if variable_handler is None:
             variable_handler = VariableHandler()
         self.variable_handler = variable_handler
@@ -48,10 +49,9 @@ class NumericSolver(object):
 
     def evaluate(self, variable_node, th=None):
         variable_node = self.variable_handler.add(variable_node)
-        if self.is_sat(th):
-            return evaluate(variable_node, self.assignment)
-        else:
-            raise Exception()
+        if not self.assigned:
+            self.solve()
+        return evaluate(variable_node, self.assignment)
 
 
 def find_assignment(variable_handler, atoms, max_num_resets, tol, verbose=True):

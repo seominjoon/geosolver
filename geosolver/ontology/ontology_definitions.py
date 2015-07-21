@@ -322,6 +322,7 @@ function_signature_tuples = (
     ('IsMidpointOf', 'truth', ['point', 'line']),
     ('IsWidthOf', 'truth', ['number', 'quad']),
     ('LengthOf', 'number', ['line']),
+    ('SquaredLengthOf', 'number', ['line']),
     ('CC', 'truth', ['root', 'root'], None, True),
     ('Is', 'truth', ['entity', 'entity'], None, True),
     ('MeasureOf', 'number', ['angle']),
@@ -352,6 +353,7 @@ function_signature_tuples = (
     ('SquareOf', 'number', ['number']),
     ('Degree', 'number', []),
     ('Pi', 'number', []),
+    ('None', 'root', []),
 )
 
 abbreviations = {
@@ -365,6 +367,7 @@ abbreviations = {
     '^': 'Pow',
     r'\sqrt': 'Sqrt',
     r'\pi': 'Pi',
+    r'\none': 'None',
     r'\degree': 'Degree',
     '||': 'Parallel',
 }

@@ -3,7 +3,7 @@ import numpy as np
 import itertools
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points, angle_in_radian, cartesian_angle, signed_distance_between_cartesian_angles, \
-    horizontal_angle, area_of_polygon
+    horizontal_angle, area_of_polygon, distance_between_points_squared
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype, SetNode
 import sys
@@ -92,12 +92,24 @@ def Polygon(*p):
 def LengthOf(line):
     return line_length(line)
 
+def SquaredLengthOf(line):
+    return distance_between_points_squared(*line)
+
 def RadiusOf(circle):
     return circle.radius
+
+def IsRadiusNumOf(number, circle):
+    return Equals(number, RadiusOf(circle))
 
 def Equals(a, b):
     std = abs((a+b)/2.0)
     value = abs(a-b)
+    out = TruthValue(value, std)
+    return out
+
+def Ge(a, b):
+    std = abs((a+b)/2.0)
+    value = max(0, b-a)
     out = TruthValue(value, std)
     return out
 
