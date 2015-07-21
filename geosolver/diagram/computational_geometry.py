@@ -118,7 +118,7 @@ def intersections_between_lines(line0, line1, eps):
 
 
 def intersections_between_circle_and_line(circle, line, eps):
-    min_angle = 30
+    min_angle = 40
     temp_sln = []
     normal_vector = np.array(line_normal_vector(line))
     parallel_vector = np.array(line_unit_vector(line))
@@ -152,7 +152,7 @@ def intersections_between_circle_and_line(circle, line, eps):
 
     if len(sln) == 2:
         angle = instantiators['angle'](sln[0], circle.center, sln[1])
-        if angle_in_degree(angle) < min_angle:
+        if angle_in_degree(angle, True) < min_angle:
             return [midpoint(sln[0], sln[1])]
 
     return sln
