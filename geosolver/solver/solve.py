@@ -32,6 +32,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
     elif query_formula.has_signature("What"):
         ns = NumericSolver(true_formulas)
         ns.solve()
+        display_entities(ns)
         if choice_formulas is None:
             # No choice given; need to find the answer!
             sf = query_formula.children[1]

@@ -1,9 +1,10 @@
 import itertools
-from geosolver.diagram.get_instances import get_all_instances
+from geosolver.diagram.get_instances import get_all_instances, get_instances
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.ontology.ontology_definitions import VariableSignature, signatures, FormulaNode, SetNode, is_singular, Node
 from geosolver.utils.num import is_number
+import numpy as np
 
 __author__ = 'minjoon'
 
@@ -80,6 +81,7 @@ def _ground_leaf(match_parse, leaf):
     assert isinstance(match_parse, MatchParse)
     return_type = leaf.return_type
     graph_parse = match_parse.graph_parse
+    core_parse = graph_parse.core_parse
     variable_signature = leaf.signature
 
     if variable_signature.id in signatures:
@@ -139,7 +141,11 @@ def _ground_leaf(match_parse, leaf):
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
             point_c = match_parse.match_dict[label_c][0]
-            return FormulaNode(signatures['Angle'], [point_a, point_b, point_c])
+            out = FormulaNode(signatures['Angle'], [point_a, point_b, point_c])
+            measure = evaluate(FormulaNode(signatures['MeasureOf'], [out]), core_parse.variable_assignment)
+            if measure > np.pi:
+                out = FormulaNode(signatures['Angle'], [point_c, point_b, point_a])
+            return out
         else:
             raise Exception()
     elif return_type == 'triangle':

@@ -65,7 +65,7 @@ def parse_match_from_known_labels(graph_parse, known_labels):
             c_point = graph_parse.point_variables[c_key]
             formula = FormulaNode(signatures['Angle'], [a_point, b_point, c_point])
             formula = FormulaNode(signatures['MeasureOf'], [formula])
-            formula = FormulaNode(signatures['Mul'], [formula, 180/np.pi])
+            formula = FormulaNode(signatures['Div'], [formula, FormulaNode(signatures['Degree'], [])])
         elif type_ == 'arc':
             (center_key, radius_key), a_key, b_key = argmin_key
             center_point = graph_parse.point_variables[center_key]

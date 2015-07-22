@@ -1,8 +1,9 @@
 import itertools
-from geosolver.diagram.computational_geometry import polygon_is_convex
+from geosolver.diagram.computational_geometry import polygon_is_convex, angle_in_radian
 from geosolver.diagram.states import GraphParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, signatures
+import numpy as np
 
 __author__ = 'minjoon'
 
@@ -172,7 +173,6 @@ def _get_angles(graph_parse, is_variable, a_key, b_key, c_key, ignore_trivial=Tr
                 b_points = line_graph[a_key][c_key]['points']
                 if b_key in b_points:
                     return {}
-
         if is_variable:
             points = graph_parse.core_parse.point_variables
         else:
