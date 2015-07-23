@@ -16,7 +16,6 @@ from geosolver.text2.syntax_parser import SyntaxParse
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
 from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
-import pyipopt
 
 
 __author__ = 'minjoon'

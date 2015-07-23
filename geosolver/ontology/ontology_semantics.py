@@ -54,7 +54,10 @@ class TruthValue(object):
         return self.__or__(other)
 
     def flip(self):
-        norm = 1-self.norm
+        if self.norm == 0:
+            norm = 10**5
+        else:
+            norm = 1.0/self.norm
         conf = 1-self.conf
         out = TruthValue(norm, conf=conf)
         return out
@@ -345,6 +348,9 @@ def Pi():
 
 def Degree():
     return np.pi/180
+
+def True(tv):
+    return tv
 
 def _polygon_to_lines(polygon):
     return [Line(polygon[index-1], point) for index, point in enumerate(polygon)]

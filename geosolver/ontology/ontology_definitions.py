@@ -369,6 +369,7 @@ abbreviations = {
     r'\pi': 'Pi',
     r'\none': 'None',
     r'\degree': 'Degree',
+    r'\what': 'What',
     '||': 'Parallel',
 }
 

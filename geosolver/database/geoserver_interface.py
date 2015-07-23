@@ -42,7 +42,8 @@ class GeoserverInterface(object):
             sentence_expressions ={int(number): {index: expr for index, expr in exprs.iteritems()} for number, exprs in pair['sentence_expressions'].iteritems()}
             sentence_words = {int(number): {int(index): word for index, word in words.iteritems()} for number, words in pair['sentence_words'].iteritems()}
             choice_expressions ={int(number): {index: expr for index, expr in exprs.iteritems()} for number, exprs in pair['choice_expressions'].iteritems()}
-            question = Question(pair['pk'], pair['text'], sentence_words, sentence_expressions, temp_filepath, choice_words, choice_expressions)
+            answer = pair['answer']
+            question = Question(pair['pk'], pair['text'], sentence_words, sentence_expressions, temp_filepath, choice_words, choice_expressions, answer)
             questions[question.key] = question
         return questions
 

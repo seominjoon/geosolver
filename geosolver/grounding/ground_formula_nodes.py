@@ -170,8 +170,6 @@ def _ground_leaf(match_parse, leaf):
             return SetNode(quads.values())
     elif return_type == 'quads':
         quads = get_all_instances(graph_parse, 'quad', True)
-        for quad in get_all_instances(graph_parse, 'quad', False).values():
-            graph_parse.display_instances([quad])
         return SetNode(quads.values())
     elif return_type == 'hexagon':
         if len(variable_signature.name) == 6:

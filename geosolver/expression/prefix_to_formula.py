@@ -15,7 +15,7 @@ def prefix_to_formula(prefix):
         elif is_number(prefix):
             return FormulaNode(FunctionSignature(prefix, 'number', []), [])
         else:
-            return FormulaNode(VariableSignature(prefix, 'root'), [])
+            return FormulaNode(VariableSignature(prefix, 'number'), [])
     else:
         sig = signatures[abbreviations[prefix[0]]]
         children = [prefix_to_formula(child) for child in prefix[1:]]

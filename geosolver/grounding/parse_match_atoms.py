@@ -1,3 +1,5 @@
+from geosolver.expression.expression_parser import expression_parser
+from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_definitions import FormulaNode, issubtype, VariableSignature, signatures, FunctionSignature
 from geosolver.utils.num import is_number
@@ -15,11 +17,16 @@ def parse_match_atoms(match_parse):
                 continue
 
             # FIXME : to be obtained by tag model
+
+            left_term = prefix_to_formula(expression_parser.parse_prefix(label))
+
+            """
             if is_number(label):
                 left_term = FormulaNode(FunctionSignature(label, "number", []), [])
             else:
                 vs = VariableSignature(label, 'number')
                 left_term = FormulaNode(vs, [])
+            """
 
             atom = FormulaNode(signatures['Equals'], [left_term, term])
             match_atoms.append(atom)
