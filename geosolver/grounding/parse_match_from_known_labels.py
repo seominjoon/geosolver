@@ -17,6 +17,7 @@ __author__ = 'minjoon'
 def parse_match_from_known_labels(graph_parse, known_labels):
     assert isinstance(graph_parse, GraphParse)
     match_dict = {}
+    point_key_dict = {}
     offset = graph_parse.image_segment_parse.diagram_image_segment.offset
     for idx, d in enumerate(known_labels):
         label = d['label']
@@ -59,6 +60,7 @@ def parse_match_from_known_labels(graph_parse, known_labels):
                 formula = FormulaNode(signatures['LengthOf'], [formula])
         elif type_ == 'point':
             formula = graph_parse.point_variables[argmin_key]
+            point_key_dict[label] = argmin_key
         elif type_ == 'angle':
             a_key, b_key, c_key = argmin_key
             a_point = graph_parse.point_variables[a_key]
@@ -82,5 +84,5 @@ def parse_match_from_known_labels(graph_parse, known_labels):
             raise Exception()
         match_dict[label].append(formula)
 
-    match_parse = MatchParse(graph_parse, match_dict)
+    match_parse = MatchParse(graph_parse, match_dict, point_key_dict)
     return match_parse

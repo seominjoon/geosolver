@@ -107,7 +107,7 @@ def _annotated_unit_test(query):
     core_parse.display_points()
 
     ans = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
-    print "ans: %s" % ans
+    print "ans:", ans
 
     if choice_formulas is None:
         attempted = True
@@ -158,7 +158,7 @@ def annotated_test():
     ids = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
     ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
     ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
-    ids = [1096]
+    ids = [1089]
     correct = 0
     attempted = 0
     total = len(ids)

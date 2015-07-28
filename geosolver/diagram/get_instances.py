@@ -8,7 +8,7 @@ import numpy as np
 __author__ = 'minjoon'
 
 
-def get_instances(graph_parse, instance_type_name, is_variable=False, *args):
+def get_instances(graph_parse, instance_type_name, is_variable, *args):
     assert instance_type_name in instantiators
     if instance_type_name in ["triangle", "quad"]:
         return _get_polygons(graph_parse, instance_type_name, is_variable, *args)
@@ -17,7 +17,13 @@ def get_instances(graph_parse, instance_type_name, is_variable=False, *args):
 
 
 def get_all_instances(graph_parse, instance_type_name, is_variable=False):
-    if instance_type_name in ["triangle", "quad", "hexagon"]:
+    if instance_type_name == 'polygon':
+        triangles = _get_all_polygons(graph_parse, 'triangle', 3, is_variable)
+        quads = _get_all_polygons(graph_parse, 'quad', 4, is_variable)
+        hexagons = _get_all_polygons(graph_parse, 'hexagon', 6, is_variable)
+        polygons = dict(triangles.items() + quads.items() + hexagons.items())
+        return polygons
+    elif instance_type_name in ["triangle", "quad", "hexagon"]:
         if instance_type_name == 'triangle': n = 3
         elif instance_type_name == 'quad': n = 4
         elif instance_type_name == 'hexagon': n = 6
@@ -142,10 +148,14 @@ def _get_all_polygons(graph_parse, name, n, is_variable):
         if len(angles) < n:
             continue
 
+        convex = polygon_is_convex(tuple(graph_parse.intersection_points[key] for key in keys))
+
         if is_variable:
-            points = tuple(graph_parse.core_parse.point_variables[key] for key in keys)
+            points = list(graph_parse.core_parse.point_variables[key] for key in keys)
         else:
-            points = tuple(graph_parse.intersection_points[key] for key in keys)
+            points = list(graph_parse.intersection_points[key] for key in keys)
+        if not convex:
+            points.reverse()
         # polygon = instantiators[name](*points)
         polygon = FormulaNode(signatures[name.capitalize()], points)
         polygon_key = tuple(keys)

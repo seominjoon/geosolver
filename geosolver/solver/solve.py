@@ -30,16 +30,13 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
         raise Exception("No query formula.")
 
     elif query_formula.has_signature("What"):
-        ns = NumericSolver(true_formulas)
-        ns.solve()
-        # display_entities(ns)
         if choice_formulas is None:
-            # No choice given; need to find the answer!
-            sf = query_formula.children[1]
-            if sf.has_signature("What"):
-                sf = query_formula.children[0]
-            out = ns.evaluate(sf)
+            ns = NumericSolver(true_formulas + [query_formula])
+            ns.solve()
+            out = ns.assignment['What']
         else:
+            ns = NumericSolver(true_formulas)
+            ns.solve()
             for key, choice_formula in choice_formulas.iteritems():
                 # print query_formula.children[1], ns.evaluate(query_formula.children[1])
                 # print choice_formula, ns.evaluate(choice_formula)

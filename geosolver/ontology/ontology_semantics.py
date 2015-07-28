@@ -289,6 +289,9 @@ def AreaOf(twod):
 def MeasureOf(angle):
     return angle_in_radian(angle, False)
 
+def Measures(angle, number):
+    return Equals(MeasureOf(angle), number)
+
 def IsAreaOf(number, twod):
     return Equals(number, AreaOf(twod))
 
@@ -379,8 +382,13 @@ def PerimeterOf(polygon):
 def SquareOf(number):
     return number ** 2
 
-def IsRight(angle):
-    return Equals(np.pi/2, MeasureOf(angle))
+def IsRight(entity):
+    if isinstance(entity, instantiators['angle']):
+        return Equals(np.pi/2, MeasureOf(entity))
+    elif isinstance(entity, instantiators['triangle']):
+        angles = _polygon_to_angles(entity)
+        tv = reduce(operator.__or__, (IsRight(angle) for angle in angles), False)
+        return tv
 
 def Pi():
     return np.pi

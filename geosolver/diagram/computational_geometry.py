@@ -235,7 +235,7 @@ def horizontal_angle(angle):
 def polygon_is_convex(points):
     angles = [instantiators['angle'](points[index-2], points[index-1], point) for index, point in enumerate(points)]
     calc = sum(angle_in_radian(angle, False) for angle in angles)
-    ans = 180*(len(points)-2)
+    ans = np.pi*(len(points)-2)
     if calc > ans + 10:
         return False
     return True

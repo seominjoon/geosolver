@@ -30,11 +30,14 @@ def parse_confident_formulas(graph_parse):
                 variable_node = FormulaNode(signatures['PointLiesOnCircle'], [point_variable, circle_variable])
                 confident_formulas.append(variable_node)
 
+    # Just enforce non collapsing between known labels?
+    """
     for from_point, to_point in itertools.combinations(graph_parse.core_parse.point_variables.values(), 2):
         line = FormulaNode(signatures['Line'], [from_point, to_point])
         length = FormulaNode(signatures['SquaredLengthOf'], [line])
         threshold = FormulaNode(FunctionSignature(str(eps**2), 'number', []), [])
         formula = FormulaNode(signatures['Ge'], [length, threshold])
         confident_formulas.append(formula)
+    """
 
     return confident_formulas
