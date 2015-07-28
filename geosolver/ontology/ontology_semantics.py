@@ -379,6 +379,9 @@ def PerimeterOf(polygon):
 def SquareOf(number):
     return number ** 2
 
+def IsRight(angle):
+    return Equals(np.pi/2, MeasureOf(angle))
+
 def Pi():
     return np.pi
 
