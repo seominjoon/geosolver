@@ -89,7 +89,7 @@ def _get_all_circles(graph_parse, is_variable):
 def _get_arcs(graph_parse, is_variable, a_key, b_key):
     assert isinstance(graph_parse, GraphParse)
     arcs = {}
-    for circle_key in _get_all_circles(graph_parse):
+    for circle_key in _get_all_circles(graph_parse, is_variable):
         if graph_parse.arc_graphs[circle_key].has_edge(a_key, b_key):
             if is_variable:
                 arc = graph_parse.arc_graphs[circle_key][a_key][b_key]['variable']

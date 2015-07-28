@@ -183,7 +183,7 @@ def angle_in_radian(angle, smaller=False):
     """
     a0 = cartesian_angle(angle.b, angle.a)
     a1 = cartesian_angle(angle.b, angle.c)
-    diff = signed_distance_between_cartesian_angles(a1, a0)
+    diff = signed_distance_between_cartesian_angles(a0, a1)
     if smaller and diff > np.pi:
         return 2*np.pi - diff
     return diff
@@ -241,6 +241,6 @@ def polygon_is_convex(points):
     return True
 
 def area_of_polygon(points):
-    area = 0.5*sum(points[index-1][0]*p[1]-p[0]*points[index-1][1] for index, p in enumerate(points))
+    area = 0.5*abs(sum(points[index-1][0]*p[1]-p[0]*points[index-1][1] for index, p in enumerate(points)))
     return area
 

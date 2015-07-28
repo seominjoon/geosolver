@@ -4,7 +4,7 @@ from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.expression.expression_parser import expression_parser
 from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula_nodes import ground_formula_node
-from geosolver.grounding.parse_match_atoms import parse_match_atoms
+from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve

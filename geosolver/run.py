@@ -9,7 +9,7 @@ from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.expression.expression_parser import expression_parser
 from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula_nodes import ground_formula_node
-from geosolver.grounding.parse_match_atoms import parse_match_atoms
+from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_definitions import FormulaNode
 from geosolver.ontology.ontology_definitions import signatures
@@ -61,6 +61,7 @@ def annotated_unit_test(query):
     try:
         result = _annotated_unit_test(query)
     except Exception, e:
+        logging.error(query)
         logging.exception(e)
         result = SimpleResult(query, True, False, False)
     #sys.stdout = oldstdout
@@ -103,6 +104,8 @@ def _annotated_unit_test(query):
             score = None
             scores = None
         print reduced_formula, score, scores
+    core_parse.display_points()
+
     ans = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
     print "ans: %s" % ans
 
@@ -153,7 +156,9 @@ def get_choice_formulas(question):
 
 def annotated_test():
     ids = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
-    # ids = [1017]
+    ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
+    ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
+    ids = [1065]
     correct = 0
     attempted = 0
     total = len(ids)

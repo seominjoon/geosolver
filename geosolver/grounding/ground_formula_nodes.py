@@ -146,6 +146,10 @@ def _ground_leaf(match_parse, leaf):
             if measure > np.pi:
                 out = FormulaNode(signatures['Angle'], [point_c, point_b, point_a])
             return out
+        elif len(variable_signature.name) == 1 and variable_signature.name.isupper():
+            raise Exception()
+        elif len(variable_signature.name) == 1 and variable_signature.name.islower():
+            return match_parse.match_dict[variable_signature.name][0]
         else:
             raise Exception()
     elif return_type == 'triangle':

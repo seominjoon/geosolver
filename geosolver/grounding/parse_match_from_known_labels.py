@@ -43,6 +43,8 @@ def parse_match_from_known_labels(graph_parse, known_labels):
         elif type_ == 'arc':
             distances = [(key, label_distance_to_arc(label_point, instance)) for key, instance in instances.iteritems()]
         elif type_ == 'angle':
+            # filter subangles
+            # instances = {key: value for key, value in instances.iteritems() if all(x == value or not is_subangle(x, value) for x in instances.values())}
             distances = [(key, label_distance_to_angle(label_point, instance)) for key, instance in instances.iteritems()]
 
         # Then use the key to get corresponding variable in general graph
@@ -58,14 +60,14 @@ def parse_match_from_known_labels(graph_parse, known_labels):
         elif type_ == 'point':
             formula = graph_parse.point_variables[argmin_key]
         elif type_ == 'angle':
-            assert len(arr) > 1 and arr[0] == 'angle'
             a_key, b_key, c_key = argmin_key
             a_point = graph_parse.point_variables[a_key]
             b_point = graph_parse.point_variables[b_key]
             c_point = graph_parse.point_variables[c_key]
             formula = FormulaNode(signatures['Angle'], [a_point, b_point, c_point])
-            formula = FormulaNode(signatures['MeasureOf'], [formula])
-            formula = FormulaNode(signatures['Div'], [formula, FormulaNode(signatures['Degree'], [])])
+            if len(arr) > 1 and arr[0] == 'angle':
+                formula = FormulaNode(signatures['MeasureOf'], [formula])
+                formula = FormulaNode(signatures['Div'], [formula, FormulaNode(signatures['Degree'], [])])
         elif type_ == 'arc':
             (center_key, radius_key), a_key, b_key = argmin_key
             center_point = graph_parse.point_variables[center_key]

@@ -68,7 +68,8 @@ def get_annotation_node(syntax_parse, annotation_string):
         elif type_ == 'variable' and len(children) == 0:
             signature = VariableSignature(local_span, s, name=name)
         else:
-            raise Exception()
+            raise Exception("local span: %r, children: %r, type: %r, s: %r"
+                            % (local_span, children, type_, s))
         content = TagRule(syntax_parse, local_span, signature)
         return AnnotationNode(content, children)
 

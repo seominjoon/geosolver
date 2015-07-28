@@ -31,4 +31,10 @@ def parse_match_atoms(match_parse):
             atom = FormulaNode(signatures['Equals'], [left_term, term])
             match_atoms.append(atom)
 
+            if term.signature.id == "Div":
+                # TODO : this should be only constrained if the observed angle is < 180
+                # TODO : In fact, the labeling should be reorganized. (x --> x*\degree)
+                res = FormulaNode(signatures['Ge'], [180, left_term])
+                match_atoms.append(res)
+
     return match_atoms

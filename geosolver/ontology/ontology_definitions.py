@@ -329,6 +329,7 @@ function_signature_tuples = (
     ('Perpendicular', 'truth', ['line', 'line'], None, True),
     ('IsChordOf', 'truth', ['line', 'circle']),
     ('Tangent', 'truth', ['line', 'twod']),
+    ('Secant', 'truth', ['line', 'circle']),
     ('RadiusOf', 'number', ['circle']),
     ('IsRadiusNumOf', 'truth', ['number', 'circle']),
     ('IsRadiusLineOf', 'truth', ['line', 'circle']),
@@ -354,6 +355,11 @@ function_signature_tuples = (
     ('Degree', 'number', []),
     ('Pi', 'number', []),
     ('None', 'root', []),
+    ('IsSideOf', 'truth', ['line', 'polygon']),
+    ('IsHypotenuseOf', 'truth', ['line', 'triangle']),
+    ('Congruent', 'truth', ['angle', 'angle']),
+    ('Find', 'truth', ['number']),
+    ('Measures', 'truth', ['angle', 'number']),
 )
 
 abbreviations = {

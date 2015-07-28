@@ -104,6 +104,30 @@ def RadiusOf(circle):
 def IsRadiusNumOf(number, circle):
     return Equals(number, RadiusOf(circle))
 
+def IsRadiusLineOf(line, circle):
+    if line[0] != circle.center and line[1] != circle.center:
+        return TruthValue(np.inf)
+    return PointLiesOnCircle(line[0], circle) | PointLiesOnCircle(line[1], circle)
+
+def LineIsLine(l0, l1):
+    if frozenset(l0) == frozenset(l1):
+        return TruthValue(0)
+    TruthValue(np.inf)
+
+def IsSideOf(line, polygon):
+    for each in _polygon_to_lines(polygon):
+        if LineIsLine(line, each):
+            return TruthValue(0)
+    return TruthValue(np.inf)
+
+def IsHypotenuseOf(line, triangle):
+    lines = _polygon_to_lines(triangle)
+    longest_line = max(lines, key=lambda l: LengthOf(l))
+    return LineIsLine(line, longest_line)
+
+def Congruent(a, b):
+    return Equals(MeasureOf(a), MeasureOf(b))
+
 def Equals(a, b):
     std = abs((a+b)/2.0)
     value = abs(a-b)
@@ -148,6 +172,10 @@ def Tangent(line, twod):
         out = reduce(operator.__or__, (PointLiesOnLine(point, line) for point in twod), False)
         return out
     raise Exception()
+
+def Secant(line, circle):
+    d = distance_between_line_and_point(line, circle.center)
+    return Ge(circle.radius, d)
 
 def IsDiameterLineOf(line, circle):
     return IsChordOf(line, circle) & Equals(LengthOf(line), 2*circle.radius)
@@ -301,6 +329,11 @@ def Five(entities):
         return TruthValue(0)
     return TruthValue(np.inf)
 
+def Six(entities):
+    if len(entities.children) == 6:
+        return TruthValue(0)
+    return TruthValue(np.inf)
+
 def Not(truth):
     return truth.flip()
 
@@ -342,6 +375,9 @@ def AverageOf(set_node):
 def PerimeterOf(polygon):
     lines = _polygon_to_lines(polygon)
     return sum(LengthOf(line) for line in lines)
+
+def SquareOf(number):
+    return number ** 2
 
 def Pi():
     return np.pi
