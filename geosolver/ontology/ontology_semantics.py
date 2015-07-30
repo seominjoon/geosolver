@@ -126,7 +126,10 @@ def IsHypotenuseOf(line, triangle):
     return LineIsLine(line, longest_line)
 
 def Congruent(a, b):
-    return Equals(MeasureOf(a), MeasureOf(b))
+    if isinstance(a, instantiators['line']):
+        return Equals(LengthOf(a), LengthOf(b))
+    elif isinstance(a, instantiators['angle']):
+        return Equals(MeasureOf(a), MeasureOf(b))
 
 def Equals(a, b):
     std = abs((a+b)/2.0)
@@ -286,8 +289,13 @@ def AreaOf(twod):
         raise Exception()
     return area
 
-def MeasureOf(angle):
-    return angle_in_radian(angle, False)
+def MeasureOf(x):
+    if isinstance(x, instantiators['angle']):
+        return angle_in_radian(x, False)
+    elif isinstance(x, instantiators['arc']):
+        circle, a, b = x
+        angle = Angle(a, circle.center, b)
+        return angle_in_radian(angle, False)
 
 def Measures(angle, number):
     return Equals(MeasureOf(angle), number)
@@ -307,6 +315,11 @@ def Isosceles(triangle):
 
     out = reduce(operator.__or__, (Equals(a, b) for a, b in combs), False)
     return out
+
+def IsArc(arc):
+    if isinstance(arc, instantiators['arc']):
+        return TruthValue(0)
+    return TruthValue(np.inf)
 
 def BisectsAngle(line, angle):
     distant_point = line[0]

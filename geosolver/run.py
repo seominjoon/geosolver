@@ -80,6 +80,7 @@ def _annotated_unit_test(query):
     graph_parse = diagram_to_graph_parse(diagram)
     core_parse = graph_parse.core_parse
     # core_parse.display_points()
+    # core_parse.primitive_parse.display_primitives()
     match_parse = parse_match_from_known_labels(graph_parse, label_data)
     match_formulas = parse_match_atoms(match_parse)
     diagram_formulas = parse_confident_formulas(graph_parse)
@@ -161,7 +162,7 @@ def annotated_test():
     #ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
     ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1148]
     ids = [997, 1046, 1053]
-    ids = [1046]
+    ids = [1122]
     correct = 0
     attempted = 0
     total = len(ids)

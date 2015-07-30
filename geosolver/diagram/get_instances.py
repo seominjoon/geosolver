@@ -4,6 +4,7 @@ from geosolver.diagram.states import GraphParse
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, signatures
 import numpy as np
+from geosolver.ontology.ontology_semantics import MeasureOf
 
 __author__ = 'minjoon'
 

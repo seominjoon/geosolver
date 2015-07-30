@@ -371,6 +371,7 @@ function_signature_tuples = (
     ('Find', 'truth', ['number']),
     ('Measures', 'truth', ['angle', 'number']),
     ('Greatest', 'number', ['*number']),
+    ('IsArc', 'truth', ['arc']),
 )
 
 abbreviations = {

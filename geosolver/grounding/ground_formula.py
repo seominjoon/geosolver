@@ -1,7 +1,7 @@
 import itertools
 from geosolver.diagram.get_instances import get_all_instances, get_instances
 from geosolver.grounding.states import MatchParse
-from geosolver.ontology.ontology_semantics import evaluate
+from geosolver.ontology.ontology_semantics import evaluate, MeasureOf
 from geosolver.ontology.ontology_definitions import VariableSignature, signatures, FormulaNode, SetNode, is_singular, Node
 from geosolver.utils.num import is_number
 import numpy as np
@@ -141,7 +141,7 @@ def _ground_leaf(match_parse, leaf):
             raise Exception()
     elif return_type == 'angle':
         # TODO :
-        if len(variable_signature.name) == 3:
+        if len(variable_signature.name) == 3 and variable_signature.name.isupper():
             label_a, label_b, label_c = variable_signature.name
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
@@ -162,6 +162,15 @@ def _ground_leaf(match_parse, leaf):
             return match_parse.match_dict[variable_signature.name][0]
         else:
             raise Exception()
+    elif return_type == 'arc':
+        if len(variable_signature.name) == 2 and variable_signature.name.isupper():
+            point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
+            test_arc = get_instances(graph_parse, 'arc', False, *point_keys).values()[0]
+            if MeasureOf(test_arc) > np.pi:
+                point_keys = [point_keys[1], point_keys[0]]
+            arc = get_instances(graph_parse, 'arc', True, *point_keys).values()[0]
+            return arc
+
     elif return_type == 'triangle':
         if variable_signature.name.isupper() and len(variable_signature.name) == 3:
             point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
