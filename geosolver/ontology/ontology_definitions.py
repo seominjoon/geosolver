@@ -93,8 +93,11 @@ class Node(object):
     def has_signature(self, id_):
         return any(not is_number(child) and child.has_signature(id_) for child in self.children)
 
+    def has_constant(self):
+        return any(not isinstance(child, Node) or child.has_constant() for child in self.children)
+
     def is_grounded(self, ids=()):
-        return all(child.is_grounded(ids) for child in self.children)
+        return all(not isinstance(child, Node) or child.is_grounded(ids) for child in self.children)
 
     def get_nodes(self, tester):
         return [node for node in self if tester(node)]
@@ -214,6 +217,13 @@ class FormulaNode(Node):
         if self.signature.id == id_:
             return True
         return any(not is_number(child) and child.has_signature(id_) for child in self.children)
+
+    def has_constant(self):
+        if self.is_leaf():
+            if isinstance(self.signature, VariableSignature):
+                return False
+            return True
+        return any(not isinstance(child, Node) or child.has_constant() for child in self.children)
 
     def is_grounded(self, ids=[]):
         """
@@ -360,6 +370,7 @@ function_signature_tuples = (
     ('Congruent', 'truth', ['angle', 'angle']),
     ('Find', 'truth', ['number']),
     ('Measures', 'truth', ['angle', 'number']),
+    ('Greatest', 'number', ['*number']),
 )
 
 abbreviations = {

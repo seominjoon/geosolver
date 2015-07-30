@@ -48,7 +48,7 @@ def label_distance_to_angle(label_point, angle):
     cad = min(signed_distance_between_cartesian_angles(cam, cav), signed_distance_between_cartesian_angles(cav, cam))
     dist = distance_between_points(label_point, angle.b)
     # print cad, cam, cav, dc, dm, cac, caa, dist*(1+cad+dc)
-    if dc > dm and cad < 0.2*dc:
+    if dc > dm and cad < 0.35*dc:
         return dist*(1+cad+dc)
     else:
         return 1000*dist  # effectively infinite

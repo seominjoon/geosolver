@@ -19,6 +19,7 @@ instantiator_defs = {
     'arc': (('circle', 'circle'), ('a', 'point'), ('b', 'point')),
     'triangle': (('a', 'point'), ('b', 'point'), ('c', 'point')),
     'quad': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
+    'hexagon': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point'), ('e', 'point'), ('f', 'point')),
 }
 
 class polygon(tuple):

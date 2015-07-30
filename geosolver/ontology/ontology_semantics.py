@@ -399,6 +399,11 @@ def Degree():
 def True(tv):
     return tv
 
+def IsCircle(circle):
+    if isinstance(circle, instantiators['circle']):
+        return TruthValue(0)
+    return TruthValue(np.inf)
+
 def _polygon_to_lines(polygon):
     return [Line(polygon[index-1], point) for index, point in enumerate(polygon)]
 

@@ -2,7 +2,7 @@ import re
 
 import networkx as nx
 
-from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, SetNode, issubtype
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, SetNode, issubtype, signatures
 
 __author__ = 'minjoon'
 
@@ -21,10 +21,16 @@ def _apply_is(is_formulas, core_formulas):
     """
     graph = nx.Graph()
     explicit_sigs = set()
+    equal_formulas = []
     for formula_node in is_formulas:
         assert isinstance(formula_node, FormulaNode)
         a_node, b_node = formula_node.children
         a_sig, b_sig = a_node.signature, b_node.signature
+
+        if a_sig.return_type == 'number' or b_sig.return_type == 'number':
+            equal_formula = FormulaNode(signatures['Equals'], [a_node, b_node])
+            equal_formulas.append(equal_formula)
+
         if not isinstance(a_sig, VariableSignature):
             continue
         if not isinstance(b_sig, VariableSignature):
@@ -39,6 +45,7 @@ def _apply_is(is_formulas, core_formulas):
     tester = lambda sig: sig in graph and any(nx.has_path(graph, sig, explicit_sig) for explicit_sig in explicit_sigs)
     getter = lambda sig: [explicit_sig for explicit_sig in explicit_sigs if nx.has_path(graph, sig, explicit_sig)][0]
     new_formula_nodes = [formula_node.replace_signature(tester, getter) for formula_node in core_formulas]
+    new_formula_nodes = new_formula_nodes + equal_formulas
     return new_formula_nodes
 
 def _apply_cc(cc_formulas, core_formulas):

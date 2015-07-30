@@ -3,7 +3,7 @@ from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.expression.expression_parser import expression_parser
 from geosolver.expression.prefix_to_formula import prefix_to_formula
-from geosolver.grounding.ground_formula_nodes import ground_formula_node
+from geosolver.grounding.ground_formula import ground_formula
 from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
@@ -66,7 +66,7 @@ def test_trans():
                              for expression in question.sentence_expressions[number].values()]
             text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
             completed_formulas = complete_text_formula_parse(text_formula_parse)
-            grounded_formulas = [ground_formula_node(match_parse, formula) for formula in completed_formulas+expr_formulas]
+            grounded_formulas = [ground_formula(match_parse, formula) for formula in completed_formulas+expr_formulas]
             text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
             all_formulas.extend(text_formulas)
 

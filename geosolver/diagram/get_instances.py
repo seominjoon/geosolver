@@ -10,7 +10,7 @@ __author__ = 'minjoon'
 
 def get_instances(graph_parse, instance_type_name, is_variable, *args):
     assert instance_type_name in instantiators
-    if instance_type_name in ["triangle", "quad"]:
+    if instance_type_name in ["triangle", "quad", 'hexagon', 'polygon']:
         return _get_polygons(graph_parse, instance_type_name, is_variable, *args)
     else:
         return eval("_get_%ss(graph_parse, is_variable, *args)" % instance_type_name)

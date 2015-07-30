@@ -8,7 +8,7 @@ import numpy as np
 
 __author__ = 'minjoon'
 
-def ground_formula_node(match_parse, formula_node):
+def ground_formula(match_parse, formula_node):
     core_parse = match_parse.graph_parse.core_parse
     singular_variable_nodes = _get_singular_variable_nodes(formula_node)
     grounded_node_sets = []
@@ -27,6 +27,11 @@ def ground_formula_node(match_parse, formula_node):
         singular_grouded_formula = _assign_variables(formula_node, var_dict)
         plural_grounded_formula = _ground_formula_node(match_parse, singular_grouded_formula)
         final_formula = _apply_distribution(plural_grounded_formula)
+        if isinstance(final_formula, SetNode):
+            children = [child for child in final_formula.children
+                        if child.has_constant() or evaluate(child, core_parse.variable_assignment).conf > 0.5]
+            final_formula = SetNode(children)
+
         final_formulas.append(final_formula)
         if not final_formula.is_grounded(core_parse.variable_assignment.keys()):
             score = 1
@@ -158,18 +163,9 @@ def _ground_leaf(match_parse, leaf):
         else:
             raise Exception()
     elif return_type == 'triangle':
-        if len(variable_signature.name) == 3:
-            label_a, label_b, label_c = variable_signature.name
-            point_a_key = match_parse.point_key_dict[label_a]
-            point_b_key = match_parse.point_key_dict[label_b]
-            point_c_key = match_parse.point_key_dict[label_c]
-            """
-            point_a = match_parse.match_dict[label_a][0]
-            point_b = match_parse.match_dict[label_b][0]
-            point_c = match_parse.match_dict[label_c][0]
-            return FormulaNode(signatures['Triangle'], [point_a, point_b, point_c])
-            """
-            triangles = get_instances(graph_parse, 'triangle', True, point_a_key, point_b_key, point_c_key)
+        if variable_signature.name.isupper() and len(variable_signature.name) == 3:
+            point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
+            triangles = get_instances(graph_parse, 'triangle', True, *point_keys)
             return triangles.values()[0]
         elif variable_signature.name == 'triangle':
             triangles = get_all_instances(graph_parse, 'triangle', True)
@@ -178,9 +174,10 @@ def _ground_leaf(match_parse, leaf):
         triangles = get_all_instances(graph_parse, 'triangle', True)
         return SetNode(triangles.values())
     elif return_type == 'quad':
-        if variable_signature.name.isupper():
-            points = [match_parse.match_dict[label][0] for label in variable_signature.name]
-            return FormulaNode(signatures['Quad'], points)
+        if variable_signature.name.isupper() and len(variable_signature.name) == 4:
+            point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
+            quads = get_instances(graph_parse, 'quad', True, *point_keys)
+            return quads.values()[0]
         else:
             quads = get_all_instances(graph_parse, 'quad', True)
             return SetNode(quads.values())
@@ -188,26 +185,25 @@ def _ground_leaf(match_parse, leaf):
         quads = get_all_instances(graph_parse, 'quad', True)
         return SetNode(quads.values())
     elif return_type == 'hexagon':
-        if len(variable_signature.name) == 6:
-            points = [match_parse.match_dict[label][0] for label in variable_signature.name]
-            return FormulaNode(signatures['Hexagon'], points)
+        if variable_signature.name.isupper() and len(variable_signature.name) == 6:
+            point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
+            hexagons = get_instances(graph_parse, 'hexagon', True, *point_keys)
+            return hexagons.values()[0]
         else:
             quads = get_all_instances(graph_parse, 'hexagon', True)
             return SetNode(quads.values())
     elif return_type == 'polygon':
         if variable_signature.name.isupper():
-            points = [match_parse.match_dict[label][0] for label in variable_signature.name]
-            return FormulaNode(signatures['Polygon'], points)
+            point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
+            polygons = get_instances(graph_parse, 'polygon', True, *point_keys)
+            return polygons.values()[0]
         else:
             polygons = get_all_instances(graph_parse, 'polygon', True)
             return SetNode(polygons.values())
-
     elif return_type == 'twod':
-        triangles = get_all_instances(graph_parse, 'triangle', True)
-        quads = get_all_instances(graph_parse, 'quad', True)
-        hexagons = get_all_instances(graph_parse, 'hexagon', True)
         circles = get_all_instances(graph_parse, 'circle', True)
-        return SetNode(triangles.values() + quads.values() + hexagons.values() + circles.values())
+        polygons = get_all_instances(graph_parse, 'polygon', True)
+        return SetNode(polygons.values() + circles.values())
 
     print variable_signature.name in match_parse.match_dict
     print leaf.signature.id, leaf.signature.name, leaf.return_type

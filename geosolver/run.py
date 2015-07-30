@@ -8,7 +8,7 @@ from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.expression.expression_parser import expression_parser
 from geosolver.expression.prefix_to_formula import prefix_to_formula
-from geosolver.grounding.ground_formula_nodes import ground_formula_node
+from geosolver.grounding.ground_formula import ground_formula
 from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_definitions import FormulaNode
@@ -79,6 +79,7 @@ def _annotated_unit_test(query):
     diagram = open_image(question.diagram_path)
     graph_parse = diagram_to_graph_parse(diagram)
     core_parse = graph_parse.core_parse
+    # core_parse.display_points()
     match_parse = parse_match_from_known_labels(graph_parse, label_data)
     match_formulas = parse_match_atoms(match_parse)
     diagram_formulas = parse_confident_formulas(graph_parse)
@@ -91,7 +92,7 @@ def _annotated_unit_test(query):
                          for expression in question.sentence_expressions[number].values()]
         text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
         completed_formulas = complete_text_formula_parse(text_formula_parse)
-        grounded_formulas = [ground_formula_node(match_parse, formula) for formula in completed_formulas+expr_formulas]
+        grounded_formulas = [ground_formula(match_parse, formula) for formula in completed_formulas+expr_formulas]
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
         all_formulas.extend(text_formulas)
 
@@ -104,7 +105,7 @@ def _annotated_unit_test(query):
             score = None
             scores = None
         print reduced_formula, score, scores
-    core_parse.display_points()
+    # core_parse.display_points()
 
     ans = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
     print "ans:", ans
@@ -156,9 +157,11 @@ def get_choice_formulas(question):
 
 def annotated_test():
     ids = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
-    ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
-    ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
-    ids = [1089]
+    # ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
+    #ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
+    ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1148]
+    ids = [997, 1046, 1053]
+    ids = [1046]
     correct = 0
     attempted = 0
     total = len(ids)
