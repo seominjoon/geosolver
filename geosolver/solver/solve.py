@@ -1,3 +1,4 @@
+import logging
 import time
 from geosolver.ontology.ontology_semantics import evaluate, Equals
 from geosolver.solver.display_entities import display_entities
@@ -22,7 +23,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
         assert isinstance(formula, FormulaNode)
         if formula.has_signature("What") or formula.has_signature("WhichOf") or formula.has_signature("Find"):
             if query_formula is not None:
-                raise Exception("More than one query formula.")
+                logging.warning("More than one query formula.")
             query_formula = formula
         else:
             true_formulas.append(formula)
@@ -31,10 +32,17 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
 
     elif query_formula.has_signature("What"):
         if choice_formulas is None:
-            ns = NumericSolver(true_formulas + [query_formula])
+            ns = NumericSolver(given_formulas)
             ns.solve()
             out = ns.assignment['What']
         else:
+            ns = NumericSolver(given_formulas)
+            ns.solve()
+            for key, choice_formula in choice_formulas.iteritems():
+                equal_formula = FormulaNode(signatures['Equals'], [ns.assignment['What'], choice_formula])
+                out[key] = ns.evaluate(equal_formula)
+
+            """
             ns = NumericSolver(true_formulas)
             ns.solve()
             for key, choice_formula in choice_formulas.iteritems():
@@ -45,6 +53,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
                 replaced_formula = query_formula.replace_node(tester, getter)
                 # print replaced_formula
                 out[key] = ns.evaluate(replaced_formula)
+            """
 
     elif query_formula.has_signature("Find"):
         ns = NumericSolver(true_formulas)
@@ -57,6 +66,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
             for key, choice_formula in choice_formulas.iteritems():
                 replaced_formula = FormulaNode(signatures['Equals'], [query_formula.children[0], choice_formula])
                 out[key] = ns.evaluate(replaced_formula)
+        display_entities(ns)
 
 
     elif query_formula.has_signature("WhichOf"):

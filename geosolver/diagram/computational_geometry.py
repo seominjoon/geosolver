@@ -74,6 +74,13 @@ def distance_between_line_and_point(line, point):
         return min(distance_between_points(point, line.a),
                    distance_between_points(point, line.b))
 
+def perpendicular_distance_between_line_and_point(line, point):
+    p = midpoint(line.a, line.b)
+    vector = point.x - p.x, point.y - p.y
+    u = line_unit_vector(line)
+    n = line_normal_vector(line)
+    perpendicular_distance = abs(np.dot(vector, n))
+    return perpendicular_distance
 
 def distance_between_circle_and_point(circle, point):
     return abs(circle.radius - distance_between_points(circle.center, point))

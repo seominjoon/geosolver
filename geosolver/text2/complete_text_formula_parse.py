@@ -27,14 +27,15 @@ def _apply_is(is_formulas, core_formulas):
         a_node, b_node = formula_node.children
         a_sig, b_sig = a_node.signature, b_node.signature
 
-        if a_sig.return_type == 'number' or b_sig.return_type == 'number':
-            equal_formula = FormulaNode(signatures['Equals'], [a_node, b_node])
-            equal_formulas.append(equal_formula)
-
         if not isinstance(a_sig, VariableSignature):
             continue
         if not isinstance(b_sig, VariableSignature):
             continue
+
+        if a_sig.return_type == 'number' or b_sig.return_type == 'number':
+            equal_formula = FormulaNode(signatures['Equals'], [a_node, b_node])
+            equal_formulas.append(equal_formula)
+
         graph.add_edge(a_sig, b_sig)
         p = re.compile("^([A-Z]+|[a-z])$")
         if p.match(a_sig.name):

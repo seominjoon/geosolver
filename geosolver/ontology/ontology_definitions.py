@@ -341,6 +341,7 @@ function_signature_tuples = (
     ('Tangent', 'truth', ['line', 'twod']),
     ('Secant', 'truth', ['line', 'circle']),
     ('RadiusOf', 'number', ['circle']),
+    ('DiameterOf', 'number', ['circle']),
     ('IsRadiusNumOf', 'truth', ['number', 'circle']),
     ('IsRadiusLineOf', 'truth', ['line', 'circle']),
     ('PointLiesOnLine', 'truth', ['point', 'line']),

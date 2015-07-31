@@ -3,7 +3,7 @@ import numpy as np
 import itertools
 from geosolver.diagram.computational_geometry import distance_between_line_and_point, line_length, \
     distance_between_points, angle_in_radian, cartesian_angle, signed_distance_between_cartesian_angles, \
-    horizontal_angle, area_of_polygon, distance_between_points_squared
+    horizontal_angle, area_of_polygon, distance_between_points_squared, perpendicular_distance_between_line_and_point
 from geosolver.ontology.instantiator_definitions import instantiators
 from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype, SetNode
 import sys
@@ -172,7 +172,7 @@ def Or(a, b):
 def Tangent(line, twod):
     name = twod.__class__.__name__
     if name == "circle":
-        d = distance_between_line_and_point(line, twod.center)
+        d = perpendicular_distance_between_line_and_point(line, twod.center)
         return Equals(d, twod.radius)
     elif issubtype(name, 'polygon'):
         out = reduce(operator.__or__, (PointLiesOnLine(point, line) for point in twod), False)
@@ -185,6 +185,9 @@ def Secant(line, circle):
 
 def IsDiameterLineOf(line, circle):
     return IsChordOf(line, circle) & Equals(LengthOf(line), 2*circle.radius)
+
+def DiameterOf(circle):
+    return 2*circle.radius
 
 def PointLiesOnCircle(point, circle):
     d = distance_between_points(point, circle.center)
@@ -405,6 +408,9 @@ def IsRight(entity):
         angles = _polygon_to_angles(entity)
         tv = reduce(operator.__or__, (IsRight(angle) for angle in angles), False)
         return tv
+
+def Find(number):
+    return TruthValue(0)
 
 
 def Pi():

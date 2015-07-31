@@ -108,7 +108,7 @@ def _annotated_unit_test(query):
             score = None
             scores = None
         print reduced_formula, score, scores
-    # core_parse.display_points()
+    core_parse.display_points()
 
     ans = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
     print "ans:", ans
@@ -173,8 +173,8 @@ def annotated_test():
     # ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
     #ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
     ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1148]
-    ids = [997, 1046, 1053]
-    ids = [1123]
+    #ids = [997, 1046, 1053]
+    ids = [1083]
     correct = 0
     attempted = 0
     total = len(ids)
