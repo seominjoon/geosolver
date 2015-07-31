@@ -8,9 +8,8 @@ from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
-from geosolver.text2.annotation_node_to_rules import annotation_node_to_tag_rules, annotation_node_to_semantic_rules
-from geosolver.text2.annotation_nodes_to_text_formula_parse import annotation_nodes_to_text_formula_parse
-from geosolver.text2.get_annotation_node import get_annotation_node, is_valid_annotation
+from geosolver.text2.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
+from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text2.complete_text_formula_parse import complete_text_formula_parse
 from geosolver.text2.syntax_parser import SyntaxParse
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
@@ -33,14 +32,14 @@ def test_validity():
             for _, annotation in local_annotations.iteritems():
                 if is_valid_annotation(syntax_parse, annotation):
 
-                    node = get_annotation_node(syntax_parse, annotation)
+                    node = annotation_to_semantic_tree(syntax_parse, annotation)
                     formula = node.to_formula()
                     print "formula:", formula
-                    tag_rules = annotation_node_to_tag_rules(node)
-                    unary_rules, binary_rules = annotation_node_to_semantic_rules(node)
-                    all_tag_rules.extend(tag_rules)
-                    all_unary_rules.extend(unary_rules)
-                    all_binary_rules.extend(binary_rules)
+                    # tag_rules = annotation_node_to_tag_rules(node)
+                    # unary_rules, binary_rules = annotation_node_to_semantic_rules(node)
+                    # all_tag_rules.extend(tag_rules)
+                    # all_unary_rules.extend(unary_rules)
+                    # all_binary_rules.extend(binary_rules)
                 else:
                     print annotation
 
@@ -60,7 +59,7 @@ def test_trans():
         all_formulas = match_formulas + diagram_formulas
         for number, sentence_words in question.sentence_words.iteritems():
             syntax_parse = SyntaxParse(sentence_words, None)
-            annotation_nodes = [get_annotation_node(syntax_parse, annotation)
+            annotation_nodes = [annotation_to_semantic_tree(syntax_parse, annotation)
                                 for annotation in all_annotations[pk][number].values()]
             expr_formulas = [prefix_to_formula(expression_parser.parse_prefix(expression))
                              for expression in question.sentence_expressions[number].values()]

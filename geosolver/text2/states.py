@@ -5,3 +5,5 @@ class TextFormulaParse(object):
         self.core_formulas = core_formulas
         self.is_formulas = is_formulas
         self.cc_formulas = cc_formulas
+
+

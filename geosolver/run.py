@@ -11,13 +11,10 @@ from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula import ground_formula
 from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
-from geosolver.ontology.ontology_definitions import FormulaNode
-from geosolver.ontology.ontology_definitions import signatures
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
-from geosolver.text2.annotation_node_to_rules import annotation_node_to_tag_rules, annotation_node_to_semantic_rules
-from geosolver.text2.annotation_nodes_to_text_formula_parse import annotation_nodes_to_text_formula_parse
-from geosolver.text2.get_annotation_node import get_annotation_node, is_valid_annotation
+from geosolver.text2.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
+from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text2.complete_text_formula_parse import complete_text_formula_parse
 from geosolver.text2.syntax_parser import SyntaxParse
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
@@ -87,7 +84,7 @@ def _annotated_unit_test(query):
     all_formulas = match_formulas + diagram_formulas
     for number, sentence_words in question.sentence_words.iteritems():
         syntax_parse = SyntaxParse(sentence_words, None)
-        annotation_nodes = [get_annotation_node(syntax_parse, annotation)
+        annotation_nodes = [annotation_to_semantic_tree(syntax_parse, annotation)
                             for annotation in all_annotations[pk][number].values()]
         expr_formulas = {key: prefix_to_formula(expression_parser.parse_prefix(expression))
                          for key, expression in question.sentence_expressions[number].iteritems()}
@@ -108,7 +105,7 @@ def _annotated_unit_test(query):
             score = None
             scores = None
         print reduced_formula, score, scores
-    core_parse.display_points()
+    # core_parse.display_points()
 
     ans = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
     print "ans:", ans
@@ -170,11 +167,11 @@ def get_choice_formulas(question):
 
 def annotated_test():
     ids = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
-    # ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
-    #ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
-    ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1148]
+    ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
+    ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
+    # ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1144, 1148]
     #ids = [997, 1046, 1053]
-    ids = [1083]
+    # ids = [1148]
     correct = 0
     attempted = 0
     total = len(ids)

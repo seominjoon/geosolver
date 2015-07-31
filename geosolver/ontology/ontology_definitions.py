@@ -373,6 +373,7 @@ function_signature_tuples = (
     ('Measures', 'truth', ['angle', 'number']),
     ('Greatest', 'number', ['*number']),
     ('IsArc', 'truth', ['arc']),
+    ('IsAltitudeOf', 'truth', ['line', 'triangle']),
 )
 
 abbreviations = {

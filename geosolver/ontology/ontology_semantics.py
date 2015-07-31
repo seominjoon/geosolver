@@ -196,6 +196,17 @@ def PointLiesOnCircle(point, circle):
 def IsChordOf(line, circle):
     return PointLiesOnCircle(line.a, circle) & PointLiesOnCircle(line.b, circle)
 
+def IsAltitudeOf(line, triangle):
+    a, b = line
+    if a in triangle:
+        ix = a
+    elif b in triangle:
+        ix = b
+    else:
+        return TruthValue(np.inf)
+    base = instantiators['line'](*set(triangle).difference([ix]))
+    return Perpendicular(line, base)
+
 def Perpendicular(l0, l1):
     # return Equals((l0.b.y-l0.a.y)*(l1.b.y-l1.a.y), (l0.a.x-l0.b.x)*(l1.b.x-l1.a.x))
     a0 = cartesian_angle(*l0)

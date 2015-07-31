@@ -66,7 +66,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
             for key, choice_formula in choice_formulas.iteritems():
                 replaced_formula = FormulaNode(signatures['Equals'], [query_formula.children[0], choice_formula])
                 out[key] = ns.evaluate(replaced_formula)
-        display_entities(ns)
+        # display_entities(ns)
 
 
     elif query_formula.has_signature("WhichOf"):
