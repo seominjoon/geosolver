@@ -1,20 +1,9 @@
+import itertools
+from pprint import pprint
 from geosolver import geoserver_interface
-from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
-from geosolver.diagram.shortcuts import diagram_to_graph_parse
-from geosolver.expression.expression_parser import expression_parser
-from geosolver.expression.prefix_to_formula import prefix_to_formula
-from geosolver.grounding.ground_formula import ground_formula
-from geosolver.grounding.parse_match_formulas import parse_match_atoms
-from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
-from geosolver.ontology.ontology_semantics import evaluate
-from geosolver.solver.solve import solve
-from geosolver.text2.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
 from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
-from geosolver.text2.complete_text_formula_parse import complete_text_formula_parse
+from geosolver.text2.model import NaiveTagModel
 from geosolver.text2.syntax_parser import SyntaxParse
-from geosolver.ontology.utils import filter_formulas, reduce_formulas
-from geosolver.ontology.utils import flatten_formulas
-from geosolver.utils.prep import open_image
 
 
 __author__ = 'minjoon'
@@ -43,73 +32,36 @@ def test_validity():
                 else:
                     print annotation
 
-def test_trans():
-    query = 1037
-    questions = geoserver_interface.download_questions(query)
-    all_annotations = geoserver_interface.download_semantics(query)
+def test_annotations_to_rules():
+    questions = geoserver_interface.download_questions('test')
+    all_annotations = geoserver_interface.download_semantics('test')
+    all_tag_rules = []
     for pk, question in questions.iteritems():
-        choice_formulas = get_choice_formulas(question)
-        label_data = geoserver_interface.download_labels(pk)[pk]
-        diagram = open_image(question.diagram_path)
-        graph_parse = diagram_to_graph_parse(diagram)
-        core_parse = graph_parse.core_parse
-        match_parse = parse_match_from_known_labels(graph_parse, label_data)
-        match_formulas = parse_match_atoms(match_parse)
-        diagram_formulas = parse_confident_formulas(graph_parse)
-        all_formulas = match_formulas + diagram_formulas
+        # print pk
         for number, sentence_words in question.sentence_words.iteritems():
             syntax_parse = SyntaxParse(sentence_words, None)
-            annotation_nodes = [annotation_to_semantic_tree(syntax_parse, annotation)
-                                for annotation in all_annotations[pk][number].values()]
-            expr_formulas = [prefix_to_formula(expression_parser.parse_prefix(expression))
-                             for expression in question.sentence_expressions[number].values()]
-            text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
-            completed_formulas = complete_text_formula_parse(text_formula_parse)
-            grounded_formulas = [ground_formula(match_parse, formula) for formula in completed_formulas+expr_formulas]
-            text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
-            all_formulas.extend(text_formulas)
+            semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
+                              for annotation in all_annotations[pk][number].values()]
+            tag_rules = itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees])
+            all_tag_rules.extend(tag_rules)
+            # test = NaiveTagModel(all_tag_rules)
+    tag_model = NaiveTagModel(all_tag_rules)
 
-        reduced_formulas = reduce_formulas(all_formulas)
-        for reduced_formula in reduced_formulas:
-            if reduced_formula.is_grounded(core_parse.variable_assignment.keys()):
-                score = evaluate(reduced_formula, core_parse.variable_assignment)
-                scores = [evaluate(child, core_parse.variable_assignment) for child in reduced_formula.children]
-            else:
-                score = None
-                scores = None
-            print reduced_formula, score, scores
-        result = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
-        print result
-
-        graph_parse.core_parse.display_points()
+    # tag_model.print_lexicon()
 
 
-def get_choice_formulas(question):
-    """
-    Temporary; will be replaced by text parser
-    :param question:
-    :return:
-    """
-    choice_formulas = {}
-    for number, choice_expressions in question.choice_expressions.iteritems():
-        choice_words = question.choice_words[number]
-        if len(choice_expressions) == 1:
-            string = choice_expressions.values()[0]
-        elif len(choice_expressions) == 0:
-            if len(choice_words) == 1:
-                string = choice_words.values()[0]
-            else:
-                continue
-                # string = r"\none"
-        else:
-            return None
-        expr_formula = prefix_to_formula(expression_parser.parse_prefix(string))
-        choice_formulas[number] = expr_formula
-    if len(choice_formulas) == 0:
-        return None
-    return choice_formulas
+    for pk, question in questions.iteritems():
+        print pk
+        for number, sentence_words in question.sentence_words.iteritems():
+            syntax_parse = SyntaxParse(sentence_words, None)
+            tag_rules = tag_model.generate_tag_rules(syntax_parse)
+            for tag_rule in tag_rules:
+                print tag_rule
+        print "\n\n"
+
+
 
 
 if __name__ == "__main__":
-    test_trans()
     # test_validity()
+    test_annotations_to_rules()

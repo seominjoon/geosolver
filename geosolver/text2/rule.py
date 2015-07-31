@@ -29,6 +29,12 @@ class TagRule(object):
     def is_single_word(self):
         return self.get_length() == 1
 
+    def __hash__(self):
+        return hash((self.span, self.signature))
+
+    def __eq__(self, other):
+        return self.span == other.span and self.signature == other.signature
+
     def __repr__(self):
         return "%s@%s[%s]" % (repr(self.signature), _span_to_string(self.span), self.string)
 
