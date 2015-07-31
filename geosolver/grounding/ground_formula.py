@@ -8,12 +8,12 @@ import numpy as np
 
 __author__ = 'minjoon'
 
-def ground_formula(match_parse, formula_node):
+def ground_formula(match_parse, formula_node, references={}):
     core_parse = match_parse.graph_parse.core_parse
     singular_variable_nodes = _get_singular_variable_nodes(formula_node)
     grounded_node_sets = []
     for node in singular_variable_nodes:
-        grounded_node = _ground_leaf(match_parse, node)
+        grounded_node = _ground_leaf(match_parse, node, references)
         if isinstance(grounded_node, FormulaNode):
             grounded_node_sets.append([grounded_node])
         else:
@@ -75,7 +75,7 @@ def _get_singular_variable_nodes(formula_node):
 
 
 
-def _ground_leaf(match_parse, leaf):
+def _ground_leaf(match_parse, leaf, references={}):
     """
 
     :param match_parse:
@@ -96,7 +96,7 @@ def _ground_leaf(match_parse, leaf):
         return leaf
     elif isinstance(variable_signature, VariableSignature) and variable_signature.is_ref():
         # @v_1, etc.
-        return leaf
+        return references[variable_signature.name]
     elif return_type == 'number':
         if is_number(variable_signature.name):
             return leaf
@@ -156,7 +156,11 @@ def _ground_leaf(match_parse, leaf):
             p = match_parse.match_dict[variable_signature.name][0]
             for angle in angles.values():
                 if angle[1].signature == p.signature:
-                    return FormulaNode(signatures['Angle'], list(angle))
+                    formula = FormulaNode(signatures['Angle'], list(angle))
+                    measure = evaluate(FormulaNode(signatures['MeasureOf'], [formula]), core_parse.variable_assignment)
+                    if measure > np.pi:
+                        continue
+                    return formula
 
         elif len(variable_signature.name) == 1 and variable_signature.name.islower():
             return match_parse.match_dict[variable_signature.name][0]

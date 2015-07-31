@@ -89,11 +89,13 @@ def _annotated_unit_test(query):
         syntax_parse = SyntaxParse(sentence_words, None)
         annotation_nodes = [get_annotation_node(syntax_parse, annotation)
                             for annotation in all_annotations[pk][number].values()]
-        expr_formulas = [prefix_to_formula(expression_parser.parse_prefix(expression))
-                         for expression in question.sentence_expressions[number].values()]
+        expr_formulas = {key: prefix_to_formula(expression_parser.parse_prefix(expression))
+                         for key, expression in question.sentence_expressions[number].iteritems()}
+        truth_expr_formulas, value_expr_formulas = _separate_expr_formulas(expr_formulas)
         text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
         completed_formulas = complete_text_formula_parse(text_formula_parse)
-        grounded_formulas = [ground_formula(match_parse, formula) for formula in completed_formulas+expr_formulas]
+        grounded_formulas = [ground_formula(match_parse, formula, value_expr_formulas)
+                             for formula in completed_formulas+truth_expr_formulas]
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
         all_formulas.extend(text_formulas)
 
@@ -130,6 +132,16 @@ def _annotated_unit_test(query):
 
     # graph_parse.core_parse.display_points()
 
+def _separate_expr_formulas(expr_formulas):
+    truth_expr_formulas = []
+    value_expr_formulas = {}
+    for key, expr_formula in expr_formulas.iteritems():
+        if key[1] == 's':
+            truth_expr_formulas.append(expr_formula)
+        else:
+            value_expr_formulas[key] = expr_formula
+    return truth_expr_formulas, value_expr_formulas
+
 def get_choice_formulas(question):
     """
     Temporary; will be replaced by text parser
@@ -162,7 +174,7 @@ def annotated_test():
     #ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
     ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1148]
     ids = [997, 1046, 1053]
-    ids = [1122]
+    ids = [1123]
     correct = 0
     attempted = 0
     total = len(ids)

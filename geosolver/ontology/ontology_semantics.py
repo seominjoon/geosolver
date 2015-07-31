@@ -158,6 +158,9 @@ def Mul(a, b):
 def Div(a, b):
     return float(a) / b
 
+def RatioOf(a, b):
+    return Div(a, b)
+
 def Pow(a, b):
     return a**b
 
@@ -402,6 +405,7 @@ def IsRight(entity):
         angles = _polygon_to_angles(entity)
         tv = reduce(operator.__or__, (IsRight(angle) for angle in angles), False)
         return tv
+
 
 def Pi():
     return np.pi
