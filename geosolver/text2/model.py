@@ -1,7 +1,8 @@
 from collections import defaultdict, Counter
+import itertools
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature
 from geosolver.ontology.ontology_definitions import signatures
-from geosolver.text2.rule import TagRule
+from geosolver.text2.rule import TagRule, UnaryRule, BinaryRule
 from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'
@@ -13,10 +14,6 @@ def _normalize(counter):
 
 
 class Model(object):
-    def __init__(self, rules, feature_func):
-        self.rules = rules
-        self.feature_func = feature_func
-
     def get_score(self, rule):
         return 0.0
 
@@ -28,7 +25,7 @@ class NaiveTagModel(TagModel):
     It predicts 0 for unseen tag rule, and 1 for seen.
     """
     def __init__(self, tag_rules):
-        super(NaiveTagModel, self).__init__(tag_rules, None)
+        self.tag_rules = tag_rules
         self.lexicon = defaultdict(set)
         for tag_rule in tag_rules:
             entry = (tag_rule.signature.return_type, tag_rule.signature.name)
@@ -92,8 +89,43 @@ class SemanticModel(Model):
     pass
 
 class UnaryModel(SemanticModel):
-    def __init__(self, unary_rules, feature_func):
-        super(UnaryModel, self).__init__(unary_rules, feature_func)
+    def generate_unary_rules(self, tag_rules):
+        unary_rules = []
+        for parent_tag_rule, child_tag_rule in itertools.permutations(tag_rules, 2):
+            if UnaryRule.check_validity(parent_tag_rule, child_tag_rule):
+                unary_rule = UnaryRule(parent_tag_rule, child_tag_rule)
+                unary_rules.append(unary_rule)
+        return unary_rules
 
-    def get_score(self, semantic_rule):
-        return 1.0
+class BinaryModel(SemanticModel):
+    def generate_binary_rules(self, tag_rules):
+        binary_rules = []
+        for parent_tag_rule, a_tag_rule, b_tag_rule in itertools.permutations(tag_rules, 3):
+            if BinaryRule.check_validity(parent_tag_rule, a_tag_rule, b_tag_rule):
+                binary_rule = BinaryRule(parent_tag_rule, a_tag_rule, b_tag_rule)
+                binary_rules.append(binary_rule)
+        return binary_rules
+
+
+class NaiveUnaryModel(UnaryModel):
+    def __init__(self, max_word_distance):
+        self.max_word_distance = max_word_distance
+
+    def get_score(self, unary_rule):
+        assert isinstance(unary_rule, UnaryRule)
+        distance = abs(unary_rule.child_tag_rule.span[0] - unary_rule.parent_tag_rule.span[0])
+        if distance > self.max_word_distance:
+            return 0
+        return 1
+
+class NaiveBinaryModel(BinaryModel):
+    def __init__(self, max_word_distance):
+        self.max_word_distance = max_word_distance
+
+    def get_score(self, binary_rule):
+        assert isinstance(binary_rule, BinaryRule)
+        da = abs(binary_rule.child_a_tag_rule.span[0] - binary_rule.parent_tag_rule.span[0])
+        db = abs(binary_rule.child_b_tag_rule.span[0] - binary_rule.parent_tag_rule.span[0])
+        if max(da, db) > self.max_word_distance:
+            return 0
+        return 1

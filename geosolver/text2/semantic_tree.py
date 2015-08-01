@@ -49,12 +49,14 @@ class SemanticTreeNode(object):
         unary_rules = []
         for node in self:
             if node.is_unary():
-                unary_rule = UnaryRule(self.content, self.children[0].content)
+                unary_rule = UnaryRule(node.content, node.children[0].content)
                 unary_rules.append(unary_rule)
+        return unary_rules
 
     def get_binary_rules(self):
         binary_rules = []
         for node in self:
             if node.is_binary():
-                binary_rule = BinaryRule(self.content, self.children[0].content, self.children[1].content)
+                binary_rule = BinaryRule(node.content, node.children[0].content, node.children[1].content)
                 binary_rules.append(binary_rule)
+        return binary_rules

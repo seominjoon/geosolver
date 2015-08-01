@@ -412,13 +412,13 @@ def PerimeterOf(polygon):
 def SquareOf(number):
     return number ** 2
 
-def IsRight(entity):
-    if isinstance(entity, instantiators['angle']):
-        return Equals(np.pi/2, MeasureOf(entity))
-    elif isinstance(entity, instantiators['triangle']):
-        angles = _polygon_to_angles(entity)
-        tv = reduce(operator.__or__, (IsRight(angle) for angle in angles), False)
-        return tv
+def IsRightTriangle(triangle):
+    angles = _polygon_to_angles(triangle)
+    tv = reduce(operator.__or__, (IsRightAngle(angle) for angle in angles), False)
+    return tv
+
+def IsRightAngle(angle):
+    return Equals(np.pi/2, MeasureOf(angle))
 
 def Find(number):
     return TruthValue(0)
