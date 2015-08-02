@@ -4,7 +4,7 @@ from geosolver import geoserver_interface
 from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text2.model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel
 from geosolver.text2.semantic_forest import SemanticForest
-from geosolver.text2.syntax_parser import SyntaxParse
+from geosolver.text2.syntax_parser import SyntaxParse, stanford_parser
 import numpy as np
 
 
@@ -39,9 +39,10 @@ def test_annotations_to_rules():
     all_annotations = geoserver_interface.download_semantics('test')
     all_tag_rules = []
     for pk, question in questions.iteritems():
-        # print pk
+        print pk
         for number, sentence_words in question.sentence_words.iteritems():
-            syntax_parse = SyntaxParse(sentence_words, None)
+            print sentence_words
+            syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in all_annotations[pk][number].values()]
             tag_rules = itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees])
@@ -55,7 +56,7 @@ def test_annotations_to_rules():
     for pk, question in questions.iteritems():
         print pk
         for number, sentence_words in question.sentence_words.iteritems():
-            syntax_parse = SyntaxParse(sentence_words, None)
+            syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in all_annotations[pk][number].values()]
             true_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
@@ -74,7 +75,7 @@ def test_annotations_to_rules():
                 print binary_rule, binary_rule in true_binary_rules
 
             semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
-            semantic_trees = semantic_forest.get_semantic_trees_by_type("truth")
+            semantic_trees = semantic_forest.get_semantic_trees_by_type("number")
             print ""
 
             for semantic_tree in semantic_trees:

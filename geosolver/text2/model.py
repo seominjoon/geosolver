@@ -129,3 +129,11 @@ class NaiveBinaryModel(BinaryModel):
         if max(da, db) > self.max_word_distance:
             return 0
         return 1
+
+class RFUnaryModel(UnaryModel):
+    def __init__(self):
+        self.positive_unary_rules = []
+        self.negative_unary_rules = []
+
+    def update(self, tag_rules, positive_unary_rules):
+        pass

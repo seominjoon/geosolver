@@ -1,9 +1,16 @@
+import requests
+from geosolver import settings
+import networkx as nx
+
 __author__ = 'minjoon'
 
 class SyntaxParse(object):
-    def __init__(self, words, graph):
+    def __init__(self, words, directed, undirected, rank, score):
         self.words = words
-        self.graph = graph
+        self.directed = directed
+        self.undirected = undirected
+        self.rank = rank
+        self.score = score
 
     def get_words(self, span):
         return tuple(self.words[idx] for idx in range(*span))
@@ -14,3 +21,84 @@ class SyntaxParse(object):
                 end = start + spanlen
                 if end <= len(self.words):
                     yield (start, end)
+
+
+class SyntaxParser(object):
+    def get_syntax_parses(self, words, k, unique=True):
+        """
+        Returns a list of (tree, score) pair in order of decreasing score
+        """
+        raise Exception("This function must be overriden!")
+
+    def get_best_syntax_parse(self, words):
+        return self.get_syntax_parses(words, 1)[0]
+
+
+class StanfordDependencyParser(SyntaxParser):
+    """
+    Connects to stanford parser sever via http.
+    """
+    def __init__(self, server_url):
+        self.server_url = server_url
+
+    def get_syntax_parses(self, words, k, unique=True):
+        sentence = [words[index] for index in sorted(words.keys())]
+        neutral_sentence = [_neutralize(word) for word in sentence]
+        print neutral_sentence, len(neutral_sentence)
+        params = {'words': ' '.join(neutral_sentence), 'k': k, 'paragraph': ' '.join(neutral_sentence)}
+        r = requests.get(self.server_url, params=params)
+        data = r.json()
+
+        trees = []
+
+        for rank, tree_data in enumerate(data):
+            score = tree_data['score']
+            tuples = tree_data['tuples']
+            graph = nx.DiGraph()
+            for label, from_, to in tuples:
+                from_ -= 1
+                to -= 1
+                if from_ < 0:
+                    continue
+                graph.add_edge(from_, to, label=label)
+                if 'label' not in graph.node[from_]:
+                    graph.node[from_]['label'] = "%s-%d" % (words[from_], from_)
+                    graph.node[from_]['word'] = words[from_]
+
+                if 'label' not in graph.node[to]:
+                    graph.node[to]['label'] = "%s-%d" % (words[to], to)
+                    graph.node[to]['word'] = words[to]
+
+            if unique and not any(match_trees(syntax_tree.directed, graph) for syntax_tree in trees):
+                tree = SyntaxParse(words, graph, graph.to_undirected(), rank, score)
+                trees.append(tree)
+
+        return trees
+
+def _neutralize(word):
+    if word.startswith("@v"):
+        return 'number'
+    if word.startswith("@s"):
+        return "statement"
+    return word
+
+def match_trees(tree0, tree1, match_edge_label=False):
+    """
+    Returns True if tree0 and tree1 are identical.
+    Edge labels are not considered unless match_edge_label is set to True.
+
+    :param tree0:
+    :param tree1:
+    :param match_edge_label:
+    :return:
+    """
+    assert isinstance(tree0, nx.DiGraph)
+    assert isinstance(tree1, nx.DiGraph)
+    for u, v, data in tree0.edges(data=True):
+        if not tree1.has_edge(u, v):
+            return False
+        if match_edge_label and data['label'] != tree1[u][v]['label']:
+            return False
+    return True
+
+stanford_parser = StanfordDependencyParser(settings.STANFORD_PARSER_SERVER_URL)
