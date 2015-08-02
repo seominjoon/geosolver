@@ -72,7 +72,9 @@ class UnaryRule(SemanticRule):
         elif valence == 1:
             return issubtype(child_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])
         elif valence == 2:
-            return issubtype(child_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])
+            c1 = issubtype(child_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])
+            c2 = issubtype(parent_tag_rule.signature.arg_types[1], 'entity')
+            return c1 and c2
         raise Exception()
 
 

@@ -42,7 +42,7 @@ class SemanticTreeNode(object):
         return FormulaNode(self.content.signature, args)
 
     def get_tag_rules(self):
-        tag_rules = [node.content for node in self]
+        tag_rules = set(node.content for node in self)
         return tag_rules
 
     def get_unary_rules(self):
@@ -60,3 +60,15 @@ class SemanticTreeNode(object):
                 binary_rule = BinaryRule(node.content, node.children[0].content, node.children[1].content)
                 binary_rules.append(binary_rule)
         return binary_rules
+
+    def get_self_rule(self):
+        if self.is_leaf():
+            return None
+        elif self.is_unary():
+            unary_rule = UnaryRule(self.content, self.children[0].content)
+            return unary_rule
+        elif self.is_binary():
+            binary_rule = BinaryRule(self.content, self.children[0].content, self.children[1].content)
+            return binary_rule
+
+        raise Exception()
