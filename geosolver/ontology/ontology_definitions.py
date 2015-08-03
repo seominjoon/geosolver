@@ -248,11 +248,14 @@ class SetNode(Node):
 
 
 type_inheritances = (
-    ('root', 'truth'),
+    ('root', 'boolean'),
     ('root', 'number'),
     ('root', 'entity'),
     ('entity', 'point'),
     ('entity', 'oned'),
+    ('boolean', 'truth'),
+    ('boolean', 'cc'),
+    ('boolean', 'is'),
     ('oned', 'line'),
     ('oned', 'angle'),
     ('oned', 'arc'),
@@ -278,17 +281,21 @@ for parent, child in type_inheritances:
 def issubtype(child_type, parent_type):
     if child_type == "ground":
         return True
+    if parent_type == "ground":
+        return False
     if parent_type.startswith("*"):
         parent_type = parent_type[1:]
-    if child_type.endswith("s"):
+    if is_plural(child_type):
         child_type = child_type[:-1]
+    if is_plural(parent_type):
+        parent_type = parent_type[:-1]
     return nx.has_path(type_graph, parent_type, child_type)
 
 def is_singular(type_):
     return type_ in types
 
 def is_plural(type_):
-    return type_[:-1] in types and type_[-1] == 's'
+    return type_ != 'is' and type_[:-1] in types and type_[-1] == 's'
 
 function_signature_tuples = (
     ('Not', 'truth', ['truth']),
@@ -313,7 +320,7 @@ function_signature_tuples = (
     ('Polygon', 'polygon', ['*point']),
     ('Hexagon', 'hexagon', ['point', 'point', 'point', 'point', 'point', 'point']),
     ('IntersectionOf', 'point', ['entity', 'entity'], None, True),
-    ('Is', 'truth', ['root', 'root'], None, True),
+    ('Is', 'is', ['root', 'root'], None, True),
     ('Equals', 'truth', ['number', 'number']),
     ('Add', 'number', ['number', 'number'], None, True),
     ('Mul', 'number', ['number', 'number'], None, True),
@@ -343,7 +350,7 @@ function_signature_tuples = (
     ('IsWidthOf', 'truth', ['number', 'quad']),
     ('LengthOf', 'number', ['line']),
     ('SquaredLengthOf', 'number', ['line']),
-    ('CC', 'truth', ['root', 'root'], None, True),
+    ('CC', 'cc', ['root', 'root'], None, True),
     ('MeasureOf', 'number', ['angular']),
     ('Perpendicular', 'truth', ['line', 'line'], None, True),
     ('IsChordOf', 'truth', ['line', 'circle']),
@@ -363,7 +370,6 @@ function_signature_tuples = (
     ('Five', 'truth', ['*entity']),
     ('Six', 'truth', ['*entity']),
     ('BisectsAngle', 'truth', ['line', 'angle']),
-    ('WhichOf', 'ground', ['*root']),
     ('What', 'number', []),
     ('AverageOf', 'number', ['*number']),
     ('SumOf', 'number', ['*number']),
@@ -379,7 +385,7 @@ function_signature_tuples = (
     ('Congruent', 'truth', ['entity', 'entity']),
     ('Find', 'truth', ['number']),
     ('Measures', 'truth', ['angle', 'number']),
-    ('Greatest', 'number', ['*number']),
+    ('IsGreatest', 'truth', ['*number']),
     ('IsArc', 'truth', ['arc']),
     ('IsAltitudeOf', 'truth', ['line', 'triangle']),
     ('HeightOf', 'number', ['polygon']),
@@ -416,4 +422,6 @@ def get_function_signatures():
 
 signatures = get_function_signatures()
 signatures['What'] = VariableSignature('What', 'number')
-signatures['Following'] = VariableSignature('Following', 'ground')
+signatures['Which'] = VariableSignature('Which', 'ground')
+signatures['Except'] = VariableSignature('Except', 'ground')
+#signatures['Following'] = VariableSignature('Following', 'ground')

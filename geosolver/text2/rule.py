@@ -40,7 +40,7 @@ class TagRule(object):
         return span and sig
 
     def __repr__(self):
-        return "%s@%s[%s]" % (repr(self.signature.id), _span_to_string(self.span), self.string)
+        return "%s@%s[%s]" % (repr(self.signature), _span_to_string(self.span), self.string)
 
     def __hash__(self):
         return hash((self.span, self.signature))
@@ -51,7 +51,7 @@ class SemanticRule(object):
 
 class UnaryRule(SemanticRule):
     def __init__(self, parent_tag_rule, child_tag_rule):
-        assert UnaryRule.check_validity(parent_tag_rule, child_tag_rule)
+        assert UnaryRule.val_func(parent_tag_rule, child_tag_rule)
         assert isinstance(parent_tag_rule, TagRule)
         assert isinstance(child_tag_rule, TagRule)
         self.syntax_parse = parent_tag_rule.syntax_parse
@@ -68,7 +68,7 @@ class UnaryRule(SemanticRule):
         return self.parent_tag_rule == other.parent_tag_rule and self.child_tag_rule == other.child_tag_rule
 
     @staticmethod
-    def check_validity(parent_tag_rule, child_tag_rule):
+    def val_func(parent_tag_rule, child_tag_rule):
         valence = parent_tag_rule.signature.valence
         if valence == 0:
             return False
@@ -86,14 +86,14 @@ class UnaryRule(SemanticRule):
 
 class BinaryRule(SemanticRule):
     def __init__(self, parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
-        assert BinaryRule.check_validity(parent_tag_rule, child_a_tag_rule, child_b_tag_rule)
+        assert BinaryRule.val_func(parent_tag_rule, child_a_tag_rule, child_b_tag_rule)
         self.syntax_parse = parent_tag_rule.syntax_parse
         self.parent_tag_rule = parent_tag_rule
         self.child_a_tag_rule = child_a_tag_rule
         self.child_b_tag_rule = child_b_tag_rule
 
     @staticmethod
-    def check_validity(parent_tag_rule, a_tag_rule, b_tag_rule):
+    def val_func(parent_tag_rule, a_tag_rule, b_tag_rule):
         valence = parent_tag_rule.signature.valence
         if valence == 2:
             a = issubtype(a_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])

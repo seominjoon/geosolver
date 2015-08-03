@@ -19,6 +19,12 @@ class SemanticTreeNode(object):
             args_string = ", ".join(repr(child) for child in self.children)
             return "%r(%s)" % (self.content, args_string)
 
+    def __hash__(self):
+        return hash((self.content, tuple(self.children)))
+
+    def __eq__(self, other):
+        return self.content == other.content and tuple(self.children) == tuple(other.children)
+
     def __iter__(self):
         queue = deque()
         queue.appendleft(self)

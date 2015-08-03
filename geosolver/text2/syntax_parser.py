@@ -19,7 +19,7 @@ class SyntaxParse(object):
     def iterate_spans(self, maxlen=2):
         for start in range(len(self.words)):
             for spanlen in range(maxlen):
-                end = start + spanlen
+                end = start + spanlen + 1
                 if end <= len(self.words):
                     yield (start, end)
 
