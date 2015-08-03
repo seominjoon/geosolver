@@ -1,3 +1,4 @@
+import itertools
 import requests
 from geosolver import settings
 import networkx as nx
@@ -22,6 +23,18 @@ class SyntaxParse(object):
                 if end <= len(self.words):
                     yield (start, end)
 
+    def distance_between_spans(self, s0, s1, directed=False):
+        distances = [self.distance_between_indices(i0, i1, directed)
+                     for i0, i1 in itertools.product(range(*s0), range(*s1))]
+        return min(distances)
+
+    def distance_between_indices(self, i0, i1, directed=False):
+        graph = self.undirected
+        if directed:
+            graph = self.directed
+        d = nx.shortest_path_length(graph, i0, i1)
+        return d
+
 
 class SyntaxParser(object):
     def get_syntax_parses(self, words, k, unique=True):
@@ -42,13 +55,13 @@ class StanfordDependencyParser(SyntaxParser):
         self.server_url = server_url
 
     def get_syntax_parses(self, words, k, unique=True):
+        # FIXME : this should be fixed at geoserver level
+        words = {key: word.lstrip().rstrip() for key, word in words.iteritems()}
         sentence = [words[index] for index in sorted(words.keys())]
         neutral_sentence = [_neutralize(word) for word in sentence]
-        print neutral_sentence, len(neutral_sentence)
-        params = {'words': ' '.join(neutral_sentence), 'k': k, 'paragraph': ' '.join(neutral_sentence)}
+        params = {'words': '+'.join(neutral_sentence), 'k': k, 'paragraph': ' '.join(neutral_sentence)}
         r = requests.get(self.server_url, params=params)
         data = r.json()
-
         trees = []
 
         for rank, tree_data in enumerate(data):
@@ -69,7 +82,7 @@ class StanfordDependencyParser(SyntaxParser):
                     graph.node[to]['label'] = "%s-%d" % (words[to], to)
                     graph.node[to]['word'] = words[to]
 
-            if unique and not any(match_trees(syntax_tree.directed, graph) for syntax_tree in trees):
+            if unique and not any(_match_trees(syntax_tree.directed, graph) for syntax_tree in trees):
                 tree = SyntaxParse(words, graph, graph.to_undirected(), rank, score)
                 trees.append(tree)
 
@@ -82,7 +95,7 @@ def _neutralize(word):
         return "statement"
     return word
 
-def match_trees(tree0, tree1, match_edge_label=False):
+def _match_trees(tree0, tree1, match_edge_label=False):
     """
     Returns True if tree0 and tree1 are identical.
     Edge labels are not considered unless match_edge_label is set to True.

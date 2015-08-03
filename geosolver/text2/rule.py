@@ -1,4 +1,4 @@
-from geosolver.ontology.ontology_definitions import issubtype
+from geosolver.ontology.ontology_definitions import issubtype, Signature
 from geosolver.text2.syntax_parser import SyntaxParse
 
 __author__ = 'minjoon'
@@ -14,6 +14,7 @@ def _span_to_string(span):
 class TagRule(object):
     def __init__(self, syntax_parse, span, signature):
         assert isinstance(syntax_parse, SyntaxParse)
+        assert isinstance(signature, Signature)
         self.syntax_parse = syntax_parse
         self.span = span
         self.signature = signature
@@ -51,6 +52,8 @@ class SemanticRule(object):
 class UnaryRule(SemanticRule):
     def __init__(self, parent_tag_rule, child_tag_rule):
         assert UnaryRule.check_validity(parent_tag_rule, child_tag_rule)
+        assert isinstance(parent_tag_rule, TagRule)
+        assert isinstance(child_tag_rule, TagRule)
         self.syntax_parse = parent_tag_rule.syntax_parse
         self.parent_tag_rule = parent_tag_rule
         self.child_tag_rule = child_tag_rule

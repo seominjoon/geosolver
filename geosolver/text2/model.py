@@ -1,9 +1,12 @@
 from collections import defaultdict, Counter
 import itertools
+from operator import __mul__
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature
 from geosolver.ontology.ontology_definitions import signatures
 from geosolver.text2.rule import TagRule, UnaryRule, BinaryRule
+from geosolver.text2.semantic_tree import SemanticTreeNode
 from geosolver.utils.num import is_number
+import numpy as np
 
 __author__ = 'minjoon'
 
@@ -106,6 +109,25 @@ class BinaryModel(SemanticModel):
                 binary_rules.append(binary_rule)
         return binary_rules
 
+class UnifiedModel(Model):
+    def __init__(self, unary_model, binary_model):
+        self.unary_model = unary_model
+        self.binary_model = binary_model
+
+    def get_score(self, rule):
+        if isinstance(rule, UnaryRule):
+            return self.unary_model.get_score(rule)
+        elif isinstance(rule, BinaryRule):
+            return self.binary_model.get_score(rule)
+        raise Exception()
+
+    def get_tree_score(self, semantic_tree):
+        assert isinstance(semantic_tree, SemanticTreeNode)
+        unary_rules = semantic_tree.get_unary_rules()
+        binary_rules = semantic_tree.get_binary_rules()
+        scores = [self.get_score(rule) for rule in itertools.chain(unary_rules, binary_rules)]
+        return reduce(__mul__, scores, 1)
+
 
 class NaiveUnaryModel(UnaryModel):
     def __init__(self, max_word_distance):
@@ -113,10 +135,14 @@ class NaiveUnaryModel(UnaryModel):
 
     def get_score(self, unary_rule):
         assert isinstance(unary_rule, UnaryRule)
-        distance = abs(unary_rule.child_tag_rule.span[0] - unary_rule.parent_tag_rule.span[0])
+        syntax_parse = unary_rule.syntax_parse
+        distance = syntax_parse.distance_between_spans(unary_rule.child_tag_rule.span, unary_rule.parent_tag_rule.span)
+        if distance == 0:
+            return 1.0
         if distance > self.max_word_distance:
-            return 0
-        return 1
+            return 0.0
+        return 1.0/distance
+
 
 class NaiveBinaryModel(BinaryModel):
     def __init__(self, max_word_distance):
@@ -124,11 +150,16 @@ class NaiveBinaryModel(BinaryModel):
 
     def get_score(self, binary_rule):
         assert isinstance(binary_rule, BinaryRule)
-        da = abs(binary_rule.child_a_tag_rule.span[0] - binary_rule.parent_tag_rule.span[0])
-        db = abs(binary_rule.child_b_tag_rule.span[0] - binary_rule.parent_tag_rule.span[0])
-        if max(da, db) > self.max_word_distance:
-            return 0
-        return 1
+        syntax_parse = binary_rule.syntax_parse
+        da = syntax_parse.distance_between_spans(binary_rule.child_a_tag_rule.span, binary_rule.parent_tag_rule.span)
+        db = syntax_parse.distance_between_spans(binary_rule.child_b_tag_rule.span, binary_rule.parent_tag_rule.span)
+        if da == 0: sa = 1
+        elif da > self.max_word_distance: sa = 0
+        else: sa = 1.0/da
+        if db == 0: sb = 1
+        elif db > self.max_word_distance: sb = 0
+        else: sb = 1.0/db
+        return np.mean([sa, sb])
 
 class RFUnaryModel(UnaryModel):
     def __init__(self):

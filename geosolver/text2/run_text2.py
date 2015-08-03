@@ -1,5 +1,7 @@
 import itertools
+import os
 from pprint import pprint
+import sys
 from geosolver import geoserver_interface
 from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text2.model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel
@@ -37,12 +39,16 @@ def test_validity():
 def test_annotations_to_rules():
     questions = geoserver_interface.download_questions('test')
     all_annotations = geoserver_interface.download_semantics('test')
+    print "parsing syntax..."
+    syntax_parses = {pk: {number: stanford_parser.get_best_syntax_parse(words)
+                          for number, words in question.sentence_words.iteritems()}
+                     for pk, question in questions.iteritems()}
+
     all_tag_rules = []
+
     for pk, question in questions.iteritems():
-        print pk
         for number, sentence_words in question.sentence_words.iteritems():
-            print sentence_words
-            syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
+            syntax_parse = syntax_parses[pk][number]
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in all_annotations[pk][number].values()]
             tag_rules = itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees])
@@ -56,7 +62,7 @@ def test_annotations_to_rules():
     for pk, question in questions.iteritems():
         print pk
         for number, sentence_words in question.sentence_words.iteritems():
-            syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
+            syntax_parse = syntax_parses[pk][number]
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in all_annotations[pk][number].values()]
             true_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
@@ -65,15 +71,17 @@ def test_annotations_to_rules():
             tag_rules = [x for x in tag_rules if x.signature.id not in ('Is', 'CC')]
             unary_model = NaiveUnaryModel(3)
             unary_rules = [ur for ur in unary_model.generate_unary_rules(tag_rules) if unary_model.get_score(ur) > 0]
+            """
             for unary_rule in unary_rules:
                 print unary_rule, unary_rule in true_unary_rules
-
+            """
 
             binary_model = NaiveBinaryModel(3)
             binary_rules = [br for br in binary_model.generate_binary_rules(tag_rules) if binary_model.get_score(br) > 0]
+            """
             for binary_rule in binary_rules:
                 print binary_rule, binary_rule in true_binary_rules
-
+            """
             semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
             semantic_trees = semantic_forest.get_semantic_trees_by_type("number")
             print ""
