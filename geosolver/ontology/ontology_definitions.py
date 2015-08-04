@@ -379,7 +379,6 @@ function_signature_tuples = (
     ('SquareOf', 'number', ['number']),
     ('Degree', 'number', []),
     ('Pi', 'number', []),
-    ('None', 'root', []),
     ('IsSideOf', 'truth', ['line', 'polygon']),
     ('IsHypotenuseOf', 'truth', ['line', 'triangle']),
     ('Congruent', 'truth', ['entity', 'entity']),
@@ -389,6 +388,7 @@ function_signature_tuples = (
     ('IsArc', 'truth', ['arc']),
     ('IsAltitudeOf', 'truth', ['line', 'triangle']),
     ('HeightOf', 'number', ['polygon']),
+    ('HowMany', 'truth', ['number', 'number']),
 )
 
 abbreviations = {

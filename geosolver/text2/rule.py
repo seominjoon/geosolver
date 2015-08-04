@@ -87,6 +87,9 @@ class UnaryRule(SemanticRule):
 class BinaryRule(SemanticRule):
     def __init__(self, parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
         assert BinaryRule.val_func(parent_tag_rule, child_a_tag_rule, child_b_tag_rule)
+        assert isinstance(parent_tag_rule, TagRule)
+        assert isinstance(child_a_tag_rule, TagRule)
+        assert isinstance(child_b_tag_rule, TagRule)
         self.syntax_parse = parent_tag_rule.syntax_parse
         self.parent_tag_rule = parent_tag_rule
         self.child_a_tag_rule = child_a_tag_rule

@@ -231,6 +231,22 @@ class NaiveIsModel(NaiveBinaryModel):
             return False
         return BinaryRule.val_func(p, a, b)
 
+    def get_score(self, binary_rule):
+        assert isinstance(binary_rule, BinaryRule)
+        b_to_a = binary_rule.syntax_parse.relation_between_spans(binary_rule.child_b_tag_rule.span,
+                                                                 binary_rule.child_a_tag_rule.span, True)
+        b_to_p = binary_rule.syntax_parse.relation_between_spans(binary_rule.child_b_tag_rule.span,
+                                                                 binary_rule.parent_tag_rule.span, True)
+        p_to_a = binary_rule.syntax_parse.relation_between_spans(binary_rule.parent_tag_rule.span,
+                                                                 binary_rule.child_a_tag_rule.span, True)
+        p_to_b = binary_rule.syntax_parse.relation_between_spans(binary_rule.parent_tag_rule.span,
+                                                                 binary_rule.child_b_tag_rule.span, True)
+        if b_to_p == "cop" and b_to_a == "nsubj":
+            return 1.0
+        elif p_to_a == "nsubj" and p_to_b == "dobj":
+            return 1.0
+        return 0.0
+
 
 class NaiveCCModel(NaiveBinaryModel):
     @staticmethod
@@ -242,6 +258,16 @@ class NaiveCCModel(NaiveBinaryModel):
         if b.signature.valence > 0:
             return False
         return BinaryRule.val_func(p, a, b)
+
+    def get_score(self, binary_rule):
+        assert isinstance(binary_rule, BinaryRule)
+        a_to_b = binary_rule.syntax_parse.relation_between_spans(binary_rule.child_a_tag_rule.span,
+                                                                 binary_rule.child_b_tag_rule.span, True)
+        a_to_p = binary_rule.syntax_parse.relation_between_spans(binary_rule.child_a_tag_rule.span,
+                                                                 binary_rule.parent_tag_rule.span, True)
+        if a_to_p == "cc" and (a_to_b == "conj" or a_to_b == "advmod"):
+            return 1.0
+        return 0.0
 
 
 class RFUnaryModel(UnaryModel):

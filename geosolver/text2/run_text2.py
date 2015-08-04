@@ -40,7 +40,7 @@ def test_validity():
 
 
 def test_annotations_to_rules():
-    query = 1014
+    query = 'test'
     questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
     print "parsing syntax..."
@@ -74,6 +74,7 @@ def test_annotations_to_rules():
             syntax_parse = syntax_parses[pk][number]
             true_semantic_trees = set(annotation_to_semantic_tree(syntax_parse, annotation)
                                       for annotation in all_annotations[pk][number].values())
+            true_cc_semantic_trees = set(t for t in true_semantic_trees if t.content.signature.id == "CC")
             true_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in true_semantic_trees]))
             true_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in true_semantic_trees]))
             tag_rules = tag_model.generate_tag_rules(syntax_parse)
@@ -83,11 +84,15 @@ def test_annotations_to_rules():
 
             binary_rules = [br for br in cm.generate_binary_rules(tag_rules) if cm.get_score(br) > 0]
 
+
+            """
+            print tag_rules
             for ur in unary_rules:
                 print ur
             for br in binary_rules:
                 print br
             print ""
+            """
 
             semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
             terminator = lambda tree: False
@@ -96,10 +101,15 @@ def test_annotations_to_rules():
             is_semantic_trees = semantic_forest.get_semantic_trees_by_type("is", terminator)
             all_semantic_trees = set(itertools.chain(core_semantic_trees, cc_semantic_trees, is_semantic_trees))
 
+            # all_semantic_trees = cc_semantic_trees
+            # true_semantic_trees = true_cc_semantic_trees
+
             semantic_tree_scores = {semantic_tree: cm.get_tree_score(semantic_tree) for semantic_tree in all_semantic_trees}
             missing = true_semantic_trees - all_semantic_trees
+            # fp = all_semantic_trees - true_semantic_trees
             if len(missing) > 0:
                 print missing
+
 
             ref = len(true_semantic_trees)
             for th, triple in triples.iteritems():
@@ -121,7 +131,7 @@ def test_annotations_to_rules():
                 print "%.2f: %r, %r" % (score, semantic_tree in true_semantic_trees, semantic_tree)
             """
 
-            tree_nums.append(len(semantic_trees))
+            tree_nums.append(len(all_semantic_trees))
 
 
             """

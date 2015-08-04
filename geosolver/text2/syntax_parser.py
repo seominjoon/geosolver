@@ -35,6 +35,22 @@ class SyntaxParse(object):
         d = nx.shortest_path_length(graph, i0, i1)
         return d
 
+    def relation_between_spans(self, s0, s1, directed=False):
+        relations = [self.relation_between_indices(i0, i1, directed)
+                     for i0, i1 in itertools.product(range(*s0), range(*s1))]
+        for relation in relations:
+            if relation is not None:
+                return relation
+        return None
+
+    def relation_between_indices(self, i0, i1, directed=False):
+        graph = self.undirected
+        if directed: graph = self.directed
+
+        if i1 in graph[i0]:
+            label = graph[i0][i1]['label']
+            return label
+        return None
 
 class SyntaxParser(object):
     def get_syntax_parses(self, words, k, unique=True):
