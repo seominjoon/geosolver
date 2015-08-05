@@ -4,7 +4,7 @@ from operator import __mul__
 from sklearn.ensemble import RandomForestClassifier
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype
 from geosolver.ontology.ontology_definitions import signatures
-from geosolver.text2.feature_function import UnaryFeatureFunction
+from geosolver.text2.feature_function import UnaryFeatureFunction, BinaryFeatureFunction
 from geosolver.text2.rule import TagRule, UnaryRule, BinaryRule
 from geosolver.text2.semantic_tree import SemanticTreeNode
 from geosolver.utils.num import is_number
@@ -125,11 +125,11 @@ class BinaryModel(SemanticModel):
         raise Exception()
 
     def generate_binary_rules(self, tag_rules):
-        binary_rules = []
+        binary_rules = set()
         for parent_tag_rule, a_tag_rule, b_tag_rule in itertools.permutations(tag_rules, 3):
             if self.__class__.val_func(parent_tag_rule, a_tag_rule, b_tag_rule):
                 binary_rule = BinaryRule(parent_tag_rule, a_tag_rule, b_tag_rule)
-                binary_rules.append(binary_rule)
+                binary_rules.add(binary_rule)
         return binary_rules
 
 
@@ -294,9 +294,10 @@ class RFUnaryModel(UnaryModel):
         self.negative_unary_rules.extend(negative_unary_rules)
 
     def fit(self):
-        print "# of positive unary examples:", len(self.positive_unary_rules)
-        print "# of negative unary examples:", len(self.negative_unary_rules)
-        self.feature_function = UnaryFeatureFunction(self.positive_unary_rules)
+        print "Fitting %s:" % self.__class__.__name__
+        print "# of positive examples:", len(self.positive_unary_rules)
+        print "# of negative examples:", len(self.negative_unary_rules)
+        self.feature_function = UnaryFeatureFunction(self.positive_unary_rules + self.negative_unary_rules)
         X = []
         y = []
         for pur in self.positive_unary_rules:
@@ -306,7 +307,7 @@ class RFUnaryModel(UnaryModel):
             X.append(self.feature_function.map(nur))
             y.append(0)
 
-        print "length of unary feature vector:", np.shape(X)[1]
+        print "length of feature vector:", np.shape(X)[1]
         self.classifier.fit(X, y)
 
     def get_score(self, ur):
@@ -315,4 +316,67 @@ class RFUnaryModel(UnaryModel):
         return probas[0][1]
 
 
+class RFCoreModel(BinaryModel):
+    def __init__(self):
+        self.positive_binary_rules = []
+        self.negative_binary_rules = []
+        self.feature_function = None
+        self.classifier = RandomForestClassifier()
 
+    @staticmethod
+    def val_func(p, a, b):
+        if p.signature.id in ('Is', 'CC') or a.signature.id in ('Is', 'CC') or b.signature.id in ('Is', 'CC'):
+            return False
+        return BinaryRule.val_func(p, a, b)
+
+    def update(self, tag_rules, positive_binary_rules):
+        all_binary_rules = self.generate_binary_rules(tag_rules)
+        negative_binary_rules = all_binary_rules - positive_binary_rules
+        self.positive_binary_rules.extend(positive_binary_rules)
+        self.negative_binary_rules.extend(negative_binary_rules)
+
+    def fit(self):
+        print "Fitting %s:" % self.__class__.__name__
+        print "# of positive examples:", len(self.positive_binary_rules)
+        print "# of negative examples:", len(self.negative_binary_rules)
+        self.feature_function = BinaryFeatureFunction(self.positive_binary_rules + self.negative_binary_rules)
+        X = []
+        y = []
+        for pbr in self.positive_binary_rules:
+            X.append(self.feature_function.map(pbr))
+            y.append(1)
+        for nbr in self.negative_binary_rules:
+            X.append(self.feature_function.map(nbr))
+            y.append(0)
+
+        print "length of feature vector:", np.shape(X)[1]
+        self.classifier.fit(X, y)
+
+    def get_score(self, br):
+        x = self.feature_function.map(br)
+        probas = self.classifier.predict_proba([x])
+        return probas[0][1]
+
+class RFIsModel(RFCoreModel):
+    @staticmethod
+    def val_func(p, a, b):
+        if p.signature.id != "Is":
+            return False
+        if not issubtype(a.signature.return_type, b.signature.return_type) and \
+                not issubtype(b.signature.return_type, a.signature.return_type):
+            return False
+        if not (issubtype(a.signature.return_type, 'number') or issubtype(a.signature.return_type, 'entity')):
+            return False
+        return BinaryRule.val_func(p, a, b)
+
+
+class RFCCModel(RFCoreModel):
+    @staticmethod
+    def val_func(p, a, b):
+        if p.signature.id != "CC":
+            return False
+        if a.signature.valence > 0:
+            return False
+        if b.signature.valence > 0:
+            return False
+        return BinaryRule.val_func(p, a, b)

@@ -51,7 +51,7 @@ class SemanticRule(object):
 
 class UnaryRule(SemanticRule):
     def __init__(self, parent_tag_rule, child_tag_rule):
-        assert UnaryRule.val_func(parent_tag_rule, child_tag_rule)
+        #assert UnaryRule.val_func(parent_tag_rule, child_tag_rule)
         assert isinstance(parent_tag_rule, TagRule)
         assert isinstance(child_tag_rule, TagRule)
         self.syntax_parse = parent_tag_rule.syntax_parse

@@ -1,4 +1,4 @@
-from geosolver.text2.rule import UnaryRule
+from geosolver.text2.rule import UnaryRule, BinaryRule
 
 __author__ = 'minjoon'
 
@@ -9,7 +9,6 @@ class FeatureFunction(object):
 
 class UnaryFeatureFunction(FeatureFunction):
     def __init__(self, unary_rules):
-        self.unary_rules = unary_rules
         self.nbr_rel_set = set()
         self.mid_tag_set = set()
         self.graph_dist_set = {0, 1, 2}
@@ -65,3 +64,28 @@ class UnaryFeatureFunction(FeatureFunction):
             out.append(int(ref_c_return_type == p.signature.return_type))
 
         return tuple(out)
+
+
+def binary_rule_to_unary_rules(binary_rule):
+    assert isinstance(binary_rule, BinaryRule)
+    p, a, b = binary_rule.parent_tag_rule, binary_rule.child_a_tag_rule, binary_rule.child_b_tag_rule
+    pa = UnaryRule(p, a)
+    pb = UnaryRule(p, b)
+    ab = UnaryRule(a, b)
+    return pa, pb, ab
+
+
+class BinaryFeatureFunction(FeatureFunction):
+    def __init__(self, binary_rules):
+        pas, pbs, abs = zip(*[binary_rule_to_unary_rules(br) for br in binary_rules])
+        self.pa_ff = UnaryFeatureFunction(pas)
+        self.pb_ff = UnaryFeatureFunction(pbs)
+        self.ab_ff = UnaryFeatureFunction(abs)
+
+    def map(self, rule):
+        pa, pb, ab = binary_rule_to_unary_rules(rule)
+        pa_fv = self.pa_ff.map(pa)
+        pb_fv = self.pa_ff.map(pb)
+        ab_fv = self.pa_ff.map(ab)
+        fv = pa_fv + pb_fv + ab_fv
+        return fv

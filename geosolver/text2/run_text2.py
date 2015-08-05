@@ -6,7 +6,7 @@ from geosolver import geoserver_interface
 from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text2.feature_function import UnaryFeatureFunction
 from geosolver.text2.model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel, CombinedModel, \
-    BinaryModel, NaiveCoreModel, NaiveIsModel, NaiveCCModel, RFUnaryModel
+    BinaryModel, NaiveCoreModel, NaiveIsModel, NaiveCCModel, RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel
 from geosolver.text2.rule import UnaryRule, BinaryRule
 from geosolver.text2.semantic_forest import SemanticForest
 from geosolver.text2.syntax_parser import SyntaxParse, stanford_parser
@@ -21,12 +21,27 @@ def questions_to_syntax_parses(questions):
                      for pk, question in questions.iteritems()}
     return syntax_parses
 
+def split_binary_rules(binary_rules):
+    core_rules = set()
+    is_rules = set()
+    cc_rules = set()
+    for br in binary_rules:
+        id_ = br.parent_tag_rule.signature.id
+        if id_ == "Is":
+            is_rules.add(br)
+        elif id_ == "CC":
+            cc_rules.add(br)
+        else:
+            core_rules.add(br)
+    return core_rules, is_rules, cc_rules
+
+
 def train_model(questions, annotations):
     tm = NaiveTagModel()
     um = RFUnaryModel()
-    corem = NaiveBinaryModel(3)
-    ism = NaiveIsModel(3)
-    ccm = NaiveCCModel(3)
+    corem = RFCoreModel()
+    ism = RFIsModel()
+    ccm = RFCCModel()
 
     syntax_parses = questions_to_syntax_parses(questions)
     for pk, local_syntax_parses in syntax_parses.iteritems():
@@ -37,10 +52,24 @@ def train_model(questions, annotations):
             local_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
             local_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
             local_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
+            core_rules, is_rules, cc_rules = split_binary_rules(local_binary_rules)
+
+            # Sanity check
+            for ur in local_unary_rules:
+                assert um.val_func(ur.parent_tag_rule, ur.child_tag_rule)
+            for br in core_rules:
+                assert corem.val_func(br.parent_tag_rule, br.child_a_tag_rule, br.child_b_tag_rule)
+
             tm.update(local_tag_rules)
             um.update(local_tag_rules, local_unary_rules)
+            corem.update(local_tag_rules, core_rules)
+            ism.update(local_tag_rules, is_rules)
+            ccm.update(local_tag_rules, cc_rules)
 
     um.fit()
+    corem.fit()
+    ism.fit()
+    ccm.fit()
 
     cm = CombinedModel(tm, um, corem, ism, ccm)
     return cm
@@ -50,6 +79,16 @@ def evaluate_model(combined_model, questions, annotations):
 
     unary_correct = 0
     unary_wrong = 0
+    core_correct = 0
+    core_wrong = 0
+    is_correct = 0
+    is_wrong = 0
+    cc_correct = 0
+    cc_wrong = 0
+    unary_scores = []
+    core_scores = []
+    is_scores = []
+    cc_scores = []
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
         for number, syntax_parse in local_syntax_parses.iteritems():
@@ -58,21 +97,70 @@ def evaluate_model(combined_model, questions, annotations):
             positive_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
             positive_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
             positive_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
+            pos_core_rules, pos_is_rules, pos_cc_rules = split_binary_rules(positive_binary_rules)
 
             negative_unary_rules = combined_model.generate_unary_rules(positive_tag_rules) - positive_unary_rules
+            neg_core_rules = combined_model.core_model.generate_binary_rules(positive_tag_rules) - pos_core_rules
+            neg_is_rules = combined_model.is_model.generate_binary_rules(positive_tag_rules) - pos_is_rules
+            neg_cc_rules = combined_model.cc_model.generate_binary_rules(positive_tag_rules) - pos_cc_rules
 
             for pur in positive_unary_rules:
                 score = combined_model.get_score(pur)
+                unary_scores.append(score)
                 if score >= 0.5: unary_correct += 1
                 else: unary_wrong += 1
 
             for nur in negative_unary_rules:
                 score = combined_model.get_score(nur)
+                unary_scores.append(1-score)
                 if score >= 0.5: unary_wrong += 1
                 else: unary_correct += 1
 
+            for pur in pos_core_rules:
+                score = combined_model.get_score(pur)
+                core_scores.append(score)
+                if score >= 0.5: core_correct += 1
+                else: core_wrong += 1
+
+            for nur in neg_core_rules:
+                score = combined_model.get_score(nur)
+                core_scores.append(1-score)
+                if score >= 0.5: core_wrong += 1
+                else: core_correct += 1
+
+            for pur in pos_is_rules:
+                score = combined_model.get_score(pur)
+                is_scores.append(score)
+                if score >= 0.5: is_correct += 1
+                else: is_wrong += 1
+
+            for nur in neg_is_rules:
+                score = combined_model.get_score(nur)
+                is_scores.append(1-score)
+                if score >= 0.5: is_wrong += 1
+                else: is_correct += 1
+
+            for pur in pos_cc_rules:
+                score = combined_model.get_score(pur)
+                cc_scores.append(score)
+                if score >= 0.5: cc_correct += 1
+                else: cc_wrong += 1
+
+            for nur in neg_cc_rules:
+                score = combined_model.get_score(nur)
+                cc_scores.append(1-score)
+                if score >= 0.5: cc_wrong += 1
+                else: cc_correct += 1
+
     unary_acc = float(unary_correct)/(unary_correct+unary_wrong)
-    return unary_acc
+    core_acc = float(core_correct)/(core_correct+core_wrong)
+    is_acc = float(is_correct)/(is_correct+is_wrong)
+    cc_acc = float(cc_correct)/(cc_correct+cc_wrong)
+    print min(unary_scores), np.mean(unary_scores), max(unary_scores), np.std(unary_scores)
+    print min(core_scores), np.mean(core_scores), max(core_scores), np.std(core_scores)
+    print min(is_scores), np.mean(is_scores), max(is_scores), np.std(is_scores)
+    print min(cc_scores), np.mean(cc_scores), max(cc_scores), np.std(cc_scores)
+    return unary_acc, core_acc, is_acc, cc_acc
 
 
 def split(questions, annotations, ratio):
