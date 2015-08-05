@@ -5,7 +5,7 @@ import sys
 from geosolver import geoserver_interface
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text.feature_function import UnaryFeatureFunction
-from geosolver.text.model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel, CombinedModel, \
+from geosolver.text.rule_model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel, CombinedModel, \
     BinaryModel, NaiveCoreModel, NaiveIsModel, NaiveCCModel, RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel
 from geosolver.text.rule import UnaryRule, BinaryRule
 from geosolver.text.semantic_forest import SemanticForest
@@ -37,7 +37,7 @@ def split_binary_rules(binary_rules):
     return core_rules, is_rules, cc_rules
 
 
-def train_model(questions, annotations):
+def train_rule_model(questions, annotations):
     tm = NaiveTagModel()
     um = RFUnaryModel()
     corem = RFCoreModel()
@@ -75,25 +75,17 @@ def train_model(questions, annotations):
     cm = CombinedModel(tm, um, corem, ism, ccm)
     return cm
 
-def evaluate_model(combined_model, questions, annotations, threshold):
+def evaluate_rule_model(combined_model, questions, annotations, thresholds):
     syntax_parses = questions_to_syntax_parses(questions)
 
-    unary_correct = 0
-    unary_wrong = 0
-    unary_tp, unary_fp, unary_tn, unary_fn = 0, 0, 0, 0
-    core_correct = 0
-    core_wrong = 0
-    core_tp, core_fp, core_tn, core_fn = 0, 0, 0, 0
-    is_tp, is_fp, is_tn, is_fn = 0, 0, 0, 0
-    is_correct = 0
-    is_wrong = 0
-    cc_tp, cc_fp, cc_tn, cc_fn = 0, 0, 0, 0
-    cc_correct = 0
-    cc_wrong = 0
-    unary_scores = []
-    core_scores = []
-    is_scores = []
-    cc_scores = []
+    all_pos_unary_rules = []
+    all_pos_core_rules = []
+    all_pos_is_rules = []
+    all_pos_cc_rules = []
+    all_neg_unary_rules = []
+    all_neg_core_rules = []
+    all_neg_is_rules = []
+    all_neg_cc_rules = []
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
         for number, syntax_parse in local_syntax_parses.iteritems():
@@ -109,74 +101,22 @@ def evaluate_model(combined_model, questions, annotations, threshold):
             neg_is_rules = combined_model.is_model.generate_binary_rules(positive_tag_rules) - pos_is_rules
             neg_cc_rules = combined_model.cc_model.generate_binary_rules(positive_tag_rules) - pos_cc_rules
 
-            for pur in positive_unary_rules:
-                score = combined_model.get_score(pur)
-                unary_scores.append(score)
-                if score >= threshold: unary_tp += 1
-                else: unary_fn += 1
+            all_pos_unary_rules.extend(positive_unary_rules)
+            all_pos_core_rules.extend(pos_core_rules)
+            all_pos_is_rules.extend(pos_is_rules)
+            all_pos_cc_rules.extend(pos_cc_rules)
+            all_neg_unary_rules.extend(negative_unary_rules)
+            all_neg_core_rules.extend(neg_core_rules)
+            all_neg_is_rules.extend(neg_is_rules)
+            all_neg_cc_rules.extend(neg_cc_rules)
 
-            for nur in negative_unary_rules:
-                score = combined_model.get_score(nur)
-                unary_scores.append(1-score)
-                if score >= threshold: unary_fp += 1
-                else: unary_tn += 1
+    unary_prs = combined_model.unary_model.get_prs(all_pos_unary_rules, all_neg_unary_rules, thresholds)
+    core_prs = combined_model.core_model.get_prs(all_pos_core_rules, all_neg_core_rules, thresholds)
+    is_prs = combined_model.is_model.get_prs(all_pos_is_rules, all_neg_is_rules, thresholds)
+    cc_prs = combined_model.cc_model.get_prs(all_pos_cc_rules, all_neg_cc_rules, thresholds)
 
-            for pbr in pos_core_rules:
-                score = combined_model.get_score(pbr)
-                core_scores.append(score)
-                if score >= threshold: core_tp += 1
-                else: core_fn += 1
+    return unary_prs, core_prs, is_prs, cc_prs
 
-            for nbr in neg_core_rules:
-                score = combined_model.get_score(nbr)
-                core_scores.append(1-score)
-                if score >= threshold: core_fp += 1
-                else: core_tn += 1
-
-            for pbr in pos_is_rules:
-                score = combined_model.get_score(pbr)
-                is_scores.append(score)
-                if score >= threshold: is_tp += 1
-                else: is_fn += 1
-
-            for nur in neg_is_rules:
-                score = combined_model.get_score(nur)
-                is_scores.append(1-score)
-                if score >= threshold: is_fp += 1
-                else: is_tn += 1
-
-            for pbr in pos_cc_rules:
-                score = combined_model.get_score(pbr)
-                cc_scores.append(score)
-                if score >= threshold: cc_tp += 1
-                else: cc_fn += 1
-
-            for nbr in neg_cc_rules:
-                score = combined_model.get_score(nbr)
-                cc_scores.append(1-score)
-                if score >= threshold: cc_fp += 1
-                else: cc_tn += 1
-
-    #unary_acc = float(unary_correct)/(unary_correct+unary_wrong)
-    #core_acc = float(core_correct)/(core_correct+core_wrong)
-    # is_acc = float(is_correct)/(is_correct+is_wrong)
-    unary_p = float(unary_tp)/(unary_tp+unary_fp)
-    unary_r = float(unary_tp)/(unary_tp+unary_fn)
-    core_p = float(core_tp)/(core_tp+core_fp)
-    core_r = float(core_tp)/(core_tp+core_fn)
-
-    is_p = float(is_tp)/(is_tp+is_fp)
-    is_r = float(is_tp)/(is_tp+is_fn)
-    cc_p = float(cc_tp)/(cc_tp+cc_fp)
-    cc_r = float(cc_tp)/(cc_tp+cc_fn)
-    #cc_acc = float(cc_correct)/(cc_correct+cc_wrong)
-    """
-    print min(unary_scores), np.mean(unary_scores), max(unary_scores), np.std(unary_scores)
-    print min(core_scores), np.mean(core_scores), max(core_scores), np.std(core_scores)
-    print min(is_scores), np.mean(is_scores), max(is_scores), np.std(is_scores)
-    print min(cc_scores), np.mean(cc_scores), max(cc_scores), np.std(cc_scores)
-    """
-    return (unary_p, unary_r), (core_p, core_r), (is_p, is_r), (cc_p, cc_r)
 
 
 def split(questions, annotations, ratio):
@@ -198,9 +138,17 @@ def test_model():
     all_annotations = geoserver_interface.download_semantics(query)
 
     (te_q, te_a), (tr_q, tr_a) = split(all_questions, all_annotations, 0.5)
-    cm = train_model(tr_q, tr_a)
-    result = evaluate_model(cm, te_q, te_a, 0.7)
-    print result
+    cm = train_rule_model(tr_q, tr_a)
+    unary_prs, core_prs, is_prs, cc_prs = evaluate_rule_model(cm, te_q, te_a, np.linspace(0,1,101))
+
+    plt.plot(unary_prs.keys(), unary_prs.values(), 'o')
+    plt.show()
+    plt.plot(core_prs.keys(), core_prs.values(), 'o')
+    plt.show()
+    plt.plot(is_prs.keys(), is_prs.values(), 'o')
+    plt.show()
+    plt.plot(cc_prs.keys(), cc_prs.values(), 'o')
+    plt.show()
 
 if __name__ == "__main__":
     # test_validity()

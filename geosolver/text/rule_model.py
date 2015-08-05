@@ -22,6 +22,30 @@ class Model(object):
     def get_score(self, rule):
         return 0.0
 
+    def get_prs(self, pos_rules, neg_rules, ths):
+        tps, fps, tns, fns = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
+
+
+        for pr in pos_rules:
+            score = self.get_score(pr)
+            for th in ths:
+                if score >= th: tps[th] += 1
+                else: fns[th] += 1
+
+        for nr in neg_rules:
+            score = self.get_score(nr)
+            for th in ths:
+                if score >= th: fps[th] += 1
+                else: tns[th] += 1
+
+        prs = {}
+        for th in ths:
+            p = float(tps[th])/(tps[th]+fps[th])
+            r = float(tps[th])/(tps[th]+fns[th])
+            prs[th] = p, r
+        return prs
+
+
 class TagModel(Model):
     pass
 
