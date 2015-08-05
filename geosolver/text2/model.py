@@ -29,16 +29,18 @@ class NaiveTagModel(TagModel):
     """
     It predicts 0 for unseen tag rule, and 1 for seen.
     """
-    def __init__(self, tag_rules):
-        self.tag_rules = tag_rules
+    def __init__(self):
+        self.tag_rules = []
         self.lexicon = defaultdict(set)
+
+    def update(self, tag_rules):
+        self.tag_rules.extend(tag_rules)
         for tag_rule in tag_rules:
             entry = (tag_rule.signature.return_type, tag_rule.signature.name)
-            """
-            if tag_rule.get_words()[0] == "of" and entry[0] == "number":
-                raise Exception()
-            """
             self.lexicon[tag_rule.get_words()].add(entry)
+
+    def fit(self):
+        pass
 
     def get_score(self, tag_rule):
         words = tag_rule.get_words()
@@ -132,11 +134,13 @@ class BinaryModel(SemanticModel):
 
 
 class CombinedModel(Model):
-    def __init__(self, unary_model, core_model, is_model, cc_model):
+    def __init__(self, tag_model, unary_model, core_model, is_model, cc_model):
+        assert isinstance(tag_model, TagModel)
         assert isinstance(unary_model, UnaryModel)
         assert isinstance(core_model, BinaryModel)
         assert isinstance(is_model, BinaryModel)
         assert isinstance(cc_model, BinaryModel)
+        self.tag_model = tag_model
         self.unary_model = unary_model
         self.core_model = core_model
         self.is_model = is_model
@@ -283,13 +287,15 @@ class RFUnaryModel(UnaryModel):
             return False
         return UnaryRule.val_func(p, c)
 
-    def update(self, positive_unary_rules, negative_unary_rules):
+    def update(self, tag_rules, positive_unary_rules):
+        all_unary_rules = self.generate_unary_rules(tag_rules)
+        negative_unary_rules = all_unary_rules - positive_unary_rules
         self.positive_unary_rules.extend(positive_unary_rules)
         self.negative_unary_rules.extend(negative_unary_rules)
 
     def fit(self):
-        print "positive examples:", len(self.positive_unary_rules)
-        print "negative examples:", len(self.negative_unary_rules)
+        print "# of positive unary examples:", len(self.positive_unary_rules)
+        print "# of negative unary examples:", len(self.negative_unary_rules)
         self.feature_function = UnaryFeatureFunction(self.positive_unary_rules)
         X = []
         y = []
@@ -299,10 +305,11 @@ class RFUnaryModel(UnaryModel):
         for nur in self.negative_unary_rules:
             X.append(self.feature_function.map(nur))
             y.append(0)
-        print "shape:", np.shape(X), np.shape(y)
+
+        print "length of unary feature vector:", np.shape(X)[1]
         self.classifier.fit(X, y)
 
-    def predict_proba(self, ur):
+    def get_score(self, ur):
         x = self.feature_function.map(ur)
         probas = self.classifier.predict_proba([x])
         return probas[0][1]

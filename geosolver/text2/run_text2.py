@@ -15,40 +15,92 @@ from geosolver.utils.analysis import draw_pr
 
 __author__ = 'minjoon'
 
-def test_validity():
-    questions = geoserver_interface.download_questions(1014)
-    annotations = geoserver_interface.download_semantics(1014)
-    all_tag_rules = []
-    all_unary_rules = []
-    all_binary_rules = []
-    for pk, question in questions.iteritems():
-        for number, words in question.words.iteritems():
-            syntax_parse = SyntaxParse(words, None)
-            local_annotations = annotations[pk][number]
-            for _, annotation in local_annotations.iteritems():
-                if is_valid_annotation(syntax_parse, annotation):
+def questions_to_syntax_parses(questions):
+    syntax_parses = {pk: {number: stanford_parser.get_best_syntax_parse(words)
+                          for number, words in question.sentence_words.iteritems()}
+                     for pk, question in questions.iteritems()}
+    return syntax_parses
 
-                    node = annotation_to_semantic_tree(syntax_parse, annotation)
-                    formula = node.to_formula()
-                    print "formula:", formula
-                    # tag_rules = annotation_node_to_tag_rules(node)
-                    # unary_rules, binary_rules = annotation_node_to_semantic_rules(node)
-                    # all_tag_rules.extend(tag_rules)
-                    # all_unary_rules.extend(unary_rules)
-                    # all_binary_rules.extend(binary_rules)
-                else:
-                    print annotation
+def train_model(questions, annotations):
+    tm = NaiveTagModel()
+    um = RFUnaryModel()
+    corem = NaiveBinaryModel(3)
+    ism = NaiveIsModel(3)
+    ccm = NaiveCCModel(3)
+
+    syntax_parses = questions_to_syntax_parses(questions)
+    for pk, local_syntax_parses in syntax_parses.iteritems():
+        for number, syntax_parse in local_syntax_parses.iteritems():
+            assert isinstance(syntax_parse, SyntaxParse)
+            semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
+                              for annotation in annotations[pk][number].values()]
+            local_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
+            local_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
+            local_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
+            tm.update(local_tag_rules)
+            um.update(local_tag_rules, local_unary_rules)
+
+    um.fit()
+
+    cm = CombinedModel(tm, um, corem, ism, ccm)
+    return cm
+
+def evaluate_model(combined_model, questions, annotations):
+    syntax_parses = questions_to_syntax_parses(questions)
+
+    unary_correct = 0
+    unary_wrong = 0
+
+    for pk, local_syntax_parses in syntax_parses.iteritems():
+        for number, syntax_parse in local_syntax_parses.iteritems():
+            semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
+                              for annotation in annotations[pk][number].values()]
+            positive_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
+            positive_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
+            positive_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
+
+            negative_unary_rules = combined_model.generate_unary_rules(positive_tag_rules) - positive_unary_rules
+
+            for pur in positive_unary_rules:
+                score = combined_model.get_score(pur)
+                if score >= 0.5: unary_correct += 1
+                else: unary_wrong += 1
+
+            for nur in negative_unary_rules:
+                score = combined_model.get_score(nur)
+                if score >= 0.5: unary_wrong += 1
+                else: unary_correct += 1
+
+    unary_acc = float(unary_correct)/(unary_correct+unary_wrong)
+    return unary_acc
 
 
-def map_args(func, *args):
-    assert len(args) > 0
-    out = {}
-    for pk, d in args[0].iteritems():
-        out[pk] = {}
-        for number in d.keys():
-            local_args = [arg[pk][number] for arg in args]
-            out[pk][number] = func(*local_args)
-    return out
+def split(questions, annotations, ratio):
+    keys = questions.keys()
+    bk = int(ratio*len(keys))
+    left_keys = keys[:bk]
+    right_keys = keys[bk:]
+    left_questions = {pk: questions[pk] for pk in left_keys}
+    right_questions = {pk: questions[pk] for pk in right_keys}
+    left_annotations = {pk: annotations[pk] for pk in left_keys}
+    right_annotations = {pk: annotations[pk] for pk in right_keys}
+
+    return (left_questions, left_annotations), (right_questions, right_annotations)
+
+
+def test_model():
+    query = 'test'
+    all_questions = geoserver_interface.download_questions(query)
+    all_annotations = geoserver_interface.download_semantics(query)
+
+    (te_q, te_a), (tr_q, tr_a) = split(all_questions, all_annotations, 0.5)
+    cm = train_model(tr_q, tr_a)
+    result = evaluate_model(cm, te_q, te_a)
+    print result
+
+
+
+
 
 
 def test_annotations_to_rules():
@@ -205,4 +257,5 @@ def test_annotations_to_rules():
 
 if __name__ == "__main__":
     # test_validity()
-    test_annotations_to_rules()
+    # test_annotations_to_rules()
+    test_model()
