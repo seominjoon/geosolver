@@ -1,6 +1,6 @@
 from collections import defaultdict
 import itertools
-from geosolver.text2.semantic_tree import SemanticTreeNode
+from geosolver.text.semantic_tree import SemanticTreeNode
 
 __author__ = 'minjoon'
 

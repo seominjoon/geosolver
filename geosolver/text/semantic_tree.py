@@ -1,6 +1,6 @@
 from collections import deque
 from geosolver.ontology.ontology_definitions import FormulaNode
-from geosolver.text2.rule import UnaryRule, BinaryRule
+from geosolver.text.rule import UnaryRule, BinaryRule
 
 __author__ = 'minjoon'
 

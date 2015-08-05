@@ -1,85 +1,116 @@
-from geosolver.text.ontology_states import FunctionSignature
+from geosolver.ontology.ontology_definitions import issubtype, Signature
+from geosolver.text.syntax_parser import SyntaxParse
 
 __author__ = 'minjoon'
 
+def _span_to_string(span):
+    if span == "i":
+        return span
+    elif span[0] + 1 == span[1]:
+        return "%d" % span[0]
+    else:
+        return "%d:%d" % (span[0], span[1]-1)
 
 class TagRule(object):
-    def __init__(self, words, syntax_tree, index, signature):
-        self.words = words
-        self.syntax_tree = syntax_tree
-        self.index = index
+    def __init__(self, syntax_parse, span, signature):
+        assert isinstance(syntax_parse, SyntaxParse)
+        assert isinstance(signature, Signature)
+        self.syntax_parse = syntax_parse
+        self.span = span
         self.signature = signature
+        self.is_implicit = self.span == "i"
+        self.string = "_".join(self.syntax_parse.words[i] for i in range(*self.span))
 
-    def __repr__(self):
-        if self.index is None:
-            word = None
-        else:
-            word = self.words[self.index]
-        return "%s@%r:%s" % (word, self.index, self.signature.name)
+    def get_words(self):
+        words = tuple(self.syntax_parse.words[idx] for idx in range(*self.span))
+        return words
+
+    def get_length(self):
+        return self.span[1] - self.span[0]
+
+    def is_single_word(self):
+        return self.get_length() == 1
+
+    def __hash__(self):
+        return hash((self.span, self.signature))
 
     def __eq__(self, other):
-        return repr(self) == repr(other)
+        span = self.span == other.span
+        sig = self.signature == other.signature
+        return span and sig
+
+    def __repr__(self):
+        return "%s@%s[%s]" % (repr(self.signature), _span_to_string(self.span), self.string)
+
+    def __hash__(self):
+        return hash((self.span, self.signature))
+
 
 class SemanticRule(object):
     pass
 
-
 class UnaryRule(SemanticRule):
-    def __init__(self, words, syntax_tree, tag_model, parent_index, parent_signature, child_index, child_signature):
-        assert isinstance(parent_signature, FunctionSignature)
-        assert isinstance(child_signature, FunctionSignature)
-        assert isinstance(parent_index, int) or parent_index is None
-        assert isinstance(child_index, int) or child_index is None
-        self.words = words
-        self.syntax_tree = syntax_tree
-        self.tag_model = tag_model
-        self.parent_index = parent_index
-        self.parent_signature = parent_signature
-        self.child_index = child_index
-        self.child_signature = child_signature
-
-    def __hash__(self):
-        return hash((self.parent_index, self.parent_signature, self.child_index, self.child_signature))
+    def __init__(self, parent_tag_rule, child_tag_rule):
+        #assert UnaryRule.val_func(parent_tag_rule, child_tag_rule)
+        assert isinstance(parent_tag_rule, TagRule)
+        assert isinstance(child_tag_rule, TagRule)
+        self.syntax_parse = parent_tag_rule.syntax_parse
+        self.parent_tag_rule = parent_tag_rule
+        self.child_tag_rule = child_tag_rule
 
     def __repr__(self):
-        return "%s@%r->%s@%r" % (self.parent_signature.name, self.parent_index,
-                                 self.child_signature.name, self.child_index)
+        return "%r->%r" % (self.parent_tag_rule, self.child_tag_rule)
+
+    def __hash__(self):
+        return hash((self.parent_tag_rule, self.child_tag_rule))
 
     def __eq__(self, other):
-        return repr(self) == repr(other)
+        return self.parent_tag_rule == other.parent_tag_rule and self.child_tag_rule == other.child_tag_rule
+
+    @staticmethod
+    def val_func(parent_tag_rule, child_tag_rule):
+        valence = parent_tag_rule.signature.valence
+        if valence == 0:
+            return False
+        elif valence == 1:
+            return issubtype(child_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])
+        elif valence == 2:
+            c1 = issubtype(child_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])
+            c2 = issubtype(parent_tag_rule.signature.arg_types[1], 'entity')
+            return c1 and c2
+        raise Exception()
+
+
+
 
 
 class BinaryRule(SemanticRule):
-    def __init__(self, words, syntax_tree, tag_model,
-                 parent_index, parent_signature, a_index, a_signature, b_index, b_signature):
-        assert isinstance(parent_signature, FunctionSignature)
-        assert isinstance(a_signature, FunctionSignature)
-        assert isinstance(b_signature, FunctionSignature)
-        assert isinstance(parent_index, int) or parent_index is None
-        assert isinstance(a_index, int) or a_index is None
-        assert isinstance(b_index, int) or b_index is None
-        self.words = words
-        self.syntax_tree = syntax_tree
-        self.tag_model = tag_model
-        self.parent_index = parent_index
-        self.parent_signature = parent_signature
-        self.a_index = a_index
-        self.a_signature = a_signature
-        self.b_index = b_index
-        self.b_signature = b_signature
-        self.a_rule = UnaryRule(words, syntax_tree, tag_model, parent_index, parent_signature, a_index, a_signature)
-        self.b_rule = UnaryRule(words, syntax_tree, tag_model, parent_index, parent_signature, b_index, b_signature)
-        self.c_rule = UnaryRule(words, syntax_tree, tag_model, a_index, a_signature, b_index, b_signature)
-        self.unary_rules = [self.a_rule, self.b_rule, self.c_rule]
+    def __init__(self, parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
+        assert BinaryRule.val_func(parent_tag_rule, child_a_tag_rule, child_b_tag_rule)
+        assert isinstance(parent_tag_rule, TagRule)
+        assert isinstance(child_a_tag_rule, TagRule)
+        assert isinstance(child_b_tag_rule, TagRule)
+        self.syntax_parse = parent_tag_rule.syntax_parse
+        self.parent_tag_rule = parent_tag_rule
+        self.child_a_tag_rule = child_a_tag_rule
+        self.child_b_tag_rule = child_b_tag_rule
 
-    def __hash__(self):
-        return hash((self.parent_index, self.parent_signature,
-                     self.a_index, self.a_signature, self.b_index, self.b_signature))
+    @staticmethod
+    def val_func(parent_tag_rule, a_tag_rule, b_tag_rule):
+        valence = parent_tag_rule.signature.valence
+        if valence == 2:
+            a = issubtype(a_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[0])
+            b = issubtype(b_tag_rule.signature.return_type, parent_tag_rule.signature.arg_types[1])
+            return a and b
+        else:
+            return False
 
     def __repr__(self):
-        return "%s@%r->%s@%r|%s@%r" % (self.parent_signature.name, self.parent_index,
-                                       self.a_signature.name, self.a_index,
-                                       self.b_signature.name, self.b_index)
+        return "%r->%r|%r" % (self.parent_tag_rule, self.child_a_tag_rule, self.child_b_tag_rule)
+
+    def __hash__(self):
+        return hash((self.parent_tag_rule, self.child_a_tag_rule, self.child_b_tag_rule))
 
     def __eq__(self, other):
-        return repr(self) == repr(other)
+        return self.parent_tag_rule == other.parent_tag_rule and self.child_a_tag_rule == other.child_a_tag_rule and \
+            self.child_b_tag_rule == other.child_b_tag_rule

@@ -1,5 +1,5 @@
 from geosolver.ontology.ontology_definitions import FormulaNode
-from geosolver.text2.states import TextFormulaParse
+from geosolver.text.states import TextFormulaParse
 
 __author__ = 'minjoon'
 

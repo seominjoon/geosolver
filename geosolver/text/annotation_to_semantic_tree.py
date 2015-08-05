@@ -1,8 +1,8 @@
 from pyparsing import *
 
 from geosolver.ontology.ontology_definitions import signatures, FunctionSignature, VariableSignature
-from geosolver.text2.rule import TagRule
-from geosolver.text2.semantic_tree import SemanticTreeNode
+from geosolver.text.rule import TagRule
+from geosolver.text.semantic_tree import SemanticTreeNode
 from geosolver.utils.num import is_number
 
 __author__ = 'minjoon'

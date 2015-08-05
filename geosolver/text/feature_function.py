@@ -1,139 +1,91 @@
-import itertools
-from geosolver.text.ontology import types
 from geosolver.text.rule import UnaryRule, BinaryRule
-import networkx as nx
-import numpy as np
-from geosolver.text.transitions import binary_rule_to_unary_rules
 
 __author__ = 'minjoon'
 
-
 class FeatureFunction(object):
-    def __init__(self, functions):
-        self.dim = len(functions)
-        self.functions = functions
-
-    def evaluate(self, rule):
-        return np.array([function(rule) for function in self.functions])
+    def map(self, rule):
+        pass
 
 
-def unary_generator_00(unary_rules):
-    """
-    direct neighbors with edge label in syntax tree, both ways
+class UnaryFeatureFunction(FeatureFunction):
+    def __init__(self, unary_rules):
+        self.nbr_rel_set = set()
+        self.mid_tag_set = set()
+        self.graph_dist_set = {0, 1, 2}
+        self.plain_dist_set = {1, 2}
+        self.p_tag_set = set()
+        self.c_tag_set = set()
+        self.p_return_type_set = set()
+        self.c_return_type_set = set()
 
-    :param unary_rules:
-    :return:
-    """
-    labels = set()
-    for unary_rule in unary_rules:
-        if unary_rule.parent_index is None or unary_rule.child_index is None:
-            continue
-        if unary_rule.parent_index in unary_rule.syntax_tree.undirected[unary_rule.child_index]:
-            label = unary_rule.syntax_tree.undirected[unary_rule.parent_index][unary_rule.child_index]['label']
-            labels.add(label)
+        for unary_rule in unary_rules:
+            assert isinstance(unary_rule, UnaryRule)
+            sp, p, c = unary_rule.syntax_parse, unary_rule.parent_tag_rule, unary_rule.child_tag_rule
+            graph_distance = sp.distance_between_spans(p.span, c.span)
+            if graph_distance == 1:
+                rel = sp.relation_between_spans(p.span, c.span)
+                self.nbr_rel_set.add(rel)
+            elif graph_distance == 2:
+                path = sp.shortest_path_between_spans(p.span, c.span)
+                assert len(path) == 3
+                mid_tag = sp.get_tag_by_index(path[1])
+                self.mid_tag_set.add(mid_tag)
 
-    print "labels:", labels
-
-    functions = []
-    for label in labels:
-        functions.append(_get_down(label))
-        functions.append(_get_up(label))
-    return functions
-
-def _get_down(label):
-    def down(rule):
-        if rule.child_index is None or rule.parent_index is None:
-            return 0
-        if rule.child_index in rule.syntax_tree.directed[rule.parent_index] and \
-                        rule.syntax_tree.directed[rule.parent_index][rule.child_index]['label'] == label:
-            return 1
-        else:
-            return 0
-    return down
-
-def _get_up(label):
-    def up(rule):
-        if rule.child_index is None or rule.parent_index is None:
-            return 0
-        if rule.parent_index in rule.syntax_tree.directed[rule.child_index] and \
-                        rule.syntax_tree.directed[rule.child_index][rule.parent_index]['label'] == label:
-            return 1
-        else:
-            return 0
-    return up
-
-def unary_generator_01(unary_rules):
-    """
-    return type of parent content and child content
-
-    :param unary_rules:
-    :return:
-    """
-    functions = []
-    for type_ in types:
-        functions.append(_get_parent(type_))
-        functions.append(_get_child(type_))
-    return functions
+            self.p_tag_set.add(sp.get_tag_by_span(p.span))
+            self.c_tag_set.add(sp.get_tag_by_span(c.span))
+            self.p_return_type_set.add(p.signature.return_type)
+            self.c_return_type_set.add(c.signature.return_type)
 
 
-def _get_parent(type_):
-    def parent(rule):
-        if rule.parent_signature.return_type == type_:
-            return 1
-        else:
-            return 0
-    return parent
+    def map(self, ur):
+        assert isinstance(ur, UnaryRule)
+        out = []
+        sp, p, c = ur.syntax_parse, ur.parent_tag_rule, ur.child_tag_rule
+        d = sp.distance_between_spans(p.span, c.span)
+        pd = sp.plain_distance_between_spans(p.span, c.span, True)
+
+        for ref_d in self.graph_dist_set:
+            out.append(int(d == ref_d))
+        for ref_pd in self.plain_dist_set:
+            out.append(int(abs(pd) == ref_pd))
+        for ref_rel in self.nbr_rel_set:
+            out.append(int(d == 1 and ref_rel == sp.relation_between_spans(p.span, c.span)))
+        for ref_tag in self.mid_tag_set:
+            out.append(int(d == 2 and ref_tag == sp.get_tag_by_index(sp.shortest_path_between_spans(p.span, c.span)[1])))
+        out.append(int(pd >= 0))
+
+        for ref_p_tag in self.p_tag_set:
+            out.append(int(ref_p_tag == sp.get_tag_by_span(p.span)))
+        for ref_c_tag in self.c_tag_set:
+            out.append(int(ref_c_tag == sp.get_tag_by_span(c.span)))
+        for ref_p_return_type in self.p_return_type_set:
+            out.append(int(ref_p_return_type == p.signature.return_type))
+        for ref_c_return_type in self.p_return_type_set:
+            out.append(int(ref_c_return_type == p.signature.return_type))
+
+        return tuple(out)
 
 
-def _get_child(type_):
-    def child(rule):
-        if rule.child_signature.return_type == type_:
-            return 1
-        else:
-            return 0
-    return child
+def binary_rule_to_unary_rules(binary_rule):
+    assert isinstance(binary_rule, BinaryRule)
+    p, a, b = binary_rule.parent_tag_rule, binary_rule.child_a_tag_rule, binary_rule.child_b_tag_rule
+    pa = UnaryRule(p, a)
+    pb = UnaryRule(p, b)
+    ab = UnaryRule(a, b)
+    return pa, pb, ab
 
 
-def unary_generator_02(unary_rules):
-    distances = set()
-    for unary_rule in unary_rules:
-        if unary_rule.parent_index is not None and unary_rule.child_index is not None:
-            distance = nx.shortest_path_length(unary_rule.syntax_tree.undirected, unary_rule.parent_index, unary_rule.child_index)
-            distances.add(distance)
+class BinaryFeatureFunction(FeatureFunction):
+    def __init__(self, binary_rules):
+        pas, pbs, abs = zip(*[binary_rule_to_unary_rules(br) for br in binary_rules])
+        self.pa_ff = UnaryFeatureFunction(pas)
+        self.pb_ff = UnaryFeatureFunction(pbs)
+        self.ab_ff = UnaryFeatureFunction(abs)
 
-    print "distances:", distances
-
-    functions = []
-    for distance in distances:
-        functions.append(_get_df(distance))
-    return functions
-
-def _get_df(distance):
-    def df(rule):
-        if rule.parent_index is not None and rule.child_index is not None:
-            curr_distance = nx.shortest_path_length(rule.syntax_tree.undirected, rule.parent_index, rule.child_index)
-            if curr_distance == distance:
-                return 1
-        return 0
-    return df
-
-unary_generators = [unary_generator_00, unary_generator_01, unary_generator_02]
-
-def generate_unary_feature_function(rules):
-    functions = list(itertools.chain(*[generator(rules) for generator in unary_generators]))
-    print "functions:", functions
-    feature_function = FeatureFunction(functions)
-    return feature_function
-
-
-def generate_binary_feature_function(rules):
-    a_rules, b_rules, c_rules = zip(*(rule.unary_rules for rule in rules))
-    a_functions = list(itertools.chain(*[unary_generator(a_rules) for unary_generator in unary_generators]))
-    b_functions = list(itertools.chain(*[unary_generator(b_rules) for unary_generator in unary_generators]))
-    c_functions = list(itertools.chain(*[unary_generator(c_rules) for unary_generator in unary_generators]))
-    binary_a_functions = [lambda binary_rule: a_function(binary_rule.a_rule) for a_function in a_functions]
-    binary_b_functions = [lambda binary_rule: b_function(binary_rule.b_rule) for b_function in b_functions]
-    binary_c_functions = [lambda binary_rule: c_function(binary_rule.c_rule) for c_function in c_functions]
-    functions = binary_a_functions + binary_b_functions + binary_c_functions
-    feature_function = FeatureFunction(functions)
-    return feature_function
+    def map(self, rule):
+        pa, pb, ab = binary_rule_to_unary_rules(rule)
+        pa_fv = self.pa_ff.map(pa)
+        pb_fv = self.pa_ff.map(pb)
+        ab_fv = self.pa_ff.map(ab)
+        fv = pa_fv + pb_fv + ab_fv
+        return fv

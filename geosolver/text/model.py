@@ -4,9 +4,9 @@ from operator import __mul__
 from sklearn.ensemble import RandomForestClassifier
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype
 from geosolver.ontology.ontology_definitions import signatures
-from geosolver.text2.feature_function import UnaryFeatureFunction, BinaryFeatureFunction
-from geosolver.text2.rule import TagRule, UnaryRule, BinaryRule
-from geosolver.text2.semantic_tree import SemanticTreeNode
+from geosolver.text.feature_function import UnaryFeatureFunction, BinaryFeatureFunction
+from geosolver.text.rule import TagRule, UnaryRule, BinaryRule
+from geosolver.text.semantic_tree import SemanticTreeNode
 from geosolver.utils.num import is_number
 import numpy as np
 

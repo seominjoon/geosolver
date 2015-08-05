@@ -1,251 +1,208 @@
-import timeit
+import itertools
+import os
+from pprint import pprint
+import sys
+from geosolver import geoserver_interface
+from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
+from geosolver.text.feature_function import UnaryFeatureFunction
+from geosolver.text.model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel, CombinedModel, \
+    BinaryModel, NaiveCoreModel, NaiveIsModel, NaiveCCModel, RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel
+from geosolver.text.rule import UnaryRule, BinaryRule
+from geosolver.text.semantic_forest import SemanticForest
+from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
 import numpy as np
-from geosolver.database.geoserver_interface import geoserver_interface
-from geosolver.text.annotation_to_node import annotation_to_node, is_valid_annotation
-from geosolver.text.decoder import TopDownLiftedDecoder
-from geosolver.text.dependency_parser import stanford_parser
-from geosolver.text.feature_function import generate_unary_feature_function, generate_binary_feature_function
-from geosolver.text.semantic_model_2 import UnarySemanticModel
-from geosolver.text.semantic_model_2 import BinarySemanticModel
-from geosolver.text.tag_model import CountBasedTagModel
-from geosolver.text.transitions import node_to_semantic_rules, tag_rules_to_tags, rules_to_impliable_signatures
-from geosolver.text.transitions import node_to_tag_rules
+from geosolver.utils.analysis import draw_pr
 import matplotlib.pyplot as plt
-import cPickle as pickle
-from dist_utils import normalize
 
 __author__ = 'minjoon'
 
-def replace(words):
-    new_words = {}
-    for index, word in words.iteritems():
-        if word == "=":
-            new_words[index] = 'equals'
-        elif word == "+":
-            new_words[index] = 'plus'
+def questions_to_syntax_parses(questions):
+    syntax_parses = {pk: {number: stanford_parser.get_best_syntax_parse(words)
+                          for number, words in question.sentence_words.iteritems()}
+                     for pk, question in questions.iteritems()}
+    return syntax_parses
+
+def split_binary_rules(binary_rules):
+    core_rules = set()
+    is_rules = set()
+    cc_rules = set()
+    for br in binary_rules:
+        id_ = br.parent_tag_rule.signature.id
+        if id_ == "Is":
+            is_rules.add(br)
+        elif id_ == "CC":
+            cc_rules.add(br)
         else:
-            new_words[index] = word
-    return new_words
-
-def get_models():
-    query = "annotated"
-    print "Obtaining questions and semantic annotations..."
-    questions = geoserver_interface.download_questions([query])
-    semantics = geoserver_interface.download_semantics([query])
-
-    print "Obtaining syntax trees..."
-    if False:
-        syntax_trees = {pk: {sentence_index: stanford_parser.get_best_syntax_tree(replace(words))
-                             for sentence_index, words in question.words.iteritems()}
-                        for pk, question in questions.iteritems()}
-        pickle.dump(syntax_trees, open("syntax_trees.p", 'wb'))
-    else:
-        syntax_trees = pickle.load(open("syntax_trees.p", 'rb'))
-
-    print "Obtaining nodes..."
-    nodes = {pk: {sentence_index: [annotation_to_node(annotation) for _, annotation in annotations.iteritems()]
-                  for sentence_index, annotations in d.iteritems()}
-             for pk, d in semantics.iteritems()}
-
-    print "Extracting tag rules..."
-    tag_rules = []
-    for pk, d in nodes.iteritems():
-        for sentence_index, dd in d.iteritems():
-            syntax_tree = syntax_trees[pk][sentence_index]
-            for node in dd:
-                local_tag_rules = node_to_tag_rules(syntax_tree.words, syntax_tree, node)
-                tag_rules.extend(local_tag_rules)
-
-    print "Learning tag model..."
-    tag_model = CountBasedTagModel(tag_rules)
-
-    print "Extracting semantic rules..."
-    unary_rules = []
-    binary_rules = []
-    for pk, d in nodes.iteritems():
-        for sentence_index, dd in d.iteritems():
-            syntax_tree = syntax_trees[pk][sentence_index]
-            for node in dd:
-                local_unary_rules, local_binary_rules = node_to_semantic_rules(syntax_tree.words, syntax_tree, tag_model, node, lift_index=True)
-                unary_rules.extend(local_unary_rules)
-                binary_rules.extend(local_binary_rules)
-
-    # localities = {signatures['add']: 1}
-    impliable_signatures = rules_to_impliable_signatures(unary_rules + binary_rules)
-    uff1 = generate_unary_feature_function(unary_rules)
-    bff1 = generate_binary_feature_function(binary_rules)
-    print "Learning unary model..."
-    unary_model = UnarySemanticModel(uff1, impliable_signatures=impliable_signatures)
-    unary_model.fit(unary_rules, 1)
-    print "Learning binary model..."
-    binary_model = BinarySemanticModel(bff1, impliable_signatures=impliable_signatures)
-    binary_model.fit(binary_rules, 1)
-
-    print "unary weights:", unary_model.weights
-    print "binary_weights:", binary_model.weights
-    print "impliable:", unary_model.impliable_signatures, binary_model.impliable_signatures
-
-    return tag_model, unary_model, binary_model
+            core_rules.add(br)
+    return core_rules, is_rules, cc_rules
 
 
+def train_model(questions, annotations):
+    tm = NaiveTagModel()
+    um = RFUnaryModel()
+    corem = RFCoreModel()
+    ism = RFIsModel()
+    ccm = RFCCModel()
 
-def test_models(tag_model, unary_model, binary_model):
-    print("Testing the model...")
-    query = "annotated"
-    questions = geoserver_interface.download_questions([query])
-    semantics = geoserver_interface.download_semantics([query])
-    all_gt_nodes = {}
-    all_my_node_dict = {}
-    reweighed_my_dict = {}
+    syntax_parses = questions_to_syntax_parses(questions)
+    for pk, local_syntax_parses in syntax_parses.iteritems():
+        for number, syntax_parse in local_syntax_parses.iteritems():
+            assert isinstance(syntax_parse, SyntaxParse)
+            semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
+                              for annotation in annotations[pk][number].values()]
+            local_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
+            local_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
+            local_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
+            core_rules, is_rules, cc_rules = split_binary_rules(local_binary_rules)
 
-    sizes = []
+            # Sanity check
+            for ur in local_unary_rules:
+                assert um.val_func(ur.parent_tag_rule, ur.child_tag_rule)
+            for br in core_rules:
+                assert corem.val_func(br.parent_tag_rule, br.child_a_tag_rule, br.child_b_tag_rule)
 
-    for pk, question in questions.iteritems():
-        all_gt_nodes[pk] = {}
-        all_my_node_dict[pk] = {}
-        reweighed_my_dict[pk] = {}
-        for sentence_index, words in question.words.iteritems():
-            all_gt_nodes[pk][sentence_index] = set(annotation_to_node(annotation) for annotation in semantics[pk][sentence_index].values())
-            all_my_node_dict[pk][sentence_index] = {}
-            reweighed_my_dict[pk][sentence_index] = {}
-            words = replace(words)
-            syntax_tree = stanford_parser.get_best_syntax_tree(words)
-            decoder = TopDownLiftedDecoder(unary_model, binary_model)
-            dist = decoder.get_formula_distribution(words, syntax_tree, tag_model)
-            items = sorted(dist.items(), key=lambda x: x[1])
-            sizes.append(len(items))
-            print "---------------"
-            print pk, sentence_index
-            print " ".join(words.values())
-            for node, logp in items:
-                # print(node_to_semantic_rules(words, syntax_tree, tags, node, True))
-                print node, np.exp(logp)
-                all_my_node_dict[pk][sentence_index][node] = np.exp(logp)
-            reweighed_my_dict[pk][sentence_index] = reweigh(words, syntax_tree, tag_model, all_my_node_dict[pk][sentence_index])
+            tm.update(local_tag_rules)
+            um.update(local_tag_rules, local_unary_rules)
+            corem.update(local_tag_rules, core_rules)
+            ism.update(local_tag_rules, is_rules)
+            ccm.update(local_tag_rules, cc_rules)
 
-    print "--------------"
-    print "sizes:", max(sizes), np.median(sizes), min(sizes)
+    um.fit()
+    corem.fit()
+    ism.fit()
+    ccm.fit()
 
+    cm = CombinedModel(tm, um, corem, ism, ccm)
+    return cm
 
-    #prs =  [get_pr(all_gt_nodes, all_my_node_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
-    prs =  [get_pr_by_rank(all_gt_nodes, all_my_node_dict, rank) for rank in range(1,400)]
-    print prs
-    #re_prs =  [get_pr(all_gt_nodes, reweighed_my_dict, conf) for conf in np.linspace(-0.1,1.1,121)]
-    re_prs =  [get_pr_by_rank(all_gt_nodes, reweighed_my_dict, rank) for rank in range(1,400)]
-    draw(prs)
-    draw(re_prs)
-    plt.show()
-    pr = get_pr(all_gt_nodes, all_my_node_dict, 0)
+def evaluate_model(combined_model, questions, annotations, threshold):
+    syntax_parses = questions_to_syntax_parses(questions)
 
+    unary_correct = 0
+    unary_wrong = 0
+    unary_tp, unary_fp, unary_tn, unary_fn = 0, 0, 0, 0
+    core_correct = 0
+    core_wrong = 0
+    core_tp, core_fp, core_tn, core_fn = 0, 0, 0, 0
+    is_tp, is_fp, is_tn, is_fn = 0, 0, 0, 0
+    is_correct = 0
+    is_wrong = 0
+    cc_tp, cc_fp, cc_tn, cc_fn = 0, 0, 0, 0
+    cc_correct = 0
+    cc_wrong = 0
+    unary_scores = []
+    core_scores = []
+    is_scores = []
+    cc_scores = []
 
-def draw(prs):
-    ps, rs = zip(*prs)
-    plt.plot(rs, ps)
+    for pk, local_syntax_parses in syntax_parses.iteritems():
+        for number, syntax_parse in local_syntax_parses.iteritems():
+            semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
+                              for annotation in annotations[pk][number].values()]
+            positive_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
+            positive_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
+            positive_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
+            pos_core_rules, pos_is_rules, pos_cc_rules = split_binary_rules(positive_binary_rules)
 
+            negative_unary_rules = combined_model.generate_unary_rules(positive_tag_rules) - positive_unary_rules
+            neg_core_rules = combined_model.core_model.generate_binary_rules(positive_tag_rules) - pos_core_rules
+            neg_is_rules = combined_model.is_model.generate_binary_rules(positive_tag_rules) - pos_is_rules
+            neg_cc_rules = combined_model.cc_model.generate_binary_rules(positive_tag_rules) - pos_cc_rules
 
-def get_pr_by_rank(all_gt_nodes, all_my_node_dict, rank):
-    retrieved = 0
-    relevant = 0
-    intersection = 0
+            for pur in positive_unary_rules:
+                score = combined_model.get_score(pur)
+                unary_scores.append(score)
+                if score >= threshold: unary_tp += 1
+                else: unary_fn += 1
 
-    for pk, question in all_gt_nodes.iteritems():
-        for index, curr_gt_nodes in question.iteritems():
-            curr_my_node_dict = all_my_node_dict[pk][index]
-            my_nodes = set([y[0] for y in sorted(curr_my_node_dict.items(), key=lambda x: -x[1])][:rank])
-            intersection_set = curr_gt_nodes.intersection(my_nodes)
-            retrieved += len(my_nodes)
-            relevant += len(curr_gt_nodes)
-            intersection += len(intersection_set)
-            """
-            if len(intersection_set) < len(curr_gt_nodes):
-                print curr_gt_nodes-intersection_set
-            """
+            for nur in negative_unary_rules:
+                score = combined_model.get_score(nur)
+                unary_scores.append(1-score)
+                if score >= threshold: unary_fp += 1
+                else: unary_tn += 1
 
-    if retrieved == 0:
-        precision = 1
-    else:
-        precision = float(intersection)/retrieved
-    recall = float(intersection)/relevant
-    # print missed_set
+            for pbr in pos_core_rules:
+                score = combined_model.get_score(pbr)
+                core_scores.append(score)
+                if score >= threshold: core_tp += 1
+                else: core_fn += 1
 
-    return precision, recall
+            for nbr in neg_core_rules:
+                score = combined_model.get_score(nbr)
+                core_scores.append(1-score)
+                if score >= threshold: core_fp += 1
+                else: core_tn += 1
 
+            for pbr in pos_is_rules:
+                score = combined_model.get_score(pbr)
+                is_scores.append(score)
+                if score >= threshold: is_tp += 1
+                else: is_fn += 1
 
-def get_pr(all_gt_nodes, all_my_node_dict, threshold):
-    retrieved = 0
-    relevant = 0
-    intersection = 0
+            for nur in neg_is_rules:
+                score = combined_model.get_score(nur)
+                is_scores.append(1-score)
+                if score >= threshold: is_fp += 1
+                else: is_tn += 1
 
-    for pk, question in all_gt_nodes.iteritems():
-        for index, curr_gt_nodes in question.iteritems():
-            curr_my_node_dict = all_my_node_dict[pk][index]
-            my_nodes = set(node for node, prob in curr_my_node_dict.iteritems() if prob >= threshold)
-            intersection_set = curr_gt_nodes.intersection(my_nodes)
-            retrieved += len(my_nodes)
-            relevant += len(curr_gt_nodes)
-            intersection += len(intersection_set)
-            """
-            if len(intersection_set) < len(curr_gt_nodes):
-                print curr_gt_nodes-intersection_set
-            """
+            for pbr in pos_cc_rules:
+                score = combined_model.get_score(pbr)
+                cc_scores.append(score)
+                if score >= threshold: cc_tp += 1
+                else: cc_fn += 1
 
-    if retrieved == 0:
-        precision = 1
-    else:
-        precision = float(intersection)/retrieved
-    recall = float(intersection)/relevant
-    # print missed_set
+            for nbr in neg_cc_rules:
+                score = combined_model.get_score(nbr)
+                cc_scores.append(1-score)
+                if score >= threshold: cc_fp += 1
+                else: cc_tn += 1
 
-    return precision, recall
+    #unary_acc = float(unary_correct)/(unary_correct+unary_wrong)
+    #core_acc = float(core_correct)/(core_correct+core_wrong)
+    # is_acc = float(is_correct)/(is_correct+is_wrong)
+    unary_p = float(unary_tp)/(unary_tp+unary_fp)
+    unary_r = float(unary_tp)/(unary_tp+unary_fn)
+    core_p = float(core_tp)/(core_tp+core_fp)
+    core_r = float(core_tp)/(core_tp+core_fn)
 
-
-def get_coverage(words, syntax_tree, tag_model, nodes):
-    all_indices = set()
-    for index, word in words.iteritems():
-        dist = tag_model.get_log_distribution(word)
-        if None not in dist or dist[None] < 0:
-            all_indices.add(index)
-
-    covered_indices = set()
-    for node in nodes:
-        tag_rules = node_to_tag_rules(words, syntax_tree, node)
-        current_covered_indices = set([tag_rule.index for tag_rule in tag_rules if tag_rule.index is not None])
-        covered_indices = covered_indices.union(current_covered_indices)
-    return float(len(covered_indices))/len(all_indices)
-
-
-def reweigh(words, syntax_tree, tags, node_dict):
-    new_dict = {}
-    for node, prob in node_dict.iteritems():
-        coverage = get_coverage(words, syntax_tree, tags, [node])
-        new_dict[node] = prob * coverage
-
-    if sum(new_dict.values()) == 0:
-        return new_dict
-
-    return normalize(new_dict)
-
-
-
-def get_node_sequence(words, syntax_tree, tags, nodes):
-    sequence = []
-
-
-
-def is_valid_node(node):
+    is_p = float(is_tp)/(is_tp+is_fp)
+    is_r = float(is_tp)/(is_tp+is_fn)
+    cc_p = float(cc_tp)/(cc_tp+cc_fp)
+    cc_r = float(cc_tp)/(cc_tp+cc_fn)
+    #cc_acc = float(cc_correct)/(cc_correct+cc_wrong)
     """
-    1. no constant is used twice
-    2.
-    :param node:
-    :return:
+    print min(unary_scores), np.mean(unary_scores), max(unary_scores), np.std(unary_scores)
+    print min(core_scores), np.mean(core_scores), max(core_scores), np.std(core_scores)
+    print min(is_scores), np.mean(is_scores), max(is_scores), np.std(is_scores)
+    print min(cc_scores), np.mean(cc_scores), max(cc_scores), np.std(cc_scores)
     """
+    return (unary_p, unary_r), (core_p, core_r), (is_p, is_r), (cc_p, cc_r)
 
 
+def split(questions, annotations, ratio):
+    keys = questions.keys()
+    bk = int(ratio*len(keys))
+    left_keys = keys[:bk]
+    right_keys = keys[bk:]
+    left_questions = {pk: questions[pk] for pk in left_keys}
+    right_questions = {pk: questions[pk] for pk in right_keys}
+    left_annotations = {pk: annotations[pk] for pk in left_keys}
+    right_annotations = {pk: annotations[pk] for pk in right_keys}
+
+    return (left_questions, left_annotations), (right_questions, right_annotations)
 
 
+def test_model():
+    query = 'test'
+    all_questions = geoserver_interface.download_questions(query)
+    all_annotations = geoserver_interface.download_semantics(query)
 
-
+    (te_q, te_a), (tr_q, tr_a) = split(all_questions, all_annotations, 0.5)
+    cm = train_model(tr_q, tr_a)
+    result = evaluate_model(cm, te_q, te_a, 0.7)
+    print result
 
 if __name__ == "__main__":
-    tag_model, unary_model, binary_model = get_models()
-    test_models(tag_model, unary_model, binary_model)
+    # test_validity()
+    # test_annotations_to_rules()
+    test_model()

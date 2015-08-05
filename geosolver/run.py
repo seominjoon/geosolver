@@ -13,10 +13,10 @@ from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
-from geosolver.text2.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
-from geosolver.text2.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
-from geosolver.text2.complete_text_formula_parse import complete_text_formula_parse
-from geosolver.text2.syntax_parser import SyntaxParse
+from geosolver.text.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
+from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
+from geosolver.text.complete_text_formula_parse import complete_text_formula_parse
+from geosolver.text.syntax_parser import SyntaxParse
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
 from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
