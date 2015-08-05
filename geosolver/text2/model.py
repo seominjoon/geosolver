@@ -1,8 +1,10 @@
 from collections import defaultdict, Counter
 import itertools
 from operator import __mul__
+from sklearn.ensemble import RandomForestClassifier
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype
 from geosolver.ontology.ontology_definitions import signatures
+from geosolver.text2.feature_function import UnaryFeatureFunction
 from geosolver.text2.rule import TagRule, UnaryRule, BinaryRule
 from geosolver.text2.semantic_tree import SemanticTreeNode
 from geosolver.utils.num import is_number
@@ -107,14 +109,12 @@ class UnaryModel(SemanticModel):
         return False
 
     def generate_unary_rules(self, tag_rules):
-        unary_rules = []
+        unary_rules = set()
         for parent_tag_rule, child_tag_rule in itertools.permutations(tag_rules, 2):
             if self.__class__.val_func(parent_tag_rule, child_tag_rule):
                 unary_rule = UnaryRule(parent_tag_rule, child_tag_rule)
-                unary_rules.append(unary_rule)
+                unary_rules.add(unary_rule)
         return unary_rules
-
-
 
 
 class BinaryModel(SemanticModel):
@@ -274,6 +274,38 @@ class RFUnaryModel(UnaryModel):
     def __init__(self):
         self.positive_unary_rules = []
         self.negative_unary_rules = []
+        self.feature_function = None
+        self.classifier = RandomForestClassifier()
 
-    def update(self, tag_rules, positive_unary_rules):
-        pass
+    @staticmethod
+    def val_func(p, c):
+        if p.signature.id in ('Is', 'CC'):
+            return False
+        return UnaryRule.val_func(p, c)
+
+    def update(self, positive_unary_rules, negative_unary_rules):
+        self.positive_unary_rules.extend(positive_unary_rules)
+        self.negative_unary_rules.extend(negative_unary_rules)
+
+    def fit(self):
+        print "positive examples:", len(self.positive_unary_rules)
+        print "negative examples:", len(self.negative_unary_rules)
+        self.feature_function = UnaryFeatureFunction(self.positive_unary_rules)
+        X = []
+        y = []
+        for pur in self.positive_unary_rules:
+            X.append(self.feature_function.map(pur))
+            y.append(1)
+        for nur in self.negative_unary_rules:
+            X.append(self.feature_function.map(nur))
+            y.append(0)
+        print "shape:", np.shape(X), np.shape(y)
+        self.classifier.fit(X, y)
+
+    def predict_proba(self, ur):
+        x = self.feature_function.map(ur)
+        probas = self.classifier.predict_proba([x])
+        return probas[0][1]
+
+
+
