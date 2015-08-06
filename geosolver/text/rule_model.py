@@ -46,6 +46,7 @@ class Model(object):
         return prs
 
 
+
 class TagModel(Model):
     pass
 
@@ -198,6 +199,28 @@ class CombinedModel(Model):
         cc_rules = self.cc_model.generate_binary_rules(tag_rules)
         out = set(itertools.chain(core_rules, is_rules, cc_rules))
         return out
+
+    def get_tree_prs(self, pos_trees, neg_trees, ths):
+        tps, fps, tns, fns = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
+
+        for pt in pos_trees:
+            score = self.get_tree_score(pt)
+            for th in ths:
+                if score >= th: tps[th] += 1
+                else: fns[th] += 1
+
+        for nt in neg_trees:
+            score = self.get_tree_score(nt)
+            for th in ths:
+                if score >= th: fps[th] += 1
+                else: tns[th] += 1
+
+        prs = {}
+        for th in ths:
+            p = float(tps[th])/(tps[th]+fps[th])
+            r = float(tps[th])/(tps[th]+fns[th])
+            prs[th] = p, r
+        return prs
 
 
 class NaiveUnaryModel(UnaryModel):

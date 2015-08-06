@@ -16,11 +16,13 @@ import matplotlib.pyplot as plt
 
 __author__ = 'minjoon'
 
+
 def questions_to_syntax_parses(questions):
     syntax_parses = {pk: {number: stanford_parser.get_best_syntax_parse(words)
                           for number, words in question.sentence_words.iteritems()}
                      for pk, question in questions.iteritems()}
     return syntax_parses
+
 
 def split_binary_rules(binary_rules):
     core_rules = set()
@@ -75,6 +77,7 @@ def train_rule_model(questions, annotations):
     cm = CombinedModel(tm, um, corem, ism, ccm)
     return cm
 
+
 def evaluate_rule_model(combined_model, questions, annotations, thresholds):
     syntax_parses = questions_to_syntax_parses(questions)
 
@@ -87,21 +90,29 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
     all_neg_is_rules = []
     all_neg_cc_rules = []
 
+    all_pos_semantic_trees = []
+    all_neg_semantic_trees = []
+
     for pk, local_syntax_parses in syntax_parses.iteritems():
         for number, syntax_parse in local_syntax_parses.iteritems():
-            semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
-                              for annotation in annotations[pk][number].values()]
-            positive_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
-            positive_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
-            positive_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
-            pos_core_rules, pos_is_rules, pos_cc_rules = split_binary_rules(positive_binary_rules)
+            pos_semantic_trees = set(annotation_to_semantic_tree(syntax_parse, annotation)
+                                     for annotation in annotations[pk][number].values())
 
-            negative_unary_rules = combined_model.generate_unary_rules(positive_tag_rules) - positive_unary_rules
-            neg_core_rules = combined_model.core_model.generate_binary_rules(positive_tag_rules) - pos_core_rules
-            neg_is_rules = combined_model.is_model.generate_binary_rules(positive_tag_rules) - pos_is_rules
-            neg_cc_rules = combined_model.cc_model.generate_binary_rules(positive_tag_rules) - pos_cc_rules
+            pos_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in pos_semantic_trees]))
+            pos_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in pos_semantic_trees]))
+            pos_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in pos_semantic_trees]))
+            unary_rules = combined_model.generate_unary_rules(pos_tag_rules)
+            binary_rules = combined_model.generate_binary_rules(pos_tag_rules)
+            core_rules = combined_model.core_model.generate_binary_rules(pos_tag_rules)
+            is_rules = combined_model.is_model.generate_binary_rules(pos_tag_rules)
+            cc_rules = combined_model.cc_model.generate_binary_rules(pos_tag_rules)
+            pos_core_rules, pos_is_rules, pos_cc_rules = split_binary_rules(pos_binary_rules)
+            negative_unary_rules = unary_rules - pos_unary_rules
+            neg_core_rules = core_rules - pos_core_rules
+            neg_is_rules = is_rules - pos_is_rules
+            neg_cc_rules = cc_rules - pos_cc_rules
 
-            all_pos_unary_rules.extend(positive_unary_rules)
+            all_pos_unary_rules.extend(pos_unary_rules)
             all_pos_core_rules.extend(pos_core_rules)
             all_pos_is_rules.extend(pos_is_rules)
             all_pos_cc_rules.extend(pos_cc_rules)
@@ -110,13 +121,19 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
             all_neg_is_rules.extend(neg_is_rules)
             all_neg_cc_rules.extend(neg_cc_rules)
 
+            semantic_forest = SemanticForest(pos_tag_rules, unary_rules, binary_rules)
+            semantic_trees = semantic_forest.get_semantic_trees_by_type("truth").union(semantic_forest.get_semantic_trees_by_type('is'))
+            neg_semantic_trees = semantic_trees - pos_semantic_trees
+            all_pos_semantic_trees.extend(pos_semantic_trees)
+            all_neg_semantic_trees.extend(neg_semantic_trees)
+
     unary_prs = combined_model.unary_model.get_prs(all_pos_unary_rules, all_neg_unary_rules, thresholds)
     core_prs = combined_model.core_model.get_prs(all_pos_core_rules, all_neg_core_rules, thresholds)
     is_prs = combined_model.is_model.get_prs(all_pos_is_rules, all_neg_is_rules, thresholds)
     cc_prs = combined_model.cc_model.get_prs(all_pos_cc_rules, all_neg_cc_rules, thresholds)
+    core_tree_prs = combined_model.get_tree_prs(all_pos_semantic_trees, all_neg_semantic_trees, thresholds)
 
-    return unary_prs, core_prs, is_prs, cc_prs
-
+    return unary_prs, core_prs, is_prs, cc_prs, core_tree_prs
 
 
 def split(questions, annotations, ratio):
@@ -132,15 +149,18 @@ def split(questions, annotations, ratio):
     return (left_questions, left_annotations), (right_questions, right_annotations)
 
 
-def test_model():
+def test_rule_model():
     query = 'test'
     all_questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
 
     (te_q, te_a), (tr_q, tr_a) = split(all_questions, all_annotations, 0.5)
     cm = train_rule_model(tr_q, tr_a)
-    unary_prs, core_prs, is_prs, cc_prs = evaluate_rule_model(cm, te_q, te_a, np.linspace(0,1,101))
+    unary_prs, core_prs, is_prs, cc_prs, core_tree_prs = evaluate_rule_model(cm, te_q, te_a, np.linspace(0,1,101))
 
+    plt.plot(core_tree_prs.keys(), core_tree_prs.values(), 'o')
+    plt.show()
+    """
     plt.plot(unary_prs.keys(), unary_prs.values(), 'o')
     plt.show()
     plt.plot(core_prs.keys(), core_prs.values(), 'o')
@@ -149,8 +169,9 @@ def test_model():
     plt.show()
     plt.plot(cc_prs.keys(), cc_prs.values(), 'o')
     plt.show()
+    """
 
 if __name__ == "__main__":
     # test_validity()
     # test_annotations_to_rules()
-    test_model()
+    test_rule_model()
