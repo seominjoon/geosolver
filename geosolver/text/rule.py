@@ -42,9 +42,6 @@ class TagRule(object):
     def __repr__(self):
         return "%s@%s[%s]" % (repr(self.signature), _span_to_string(self.span), self.string)
 
-    def __hash__(self):
-        return hash((self.span, self.signature))
-
 
 class SemanticRule(object):
     pass

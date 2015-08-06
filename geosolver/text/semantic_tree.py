@@ -51,6 +51,10 @@ class SemanticTreeNode(object):
         tag_rules = set(node.content for node in self)
         return tag_rules
 
+    def get_tag_rules_by_span(self, span):
+        tag_rules = set(tag_rule for tag_rule in self.get_tag_rules() if tag_rule.span == span)
+        return tag_rules
+
     def get_unary_rules(self):
         unary_rules = []
         for node in self:
