@@ -14,9 +14,9 @@ from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
-from geosolver.text.opt_model import TextGreedyOptModel
+from geosolver.text.opt_model import TextGreedyOptModel, GreedyOptModel
 from geosolver.text.rule_model import CombinedModel
-from geosolver.text.run_text import train_rule_model
+from geosolver.text.run_text import train_semantic_model, questions_to_syntax_parses, train_tag_model
 from geosolver.text.semantic_trees_to_text_formula_parse import semantic_trees_to_text_formula_parse
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text.complete_text_formula_parse import complete_text_formula_parse
@@ -131,7 +131,7 @@ def _annotated_unit_test(query):
     result = SimpleResult(query, False, attempted, correct)
     return result
 
-def full_unit_test(combined_model, question, label_data):
+def full_unit_test(opt_model, question, label_data):
     """
     Attempts to solve the question with id=id_.
     If the answer is correct, return 'c'
@@ -145,7 +145,7 @@ def full_unit_test(combined_model, question, label_data):
     #oldstdout = sys.stdout
     #sys.stdout = myout
     try:
-        result = _full_unit_test(combined_model, question, label_data)
+        result = _full_unit_test(opt_model, question, label_data)
     except Exception, e:
         logging.error(question.key)
         logging.exception(e)
@@ -157,8 +157,8 @@ def full_unit_test(combined_model, question, label_data):
 
     # graph_parse.core_parse.display_points()
 
-def _full_unit_test(combined_model, question, label_data):
-    assert isinstance(combined_model, CombinedModel)
+def _full_unit_test(opt_model, question, label_data):
+    assert isinstance(opt_model, GreedyOptModel)
 
     choice_formulas = get_choice_formulas(question)
     diagram = open_image(question.diagram_path)
@@ -178,9 +178,12 @@ def _full_unit_test(combined_model, question, label_data):
                          for key, expression in question.sentence_expressions[number].iteritems()}
         truth_expr_formulas, value_expr_formulas = _separate_expr_formulas(expr_formulas)
 
-        semantic_forest = combined_model.get_semantic_forest(syntax_parse)
+        semantic_forest = opt_model.combined_model.get_semantic_forest(syntax_parse)
         all_semantic_trees = semantic_forest.get_semantic_trees_by_type("truth").union(semantic_forest.get_semantic_trees_by_type("is"))
-        semantic_trees = set(t for t in all_semantic_trees if combined_model.get_tree_score(t) > 0.5)
+        bool_semantic_trees = opt_model.optimize(all_semantic_trees, 0)
+        cc_trees = set(t for t in semantic_forest.get_semantic_trees_by_type('cc')
+                       if opt_model.combined_model.get_tree_score(t) > 0.3)
+        semantic_trees = bool_semantic_trees.union(cc_trees)
 
         text_formula_parse = semantic_trees_to_text_formula_parse(semantic_trees)
         completed_formulas = complete_text_formula_parse(text_formula_parse)
@@ -300,7 +303,7 @@ def full_test():
     ids4 = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1144, 1148]
     ids5 = [997, 1046, 1053]
     ids = ids1 + ids2 + ids3 + ids4 + ids5
-    #ids = [973, 963]
+    # ids = [973, 963]
     correct = 0
     attempted = 0
     total = len(ids)
@@ -308,19 +311,21 @@ def full_test():
     start = time.time()
 
     all_questions = geoserver_interface.download_questions(*ids)
+    all_syntax_parses = questions_to_syntax_parses(all_questions)
     all_annotations = geoserver_interface.download_semantics()
     all_labels = geoserver_interface.download_labels()
 
-    (te_q, te_a, te_l), (tr_q, tr_a, trl_l) = split([all_questions, all_annotations, all_labels], 0.7)
-    cm = train_rule_model(all_questions, all_annotations)
-    # om = TextGreedyOptModel(cm)
+    (te_s, te_a, te_l), (tr_s, tr_a, trl_l) = split([all_syntax_parses, all_annotations, all_labels], 0.7)
+    tm = train_tag_model(all_syntax_parses, all_annotations)
+    cm = train_semantic_model(tm, all_syntax_parses, all_annotations)
+    om = TextGreedyOptModel(cm)
 
     for idx, (id_, question) in enumerate(all_questions.iteritems()):
         label = all_labels[id_]
         id_ = str(id_)
         print "-"*80
         print "id: %s" % id_
-        result = full_unit_test(cm, question, label)
+        result = full_unit_test(om, question, label)
         print result.message
         print result
         if result.error:
@@ -330,7 +335,7 @@ def full_test():
         if result.correct:
             correct += 1
         print "-"*80
-        print "%d/%d complete" % (idx+1, len(te_q))
+        print "%d/%d complete" % (idx+1, len(te_s))
     end = time.time()
     print "-"*80
     print "duration:\t%.1f" % (end - start)

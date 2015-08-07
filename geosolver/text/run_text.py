@@ -37,9 +37,7 @@ def split_binary_rules(binary_rules):
             core_rules.add(br)
     return core_rules, is_rules, cc_rules
 
-
-def train_rule_model(questions, annotations):
-    syntax_parses = questions_to_syntax_parses(questions)
+def train_tag_model(syntax_parses, annotations):
     tm = NaiveTagModel()
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
@@ -49,7 +47,9 @@ def train_rule_model(questions, annotations):
             assert isinstance(syntax_parse, SyntaxParse)
             local_tag_rules = set(itertools.chain(*[semantic_tree.get_tag_rules() for semantic_tree in semantic_trees]))
             tm.update(local_tag_rules)
+    return tm
 
+def train_semantic_model(tm, syntax_parses, annotations):
     um = RFUnaryModel()
     corem = RFCoreModel()
     ism = RFIsModel()
@@ -85,9 +85,7 @@ def train_rule_model(questions, annotations):
     return cm
 
 
-def evaluate_rule_model(combined_model, questions, annotations, thresholds):
-    syntax_parses = questions_to_syntax_parses(questions)
-
+def evaluate_rule_model(combined_model, syntax_parses, annotations, thresholds):
     all_pos_unary_rules = []
     all_pos_core_rules = []
     all_pos_is_rules = []
@@ -97,8 +95,8 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
     all_neg_is_rules = []
     all_neg_cc_rules = []
 
-    all_pos_semantic_trees = []
-    all_neg_semantic_trees = []
+    all_pos_bool_semantic_trees = []
+    all_neg_bool_semantic_trees = []
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
         print "\n\n\n"
@@ -140,16 +138,18 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
             all_neg_is_rules.extend(neg_is_rules)
             all_neg_cc_rules.extend(neg_cc_rules)
 
-            semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
-            semantic_trees = semantic_forest.get_semantic_trees_by_type("truth").union(semantic_forest.get_semantic_trees_by_type('is'))
-            neg_semantic_trees = semantic_trees - pos_semantic_trees
-            all_pos_semantic_trees.extend(pos_semantic_trees)
-            all_neg_semantic_trees.extend(neg_semantic_trees)
+            pos_bool_semantic_trees = set(t for t in pos_semantic_trees if t.content.signature.id != 'CC')
 
-            for pst in pos_semantic_trees:
+            semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
+            bool_semantic_trees = semantic_forest.get_semantic_trees_by_type("truth").union(semantic_forest.get_semantic_trees_by_type('is'))
+            neg_bool_semantic_trees = bool_semantic_trees - pos_bool_semantic_trees
+            all_pos_bool_semantic_trees.extend(pos_bool_semantic_trees)
+            all_neg_bool_semantic_trees.extend(neg_bool_semantic_trees)
+
+            for pst in pos_bool_semantic_trees:
                 print "pos:", combined_model.get_tree_score(pst), pst
             print ""
-            for nst in neg_semantic_trees:
+            for nst in neg_bool_semantic_trees:
                 score = combined_model.get_tree_score(nst)
                 if score > 0:
                     print "neg:", combined_model.get_tree_score(nst), nst
@@ -158,14 +158,13 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
     core_prs = combined_model.core_model.get_prs(all_pos_core_rules, all_neg_core_rules, thresholds)
     is_prs = combined_model.is_model.get_prs(all_pos_is_rules, all_neg_is_rules, thresholds)
     cc_prs = combined_model.cc_model.get_prs(all_pos_cc_rules, all_neg_cc_rules, thresholds)
-    core_tree_prs = combined_model.get_tree_prs(all_pos_semantic_trees, all_neg_semantic_trees, thresholds)
+    core_tree_prs = combined_model.get_tree_prs(all_pos_bool_semantic_trees, all_neg_bool_semantic_trees, thresholds)
 
     return unary_prs, core_prs, is_prs, cc_prs, core_tree_prs
 
 
-def evaluate_opt_model(opt_model, questions, annotations, thresholds):
+def evaluate_opt_model(opt_model, syntax_parses, annotations, thresholds):
     assert isinstance(opt_model, GreedyOptModel)
-    syntax_parses = questions_to_syntax_parses(questions)
 
     combined_model = opt_model.combined_model
 
@@ -175,9 +174,11 @@ def evaluate_opt_model(opt_model, questions, annotations, thresholds):
         print "="*80
         for number, syntax_parse in local_syntax_parses.iteritems():
             print pk, number
-            print "-"*80
             pos_semantic_trees = set(annotation_to_semantic_tree(syntax_parse, annotation)
                                      for annotation in annotations[pk][number].values())
+
+            pos_semantic_trees = set(t for t in pos_semantic_trees if t.content.signature != 'CC')
+
             tag_rules = combined_model.generate_tag_rules(syntax_parse)
             unary_rules = combined_model.generate_unary_rules(tag_rules)
             binary_rules = combined_model.generate_binary_rules(tag_rules)
@@ -186,6 +187,16 @@ def evaluate_opt_model(opt_model, questions, annotations, thresholds):
             semantic_trees = semantic_forest.get_semantic_trees_by_type("truth").union(semantic_forest.get_semantic_trees_by_type('is'))
             semantic_trees = set(t for t in semantic_trees if combined_model.get_tree_score(t) > 0.01)
             neg_semantic_trees = semantic_trees - pos_semantic_trees
+
+            for pst in pos_semantic_trees:
+                print "pos:", combined_model.get_tree_score(pst), pst
+            for nst in neg_semantic_trees:
+                score = combined_model.get_tree_score(nst)
+                if score > 0:
+                    print "neg:", score, nst
+
+            print ""
+
 
             for th in thresholds:
                 selected_trees = opt_model.optimize(semantic_trees, th)
@@ -197,6 +208,7 @@ def evaluate_opt_model(opt_model, questions, annotations, thresholds):
                 fps[th] += fp
                 tns[th] += tn
                 fns[th] += fn
+            print "-"*80
 
     prs = {}
 
@@ -211,11 +223,13 @@ def evaluate_opt_model(opt_model, questions, annotations, thresholds):
 def test_rule_model():
     query = 'test'
     all_questions = geoserver_interface.download_questions(query)
+    all_syntax_parses = questions_to_syntax_parses(all_questions)
     all_annotations = geoserver_interface.download_semantics(query)
+    (te_s, te_a), (tr_s, tr_a) = split((all_syntax_parses, all_annotations), 0.5)
 
-    (te_q, te_a), (tr_q, tr_a) = split((all_questions, all_annotations), 0.5)
-    cm = train_rule_model(tr_q, tr_a)
-    unary_prs, core_prs, is_prs, cc_prs, core_tree_prs = evaluate_rule_model(cm, te_q, te_a, np.linspace(0,1,101))
+    tm = train_tag_model(all_syntax_parses, all_annotations)
+    cm = train_semantic_model(tm, tr_s, tr_a)
+    unary_prs, core_prs, is_prs, cc_prs, core_tree_prs = evaluate_rule_model(cm, te_s, te_a, np.linspace(0,1,101))
 
     plt.plot(core_tree_prs.keys(), core_tree_prs.values(), 'o')
     plt.show()
@@ -231,12 +245,14 @@ def test_rule_model():
 def test_opt_model():
     query = 'test'
     all_questions = geoserver_interface.download_questions(query)
+    all_syntax_parses = questions_to_syntax_parses(all_questions)
     all_annotations = geoserver_interface.download_semantics(query)
 
-    (te_q, te_a), (tr_q, tr_a) = split([all_questions, all_annotations], 0.5)
-    cm = train_rule_model(tr_q, tr_a)
+    (te_s, te_a), (tr_s, tr_a) = split([all_syntax_parses, all_annotations], 0.5)
+    tm = train_tag_model(all_syntax_parses, all_annotations)
+    cm = train_semantic_model(tm, tr_s, tr_a)
     om = TextGreedyOptModel(cm)
-    prs = evaluate_opt_model(om, te_q, te_a, [0])
+    prs = evaluate_opt_model(om, te_s, te_a, [0])
     ps, rs = zip(*prs.values())
     plt.plot(prs.keys(), ps, 'o', label='precision')
     plt.plot(prs.keys(), rs, 'o', label='recall')
