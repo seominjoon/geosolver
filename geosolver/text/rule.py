@@ -1,4 +1,4 @@
-from geosolver.ontology.ontology_definitions import issubtype, Signature
+from geosolver.ontology.ontology_definitions import issubtype, Signature, VariableSignature
 from geosolver.text.syntax_parser import SyntaxParse
 
 __author__ = 'minjoon'
@@ -76,6 +76,13 @@ class UnaryRule(SemanticRule):
             c2 = issubtype(parent_tag_rule.signature.arg_types[1], 'entity')
             return c1 and c2
         raise Exception()
+
+    def is_self_ref(self):
+        """
+        self ref: ex. IsSquare@@1(quad@1)
+        :return:
+        """
+        return self.parent_tag_rule.span == self.child_tag_rule.span and isinstance(self.child_tag_rule.signature, VariableSignature)
 
 
 

@@ -21,7 +21,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
     query_formula = None
     for formula in given_formulas:
         assert isinstance(formula, FormulaNode)
-        if formula.has_signature("What") or formula.has_signature("WhichOf") or formula.has_signature("Find"):
+        if formula.has_signature("What") or formula.has_signature("Which") or formula.has_signature("Find"):
             if query_formula is not None:
                 logging.warning("More than one query formula.")
             query_formula = formula
@@ -69,21 +69,21 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
         # display_entities(ns)
 
 
-    elif query_formula.has_signature("WhichOf"):
+    elif query_formula.has_signature("Which"):
         ns = NumericSolver(true_formulas)
         ns.solve()
         for key, choice_formula in choice_formulas.iteritems():
             # print query_formula.children[1], ns.evaluate(query_formula.children[1])
             # print choice_formula, ns.evaluate(choice_formula)
-            tester = lambda node: node.signature.id == "WhichOf"
+            tester = lambda node: node.signature.id == "Which"
             getter = lambda node: choice_formula
             replaced_formula = query_formula.replace_node(tester, getter)
             # print replaced_formula
             out[key] = ns.evaluate(replaced_formula)
 
     # this won't be executed!
-    elif query_formula.has_signature("WhichOf"):
-        tester = lambda node: isinstance(node, FormulaNode) and node.signature.id == "WhichOf"
+    elif query_formula.has_signature("Which"):
+        tester = lambda node: isinstance(node, FormulaNode) and node.signature.id == "Which"
         for choice, choice_formula in choice_formulas.iteritems():
             getter = lambda node: choice_formula
             replaced_formula = query_formula.replace_node(tester, getter)

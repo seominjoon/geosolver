@@ -1,58 +1,76 @@
 import numpy as np
+from geosolver.text.rule import UnaryRule
+from geosolver.text.rule_model import CombinedModel
+from geosolver.text.semantic_tree import SemanticTreeNode
 
 __author__ = 'minjoon'
 
-class OptModel(object):
-    @staticmethod
-    def objective_function(semantic_trees):
+class GreedyOptModel(object):
+    def __init__(self, combined_model):
+        assert isinstance(combined_model, CombinedModel)
+        self.combined_model = combined_model
+
+    def objective_function(self, semantic_trees):
         return 0.0
 
+    def optimize(self, semantic_trees, threshold):
+        return set()
 
-class TextGreedyOptModel(OptModel):
-    def __init__(self, tag_rules):
-        self.tag_rules = tag_rules
-
-    def optimize(self, semantic_trees):
+class TextGreedyOptModel(GreedyOptModel):
+    def optimize(self, semantic_trees, threshold):
         selected = set()
         remaining = set(semantic_trees)
-        next = TextGreedyOptModel.get_next(selected, remaining)
-        curr_score = TextGreedyOptModel.objective_function(selected)
-        next_score = TextGreedyOptModel.objective_function(selected.union([next]))
-        while next_score - curr_score > 0:
+
+        curr_score = self.objective_function(selected)
+        next_tree, next_score = self.get_next_tree(selected, remaining)
+        while next_tree is not None and next_score - curr_score > threshold:
             curr_score = next_score
-            selected.add(next)
-            remaining.discard(next)
-            next = TextGreedyOptModel.get_next(selected, remaining)
-            next_score = TextGreedyOptModel.objective_function(selected.union([next]))
+            selected.add(next_tree)
+            remaining.discard(next_tree)
+            next_tree, next_score = self.get_next_tree(selected, remaining)
+            if next_tree is None:
+                break
+            next_score = self.objective_function(selected.union([next_tree]))
+            if len(selected) > 30:
+                raise Exception()
         return selected
 
-    @staticmethod
-    def objective_function(semantic_trees):
+    def objective_function(self, semantic_trees):
         if len(semantic_trees) == 0:
             return 0.0
+        sum_log = sum(np.log(self.combined_model.get_tree_score(tree)) for tree in semantic_trees)
+        cov = len(set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules()))
+        return cov + sum_log
 
     @staticmethod
-    def pairwise_redundancy(tree_a, tree_b):
+    def pairwise_legal(a_tree, b_tree):
         """
         First, return 0 if one of them is self-referencing unary tree
         Do not penalize leaf redundancies
         Penalize everything else
 
-        :param tree_a:
-        :param tree_b:
+        :param a_tree:
+        :param b_tree:
         :return:
         """
-        a_spans = set(node.content.span for node in tree_a)
-        b_spans = set(node.content.span for node in tree_b)
+        assert isinstance(a_tree, SemanticTreeNode)
+        assert isinstance(b_tree, SemanticTreeNode)
+        a_spans = set(node.content.span for node in a_tree)
+        b_spans = set(node.content.span for node in b_tree)
         common_spans = a_spans.intersection(b_spans)
-        r = 0
         for span in common_spans:
-            pass
+            a_tags = a_tree.get_tag_rules_by_span(span)
+            b_tags = b_tree.get_tag_rules_by_span(span)
+            if a_tags != b_tags:
+                return False
+        return True
 
 
-    @staticmethod
-    def get_next(selected, remaining):
-        d = {each: TextGreedyOptModel.objective_function(selected.union([each])) for each in remaining}
-        argmax = max(d.iteritems(), key=lambda pair: pair[1])[0]
-        return argmax
+    def get_next_tree(self, selected, remaining):
+        d = {each: self.objective_function(selected.union([each])) for each in remaining
+             if all(TextGreedyOptModel.pairwise_legal(each, each_selected) for each_selected in selected)}
+        if len(d) == 0:
+            return None, None
+        pair = max(d.iteritems(), key=lambda pair: pair[1])
+        return pair
 

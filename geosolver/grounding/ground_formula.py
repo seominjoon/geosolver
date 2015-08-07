@@ -217,6 +217,10 @@ def _ground_leaf(match_parse, leaf, references={}):
         circles = get_all_instances(graph_parse, 'circle', True)
         polygons = get_all_instances(graph_parse, 'polygon', True)
         return SetNode(polygons.values() + circles.values())
+    elif return_type == 'oned':
+        lines = get_all_instances(graph_parse, 'line', True)
+        arcs = get_all_instances(graph_parse, 'arc', True)
+        return SetNode(lines.values() + arcs.values())
 
     print variable_signature.name in match_parse.match_dict
     print leaf.signature.id, leaf.signature.name, leaf.return_type

@@ -92,8 +92,12 @@ def Hexagon(a, b, c, d, e, f):
 def Polygon(*p):
     return instantiators['polygon'](*p)
 
-def LengthOf(line):
-    return line_length(line)
+def LengthOf(twod):
+    if isinstance(twod, instantiators['line']):
+        return line_length(twod)
+    elif isinstance(twod, instantiators['arc']):
+        circle, a, b = twod
+        return circle.radius*(b-a)
 
 def SquaredLengthOf(line):
     return distance_between_points_squared(*line)

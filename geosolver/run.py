@@ -16,7 +16,7 @@ from geosolver.solver.solve import solve
 from geosolver.text.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text.complete_text_formula_parse import complete_text_formula_parse
-from geosolver.text.syntax_parser import SyntaxParse
+from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
 from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
@@ -83,7 +83,7 @@ def _annotated_unit_test(query):
     diagram_formulas = parse_confident_formulas(graph_parse)
     all_formulas = match_formulas + diagram_formulas
     for number, sentence_words in question.sentence_words.iteritems():
-        syntax_parse = SyntaxParse(sentence_words, None)
+        syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
         annotation_nodes = [annotation_to_semantic_tree(syntax_parse, annotation)
                             for annotation in all_annotations[pk][number].values()]
         expr_formulas = {key: prefix_to_formula(expression_parser.parse_prefix(expression))
@@ -166,12 +166,13 @@ def get_choice_formulas(question):
 
 
 def annotated_test():
-    ids = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
-    ids = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
-    ids = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
-    # ids = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1144, 1148]
-    #ids = [997, 1046, 1053]
-    # ids = [1148]
+    ids1 = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
+    ids2 = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
+    ids3 = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
+    ids4 = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1144, 1148]
+    ids5 = [997, 1046, 1053]
+    ids = ids1 + ids2 + ids3 + ids4 + ids5
+    #ids = [973]
     correct = 0
     attempted = 0
     total = len(ids)

@@ -1,7 +1,9 @@
 from collections import defaultdict, Counter
 import itertools
 from operator import __mul__
+from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype
 from geosolver.ontology.ontology_definitions import signatures
 from geosolver.text.feature_function import UnaryFeatureFunction, BinaryFeatureFunction
@@ -40,15 +42,16 @@ class Model(object):
 
         prs = {}
         for th in ths:
-            p = float(tps[th])/(tps[th]+fps[th])
-            r = float(tps[th])/(tps[th]+fns[th])
+            p = float(tps[th])/(max(1,tps[th])+fps[th])
+            r = float(tps[th])/(max(1,tps[th])+fns[th])
             prs[th] = p, r
         return prs
 
 
 
 class TagModel(Model):
-    pass
+    def generate_tag_rules(self, syntax_parse):
+        return set()
 
 class NaiveTagModel(TagModel):
     """
@@ -200,6 +203,9 @@ class CombinedModel(Model):
         out = set(itertools.chain(core_rules, is_rules, cc_rules))
         return out
 
+    def generate_tag_rules(self, syntax_parse):
+        return self.tag_model.generate_tag_rules(syntax_parse)
+
     def get_tree_prs(self, pos_trees, neg_trees, ths):
         tps, fps, tns, fns = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
 
@@ -326,7 +332,7 @@ class RFUnaryModel(UnaryModel):
         self.positive_unary_rules = []
         self.negative_unary_rules = []
         self.feature_function = None
-        self.classifier = RandomForestClassifier()
+        self.classifier = None
 
     @staticmethod
     def val_func(p, c):
@@ -355,6 +361,9 @@ class RFUnaryModel(UnaryModel):
             y.append(0)
 
         print "length of feature vector:", np.shape(X)[1]
+
+        cw = {0: len(self.positive_unary_rules), 1: len(self.negative_unary_rules)}
+        self.classifier = RandomForestClassifier(class_weight=cw) # RandomForestClassifier()
         self.classifier.fit(X, y)
 
     def get_score(self, ur):
@@ -368,7 +377,7 @@ class RFCoreModel(BinaryModel):
         self.positive_binary_rules = []
         self.negative_binary_rules = []
         self.feature_function = None
-        self.classifier = RandomForestClassifier()
+        self.classifier = None
 
     @staticmethod
     def val_func(p, a, b):
@@ -397,6 +406,9 @@ class RFCoreModel(BinaryModel):
             y.append(0)
 
         print "length of feature vector:", np.shape(X)[1]
+
+        cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
+        self.classifier = RandomForestClassifier(class_weight=cw)# RandomForestClassifier()
         self.classifier.fit(X, y)
 
     def get_score(self, br):
