@@ -34,6 +34,12 @@ class SemanticTreeNode(object):
                 queue.appendleft(child)
             yield current
 
+    def __len__(self):
+        l = 1
+        for child in self.children:
+            l += child.__len__()
+        return l
+
     def is_leaf(self):
         return len(self.children) == 0
 

@@ -11,6 +11,22 @@ def _span_to_string(span):
     else:
         return "%d:%d" % (span[0], span[1]-1)
 
+class SpanRule(object):
+    pass
+
+class BinarySpanRule(SpanRule):
+    def __init__(self, parent_span, child_a_span, child_b_span):
+        self.parent_span = parent_span
+        self.child_a_span = child_a_span
+        self.child_b_span = child_b_span
+
+    def __eq__(self, other):
+        return self.parent_span == other.parent_span and \
+               self.child_a_span == other.child_a_span and self.child_b_span == other.child_b_span
+
+    def __hash__(self):
+        return hash((self.parent_span, self.child_a_span, self.child_b_span))
+
 class TagRule(object):
     def __init__(self, syntax_parse, span, signature):
         assert isinstance(syntax_parse, SyntaxParse)
@@ -108,6 +124,9 @@ class BinaryRule(SemanticRule):
             return a and b
         else:
             return False
+
+    def to_span_rule(self):
+        return BinarySpanRule(self.parent_tag_rule.span, self.child_a_tag_rule.span, self.child_b_tag_rule.span)
 
     def __repr__(self):
         return "%r->%r|%r" % (self.parent_tag_rule, self.child_a_tag_rule, self.child_b_tag_rule)

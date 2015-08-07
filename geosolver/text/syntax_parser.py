@@ -16,16 +16,19 @@ class SyntaxParse(object):
     def get_words(self, span):
         return tuple(self.words[idx] for idx in range(*span))
 
-    def get_tag_by_index(self, index):
+    def get_word(self, index):
+        return self.words[index]
+
+    def get_pos_by_index(self, index):
         tag = self.undirected.node[index]['tag']
         return tag
 
-    def get_tag_by_span(self, span):
+    def get_pos_by_span(self, span):
         """
         If the span is > 2 words, then obatin the tag of the latter word (higher plain index).
         Usually the compound is the former.
         """
-        return self.get_tag_by_index(span[-1]-1)
+        return self.get_pos_by_index(span[-1]-1)
 
     def iterate_spans(self, maxlen=2):
         for start in range(len(self.words)):
@@ -84,6 +87,17 @@ class SyntaxParse(object):
             label = graph[i0][i1]['label']
             return label
         return None
+
+    def get_neighbors(self, span, directed=False):
+        graph = self.undirected
+        if directed: graph = self.directed
+
+        nbrs = {}
+        for from_ in range(*span):
+            for to in graph[from_]:
+                nbrs[to] = graph[from_][to]['label']
+        return nbrs
+
 
 class SyntaxParser(object):
     def get_syntax_parses(self, words, k, unique=True):

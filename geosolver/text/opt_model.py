@@ -24,6 +24,7 @@ class TextGreedyOptModel(GreedyOptModel):
         curr_score = self.objective_function(selected)
         next_tree, next_score = self.get_next_tree(selected, remaining)
         while next_tree is not None and next_score - curr_score > threshold:
+            print "%.3f, %r" % (next_score, next_tree)
             curr_score = next_score
             selected.add(next_tree)
             remaining.discard(next_tree)

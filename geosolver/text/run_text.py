@@ -118,10 +118,18 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
             is_rules = combined_model.is_model.generate_binary_rules(tag_rules)
             cc_rules = combined_model.cc_model.generate_binary_rules(tag_rules)
             pos_core_rules, pos_is_rules, pos_cc_rules = split_binary_rules(pos_binary_rules)
+            span_pos_cc_rules = set(r.to_span_rule() for r in pos_cc_rules)
             negative_unary_rules = unary_rules - pos_unary_rules
             neg_core_rules = core_rules - pos_core_rules
             neg_is_rules = is_rules - pos_is_rules
-            neg_cc_rules = cc_rules - pos_cc_rules
+            # neg_cc_rules = cc_rules - pos_cc_rules
+            neg_cc_rules = set()
+            pos_cc_rules = set()
+            for r in cc_rules:
+                if r.to_span_rule() in span_pos_cc_rules:
+                    pos_cc_rules.add(r)
+                else:
+                    neg_cc_rules.add(r)
 
             all_pos_unary_rules.extend(pos_unary_rules)
             all_pos_core_rules.extend(pos_core_rules)
@@ -142,7 +150,9 @@ def evaluate_rule_model(combined_model, questions, annotations, thresholds):
                 print "pos:", combined_model.get_tree_score(pst), pst
             print ""
             for nst in neg_semantic_trees:
-                print "neg:", combined_model.get_tree_score(nst), nst
+                score = combined_model.get_tree_score(nst)
+                if score > 0:
+                    print "neg:", combined_model.get_tree_score(nst), nst
 
     unary_prs = combined_model.unary_model.get_prs(all_pos_unary_rules, all_neg_unary_rules, thresholds)
     core_prs = combined_model.core_model.get_prs(all_pos_core_rules, all_neg_core_rules, thresholds)
@@ -162,8 +172,10 @@ def evaluate_opt_model(opt_model, questions, annotations, thresholds):
     tps, fps, tns, fns = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
-        print pk
+        print "="*80
         for number, syntax_parse in local_syntax_parses.iteritems():
+            print pk, number
+            print "-"*80
             pos_semantic_trees = set(annotation_to_semantic_tree(syntax_parse, annotation)
                                      for annotation in annotations[pk][number].values())
             tag_rules = combined_model.generate_tag_rules(syntax_parse)
@@ -201,7 +213,7 @@ def test_rule_model():
     all_questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
 
-    (te_q, te_a), (tr_q, tr_a) = split(all_questions, all_annotations, 0.5)
+    (te_q, te_a), (tr_q, tr_a) = split((all_questions, all_annotations), 0.5)
     cm = train_rule_model(tr_q, tr_a)
     unary_prs, core_prs, is_prs, cc_prs, core_tree_prs = evaluate_rule_model(cm, te_q, te_a, np.linspace(0,1,101))
 
@@ -224,7 +236,7 @@ def test_opt_model():
     (te_q, te_a), (tr_q, tr_a) = split([all_questions, all_annotations], 0.5)
     cm = train_rule_model(tr_q, tr_a)
     om = TextGreedyOptModel(cm)
-    prs = evaluate_opt_model(om, te_q, te_a, np.linspace(-2,2,21))
+    prs = evaluate_opt_model(om, te_q, te_a, [0])
     ps, rs = zip(*prs.values())
     plt.plot(prs.keys(), ps, 'o', label='precision')
     plt.plot(prs.keys(), rs, 'o', label='recall')
@@ -233,5 +245,5 @@ def test_opt_model():
 
 
 if __name__ == "__main__":
-    # test_rule_model()
-    test_opt_model()
+    test_rule_model()
+    # test_opt_model()

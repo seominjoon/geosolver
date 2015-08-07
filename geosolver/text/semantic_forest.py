@@ -80,6 +80,7 @@ class SemanticForest(object):
         return semantic_trees
 
     def get_semantic_trees_by_type(self, return_type, terminator=None):
-        roots = [node for node in self.node_dict.values() if issubtype(node.tag_rule.signature.return_type, return_type)]
+        roots = [node for node in self.node_dict.values() if issubtype(node.tag_rule.signature.return_type, return_type)
+                 and node.tag_rule.signature.return_type != 'ground']
         semantic_trees = set(itertools.chain(*[self.get_semantic_trees_by_node(root, terminator) for root in roots]))
         return semantic_trees

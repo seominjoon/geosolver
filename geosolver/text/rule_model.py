@@ -394,6 +394,8 @@ class RFCoreModel(BinaryModel):
         self.negative_binary_rules = []
         self.feature_function = None
         self.classifier = None
+        self.feature_function_class = BinaryFeatureFunction
+        self.classifier_class = RandomForestClassifier
 
     @staticmethod
     def val_func(p, a, b):
@@ -411,7 +413,7 @@ class RFCoreModel(BinaryModel):
         print "Fitting %s:" % self.__class__.__name__
         print "# of positive examples:", len(self.positive_binary_rules)
         print "# of negative examples:", len(self.negative_binary_rules)
-        self.feature_function = BinaryFeatureFunction(self.positive_binary_rules + self.negative_binary_rules)
+        self.feature_function = self.feature_function_class(self.positive_binary_rules + self.negative_binary_rules)
         X = []
         y = []
         for pbr in self.positive_binary_rules:
@@ -424,7 +426,7 @@ class RFCoreModel(BinaryModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
-        self.classifier = RandomForestClassifier(class_weight=cw)# RandomForestClassifier()
+        self.classifier = self.classifier_class(class_weight='auto')
         self.classifier.fit(X, y)
 
     def get_score(self, br):
@@ -455,3 +457,12 @@ class RFCCModel(RFCoreModel):
         if b.signature.valence > 0:
             return False
         return BinaryRule.val_func(p, a, b)
+
+    def update(self, tag_rules, positive_binary_rules):
+        all_binary_rules = self.generate_binary_rules(tag_rules)
+        positive_span_rules = set(r.to_span_rule() for r in positive_binary_rules)
+        for binary_rule in all_binary_rules:
+            if binary_rule.to_span_rule() in positive_span_rules:
+                self.positive_binary_rules.append(binary_rule)
+            else:
+                self.negative_binary_rules.append(binary_rule)
