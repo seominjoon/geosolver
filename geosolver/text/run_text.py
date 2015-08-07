@@ -1,20 +1,17 @@
 from collections import defaultdict
 import itertools
-import os
-from pprint import pprint
-import sys
+
+import numpy as np
+import matplotlib.pyplot as plt
+
 from geosolver import geoserver_interface
-from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
-from geosolver.text.feature_function import UnaryFeatureFunction
+from geosolver.database.utils import split
+from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree
 from geosolver.text.opt_model import GreedyOptModel, TextGreedyOptModel
-from geosolver.text.rule_model import NaiveTagModel, UnaryModel, NaiveUnaryModel, NaiveBinaryModel, CombinedModel, \
-    BinaryModel, NaiveCoreModel, NaiveIsModel, NaiveCCModel, RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel
-from geosolver.text.rule import UnaryRule, BinaryRule
+from geosolver.text.rule_model import NaiveTagModel, CombinedModel, \
+    RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel
 from geosolver.text.semantic_forest import SemanticForest
 from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
-import numpy as np
-from geosolver.utils.analysis import draw_pr
-import matplotlib.pyplot as plt
 
 __author__ = 'minjoon'
 
@@ -198,19 +195,6 @@ def evaluate_opt_model(opt_model, questions, annotations, thresholds):
 
     return prs
 
-def split(questions, annotations, mid, end=1):
-    keys = questions.keys()
-    bk = int(mid*len(keys))
-    ep = int(end*len(keys))
-    left_keys = keys[:bk]
-    right_keys = keys[bk:ep]
-    left_questions = {pk: questions[pk] for pk in left_keys}
-    right_questions = {pk: questions[pk] for pk in right_keys}
-    left_annotations = {pk: annotations[pk] for pk in left_keys}
-    right_annotations = {pk: annotations[pk] for pk in right_keys}
-
-    return (left_questions, left_annotations), (right_questions, right_annotations)
-
 
 def test_rule_model():
     query = 'test'
@@ -237,7 +221,7 @@ def test_opt_model():
     all_questions = geoserver_interface.download_questions(query)
     all_annotations = geoserver_interface.download_semantics(query)
 
-    (te_q, te_a), (tr_q, tr_a) = split(all_questions, all_annotations, 0.5)
+    (te_q, te_a), (tr_q, tr_a) = split([all_questions, all_annotations], 0.5)
     cm = train_rule_model(tr_q, tr_a)
     om = TextGreedyOptModel(cm)
     prs = evaluate_opt_model(om, te_q, te_a, np.linspace(-2,2,21))

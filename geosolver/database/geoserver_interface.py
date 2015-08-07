@@ -57,6 +57,7 @@ class GeoserverInterface(object):
             key = "+".join(str(x) for x in args)
         suburl = "/labels/download/%s" % str(key)
         request_url = urlparse.urljoin(self.server_url, suburl)
+        print "accessing: %s" % request_url
         r = requests.get(request_url)
         data = json.loads(r.text, object_hook=_decode_dict)
         labels = {}
@@ -73,6 +74,7 @@ class GeoserverInterface(object):
             param = "+".join(str(x) for x in args)
         suburl = "/semantics/download/%s" % param
         request_url = urlparse.urljoin(self.server_url, suburl)
+        print "accessing: %s" % request_url
         r = requests.get(request_url)
         data = json.loads(r.text, object_hook=_decode_dict)
         processed = {int(pk): {int(idx): {int(num): text

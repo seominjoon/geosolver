@@ -269,6 +269,11 @@ type_inheritances = (
     ('polygon', 'quad'),
     ('polygon', 'hexagon'),
     ('twod', 'sector'),
+    ('quad', 'para'),
+    ('quad', 'trapezoid'),
+    ('quad', 'rectangle'),
+    ('quad', 'rhombus'),
+    ('quad', 'square'),
 )
 
 types = set().union(*[set(inheritance) for inheritance in type_inheritances])

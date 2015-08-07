@@ -4,6 +4,7 @@ import numbers
 import sys
 import time
 from geosolver import geoserver_interface
+from geosolver.database.utils import split
 from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.expression.expression_parser import expression_parser
@@ -13,7 +14,10 @@ from geosolver.grounding.parse_match_formulas import parse_match_atoms
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
-from geosolver.text.semantic_trees_to_text_formula_parse import annotation_nodes_to_text_formula_parse
+from geosolver.text.opt_model import TextGreedyOptModel
+from geosolver.text.rule_model import CombinedModel
+from geosolver.text.run_text import train_rule_model
+from geosolver.text.semantic_trees_to_text_formula_parse import semantic_trees_to_text_formula_parse
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text.complete_text_formula_parse import complete_text_formula_parse
 from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
@@ -89,7 +93,7 @@ def _annotated_unit_test(query):
         expr_formulas = {key: prefix_to_formula(expression_parser.parse_prefix(expression))
                          for key, expression in question.sentence_expressions[number].iteritems()}
         truth_expr_formulas, value_expr_formulas = _separate_expr_formulas(expr_formulas)
-        text_formula_parse = annotation_nodes_to_text_formula_parse(annotation_nodes)
+        text_formula_parse = semantic_trees_to_text_formula_parse(annotation_nodes)
         completed_formulas = complete_text_formula_parse(text_formula_parse)
         grounded_formulas = [ground_formula(match_parse, formula, value_expr_formulas)
                              for formula in completed_formulas+truth_expr_formulas]
@@ -125,6 +129,95 @@ def _annotated_unit_test(query):
             correct = False
 
     result = SimpleResult(query, False, attempted, correct)
+    return result
+
+def full_unit_test(combined_model, question, label_data):
+    """
+    Attempts to solve the question with id=id_.
+    If the answer is correct, return 'c'
+    If the answer is wrong, return 'i'
+    If an error occurred, return 'e'
+
+    :param id_:
+    :return SimpleResult:
+    """
+    #myout = StringIO()
+    #oldstdout = sys.stdout
+    #sys.stdout = myout
+    try:
+        result = _full_unit_test(combined_model, question, label_data)
+    except Exception, e:
+        logging.error(question.key)
+        logging.exception(e)
+        result = SimpleResult(question.key, True, False, False)
+    #sys.stdout = oldstdout
+    #message = myout.getvalue()
+    #result.message = message
+    return result
+
+    # graph_parse.core_parse.display_points()
+
+def _full_unit_test(combined_model, question, label_data):
+    assert isinstance(combined_model, CombinedModel)
+
+    choice_formulas = get_choice_formulas(question)
+    diagram = open_image(question.diagram_path)
+    graph_parse = diagram_to_graph_parse(diagram)
+    core_parse = graph_parse.core_parse
+    # core_parse.display_points()
+    # core_parse.primitive_parse.display_primitives()
+    match_parse = parse_match_from_known_labels(graph_parse, label_data)
+    match_formulas = parse_match_atoms(match_parse)
+    diagram_formulas = parse_confident_formulas(graph_parse)
+    all_formulas = match_formulas + diagram_formulas
+    for number, sentence_words in question.sentence_words.iteritems():
+        syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
+
+
+        expr_formulas = {key: prefix_to_formula(expression_parser.parse_prefix(expression))
+                         for key, expression in question.sentence_expressions[number].iteritems()}
+        truth_expr_formulas, value_expr_formulas = _separate_expr_formulas(expr_formulas)
+
+        semantic_forest = combined_model.get_semantic_forest(syntax_parse)
+        all_semantic_trees = semantic_forest.get_semantic_trees_by_type("truth").union(semantic_forest.get_semantic_trees_by_type("is"))
+        semantic_trees = set(t for t in all_semantic_trees if combined_model.get_tree_score(t) > 0.5)
+
+        text_formula_parse = semantic_trees_to_text_formula_parse(semantic_trees)
+        completed_formulas = complete_text_formula_parse(text_formula_parse)
+        grounded_formulas = [ground_formula(match_parse, formula, value_expr_formulas)
+                             for formula in completed_formulas+truth_expr_formulas]
+        text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
+        all_formulas.extend(text_formulas)
+
+    reduced_formulas = reduce_formulas(all_formulas)
+    for reduced_formula in reduced_formulas:
+        if reduced_formula.is_grounded(core_parse.variable_assignment.keys()):
+            score = evaluate(reduced_formula, core_parse.variable_assignment)
+            scores = [evaluate(child, core_parse.variable_assignment) for child in reduced_formula.children]
+        else:
+            score = None
+            scores = None
+        print reduced_formula, score, scores
+    # core_parse.display_points()
+
+    ans = solve(reduced_formulas, choice_formulas, assignment=core_parse.variable_assignment)
+    print "ans:", ans
+
+    if choice_formulas is None:
+        attempted = True
+        if abs(ans - float(question.answer)) < 0.01:
+            correct = True
+        else:
+            correct = False
+    else:
+        attempted = True
+        c = max(ans.iteritems(), key=lambda pair: pair[1].conf)[0]
+        if c == int(question.answer):
+            correct = True
+        else:
+            correct = False
+
+    result = SimpleResult(question.key, False, attempted, correct)
     return result
 
     # graph_parse.core_parse.display_points()
@@ -178,7 +271,9 @@ def annotated_test():
     total = len(ids)
     error = 0
     start = time.time()
-    for id_ in ids:
+    for idx, id_ in enumerate(ids):
+        print "-"*80
+        print "%d/%d complete" % (idx+1, len(ids))
         id_ = str(id_)
         print "-"*80
         print "id: %s" % id_
@@ -198,6 +293,51 @@ def annotated_test():
     out = "total:\t\t%d\nattempted:\t%d\ncorrect:\t%d\nerror:\t\t%d" % (total, attempted, correct, error)
     print out
 
+def full_test():
+    ids1 = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
+    ids2 = [1025, 1027, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,]
+    ids3 = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
+    ids4 = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1144, 1148]
+    ids5 = [997, 1046, 1053]
+    ids = ids1 + ids2 + ids3 + ids4 + ids5
+    #ids = [973, 963]
+    correct = 0
+    attempted = 0
+    total = len(ids)
+    error = 0
+    start = time.time()
+
+    all_questions = geoserver_interface.download_questions(*ids)
+    all_annotations = geoserver_interface.download_semantics()
+    all_labels = geoserver_interface.download_labels()
+
+    (te_q, te_a, te_l), (tr_q, tr_a, trl_l) = split([all_questions, all_annotations, all_labels], 0.7)
+    cm = train_rule_model(tr_q, tr_a)
+    # om = TextGreedyOptModel(cm)
+
+    for idx, (id_, question) in enumerate(te_q.iteritems()):
+        label = te_l[id_]
+        id_ = str(id_)
+        print "-"*80
+        print "id: %s" % id_
+        result = full_unit_test(cm, question, label)
+        print result.message
+        print result
+        if result.error:
+            error += 1
+        if result.attempted:
+            attempted += 1
+        if result.correct:
+            correct += 1
+        print "-"*80
+        print "%d/%d complete" % (idx+1, len(ids))
+    end = time.time()
+    print "-"*80
+    print "duration:\t%.1f" % (end - start)
+
+    out = "total:\t\t%d\nattempted:\t%d\ncorrect:\t%d\nerror:\t\t%d" % (total, attempted, correct, error)
+    print out
 
 if __name__ == "__main__":
-    annotated_test()
+    # annotated_test()
+    full_test()

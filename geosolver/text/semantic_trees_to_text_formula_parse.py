@@ -3,7 +3,7 @@ from geosolver.text.states import TextFormulaParse
 
 __author__ = 'minjoon'
 
-def annotation_nodes_to_text_formula_parse(annotation_nodes):
+def semantic_trees_to_text_formula_parse(annotation_nodes):
     formulas = [annotation_node.to_formula() for annotation_node in annotation_nodes]
     core_formulas = []
     is_formulas = []

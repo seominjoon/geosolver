@@ -8,6 +8,7 @@ from geosolver.ontology.ontology_definitions import FunctionSignature, VariableS
 from geosolver.ontology.ontology_definitions import signatures
 from geosolver.text.feature_function import UnaryFeatureFunction, BinaryFeatureFunction
 from geosolver.text.rule import TagRule, UnaryRule, BinaryRule
+from geosolver.text.semantic_forest import SemanticForest
 from geosolver.text.semantic_tree import SemanticTreeNode
 from geosolver.utils.num import is_number
 import numpy as np
@@ -128,6 +129,13 @@ class NaiveTagModel(TagModel):
         for words, entries in self.lexicon.iteritems():
             print "%s: %s" % (" ".join(words), ", ".join(" ".join(entry) for entry in entries))
 
+class RFTagModel(TagModel):
+    def __init__(self):
+        self.positive_tag_rules = []
+        self.negative_tag_rules = []
+        self.feature_function = None
+        self.classifier = None
+
 
 
 class SemanticModel(Model):
@@ -227,6 +235,14 @@ class CombinedModel(Model):
             r = float(tps[th])/(tps[th]+fns[th])
             prs[th] = p, r
         return prs
+
+    def get_semantic_forest(self, syntax_parse):
+        tag_rules = self.generate_tag_rules(syntax_parse)
+        unary_rules = self.generate_unary_rules(tag_rules)
+        binary_rules = self.generate_binary_rules(tag_rules)
+        semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
+        return semantic_forest
+
 
 
 class NaiveUnaryModel(UnaryModel):

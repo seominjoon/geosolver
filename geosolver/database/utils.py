@@ -31,3 +31,14 @@ def zip_questions(questions, dest):
     :param dest:
     :return:
     """
+
+
+def split(dicts, mid, end=1):
+    keys = dicts[0].keys()
+    bk = int(mid*len(keys))
+    ep = int(end*len(keys))
+    left_keys = keys[:bk]
+    right_keys = keys[bk:ep]
+    left = tuple({pk: d[pk] for pk in left_keys} for d in dicts)
+    right = tuple({pk: d[pk] for pk in right_keys} for d in dicts)
+    return left, right
