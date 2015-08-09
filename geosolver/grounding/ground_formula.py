@@ -69,7 +69,7 @@ def _get_singular_variable_nodes(formula_node):
     singular_variable_nodes = []
     for each_node in formula_node:
         if isinstance(each_node, FormulaNode) and each_node.is_leaf() and \
-                isinstance(each_node.signature, VariableSignature) and is_singular(each_node.signature.return_type):
+                isinstance(each_node.signature, VariableSignature) and not each_node.signature.name.endswith('s'):#is_singular(each_node.signature.return_type):
             singular_variable_nodes.append(each_node)
     return singular_variable_nodes
 
@@ -182,6 +182,9 @@ def _ground_leaf(match_parse, leaf, references={}):
                 point_keys = [point_keys[1], point_keys[0]]
             arc = get_instances(graph_parse, 'arc', True, *point_keys).values()[0]
             return arc
+        else:
+            arcs = get_all_instances(graph_parse, 'arc', True)
+            return SetNode(arcs.values())
 
     elif return_type == 'triangle':
         if variable_signature.name.isupper() and len(variable_signature.name) == 3:

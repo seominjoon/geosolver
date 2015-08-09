@@ -20,6 +20,11 @@ instantiator_defs = {
     'triangle': (('a', 'point'), ('b', 'point'), ('c', 'point')),
     'quad': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
     'hexagon': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point'), ('e', 'point'), ('f', 'point')),
+    'para': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
+    'rectangle': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
+    'trapezoid': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
+    'rhombus': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
+    'square': (('a', 'point'), ('b', 'point'), ('c', 'point'), ('d', 'point')),
 }
 
 class polygon(tuple):

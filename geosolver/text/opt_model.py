@@ -101,9 +101,11 @@ class FullGreedyOptModel(TextGreedyOptModel):
         self.diagram_scores = {}
 
     def optimize(self, semantic_trees, threshold):
+        """
         for t in semantic_trees:
             print "%.3f %.3f %r" % (self.combined_model.get_tree_score(t), self.get_diagram_score(t), t)
         print ""
+        """
         return super(FullGreedyOptModel, self).optimize(semantic_trees, threshold)
 
     def get_diagram_score(self, semantic_tree):
@@ -115,7 +117,7 @@ class FullGreedyOptModel(TextGreedyOptModel):
             grounded_formula = ground_formula(self.match_parse, formula)
             score = self.match_parse.graph_parse.core_parse.evaluate(grounded_formula).conf
         except:
-            score = 0.1
+            score = 0.0
         # print "::: %.2f %r" % (score, semantic_tree)
         self.diagram_scores[semantic_tree] = score
         return score
@@ -124,7 +126,13 @@ class FullGreedyOptModel(TextGreedyOptModel):
         if len(semantic_trees) == 0:
             return 0.0
 
+        def magic(text_score, diagram_score):
+            if text_score > diagram_score:
+                return text_score
+            else:
+                return np.mean((text_score, diagram_score))
+
         # sum_log = sum(np.log(self.combined_model.get_tree_score(tree)) for tree in semantic_trees)
         cov = len(set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules()))
-        sum_log = sum(np.log(np.mean((self.combined_model.get_tree_score(t), self.get_diagram_score(t)))) for t in semantic_trees)
-        return cov + sum_log
+        sum_log = sum(np.log(magic(self.combined_model.get_tree_score(t), self.get_diagram_score(t))) for t in semantic_trees)
+        return cov + 0.5*sum_log

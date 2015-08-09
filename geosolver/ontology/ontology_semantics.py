@@ -306,6 +306,8 @@ def AreaOf(twod):
     elif issubtype(name, 'polygon'):
         # http://mathworld.wolfram.com/PolygonArea.html
         area = area_of_polygon(twod)
+    elif name == 'arc':
+        circle, a, b = twod
     else:
         raise Exception()
     return area

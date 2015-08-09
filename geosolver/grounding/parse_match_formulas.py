@@ -14,6 +14,9 @@ def parse_match_formulas(match_parse):
         for term in terms:
             assert isinstance(term, FormulaNode)
             if issubtype(term.return_type, 'entity'):
+                if term.signature.id == "Angle":
+                    res = FormulaNode(signatures['Ge'], [FormulaNode(signatures['Pi'], []), FormulaNode(signatures['MeasureOf'], [term])])
+                    match_atoms.append(res)
                 continue
 
             # FIXME : to be obtained by tag model
@@ -36,5 +39,6 @@ def parse_match_formulas(match_parse):
                 # TODO : In fact, the labeling should be reorganized. (x --> x*\degree)
                 res = FormulaNode(signatures['Ge'], [180, left_term])
                 match_atoms.append(res)
+
 
     return match_atoms

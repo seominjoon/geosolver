@@ -113,15 +113,20 @@ class NaiveTagModel(TagModel):
                     return_types.append('number')
 
                 elif word.islower() and len(word) == 1:
-                    if prev_word in ('line', 'lines'):
-                        return_types.append('line')
-                    elif prev_word in ('angle', 'angles'):
-                        return_types.append('angle')
-                    else:
-                        return_types.append('number')
+                    pos = syntax_parse.get_pos_by_index(span[0])
+                    if pos == "DT":
+                        continue
+                    return_types.append('line')
+                    return_types.append('angle')
+                    return_types.append('number')
 
                 elif word.isupper():
                     if len(word) == 1:
+                        pos = syntax_parse.get_pos_by_index(span[0])
+                        if pos == "DT":
+                            continue
+
+
                         if prev_word in ('circle', 'circles'):
                             return_types.append('circle')
                         elif prev_word in ('angle', 'angles'):
@@ -491,6 +496,8 @@ class RFCCModel(RFCoreModel):
         if a.signature.valence > 0:
             return False
         if b.signature.valence > 0:
+            return False
+        if a.signature.return_type != b.signature.return_type:
             return False
         return BinaryRule.val_func(p, a, b)
 

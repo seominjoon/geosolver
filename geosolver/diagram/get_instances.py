@@ -98,6 +98,12 @@ def _get_arcs(graph_parse, is_variable, a_key, b_key):
     arcs = {}
     for circle_key in _get_all_circles(graph_parse, is_variable):
         if graph_parse.arc_graphs[circle_key].has_edge(a_key, b_key):
+            test_arc = graph_parse.arc_graphs[circle_key][a_key][b_key]['instance']
+            circle, a, b = test_arc
+            test_angle = instantiators['angle'](a, circle.center, b)
+            if angle_in_radian(test_angle) > np.pi:
+                a_key, b_key = b_key, a_key
+
             if is_variable:
                 arc = graph_parse.arc_graphs[circle_key][a_key][b_key]['variable']
             else:
@@ -110,9 +116,10 @@ def _get_arcs(graph_parse, is_variable, a_key, b_key):
 def _get_all_arcs(graph_parse, is_variable):
     assert isinstance(graph_parse, GraphParse)
     items = []
-    for a_key, b_key in itertools.permutations(graph_parse.intersection_points, 2):
+    for a_key, b_key in itertools.combinations(graph_parse.intersection_points, 2):
         items.extend(_get_arcs(graph_parse, is_variable, a_key, b_key).iteritems())
     return dict(items)
+
 
 def _get_polygons(graph_parse, name, is_variable, *args):
     # TODO : include ignore_trivial parameter. This ignores area-0 polygons.
@@ -196,6 +203,8 @@ def _get_angles(graph_parse, is_variable, a_key, b_key, c_key, ignore_trivial=Tr
         return {angle_key: angle}
     else:
         return {}
+
+
 
 def _get_all_angles(graph_parse, is_variable, ignore_trivial=True):
     """

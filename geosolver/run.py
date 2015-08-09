@@ -29,22 +29,21 @@ __author__ = 'minjoon'
 
 
 class SimpleResult(object):
-    def __init__(self, id_, error, attempted, correct, duration=-1, message=""):
-        assert isinstance(attempted, bool)
+    def __init__(self, id_, error, penalized, correct, duration=-1, message=""):
+        assert isinstance(penalized, bool)
         assert isinstance(correct, bool)
         assert isinstance(error, bool)
         assert isinstance(duration, numbers.Real)
         assert isinstance(message, str)
-        assert attempted or not correct
         self.id = id_
-        self.attempted = attempted
+        self.penalized = penalized
         self.correct = correct
         self.duration = duration
         self.message = message
         self.error = error
 
     def __repr__(self):
-        return "(e,a,c) = %s, %s, %s" % (self.error, self.attempted, self.correct)
+        return "(e,p,c) = %s, %s, %s" % (self.error, self.penalized, self.correct)
 
 def annotated_unit_test(query):
     """
@@ -159,10 +158,12 @@ def _full_unit_test(combined_model, question, label_data):
     choice_formulas = get_choice_formulas(question)
     match_parse = question_to_match_parse(question, label_data)
     match_formulas = parse_match_formulas(match_parse)
+    print match_parse.match_dict
+    print "match formulas:", match_formulas
     graph_parse = match_parse.graph_parse
     core_parse = graph_parse.core_parse
     # core_parse.display_points()
-    core_parse.primitive_parse.display_primitives()
+    # core_parse.primitive_parse.display_primitives()
 
     opt_model = FullGreedyOptModel(combined_model, match_parse)
     # opt_model = TextGreedyOptModel(combined_model)
@@ -181,10 +182,12 @@ def _full_unit_test(combined_model, question, label_data):
         truth_semantic_trees = semantic_forest.get_semantic_trees_by_type("truth")
         is_semantic_trees = semantic_forest.get_semantic_trees_by_type("is")
         cc_trees = set(t for t in semantic_forest.get_semantic_trees_by_type('cc')
-                       if opt_model.combined_model.get_tree_score(t) > 0.5)
+                       if opt_model.combined_model.get_tree_score(t) > 0.01)
 
+        """
         for cc_tree in cc_trees:
             print "cc:", cc_tree
+        """
 
         bool_semantic_trees = opt_model.optimize(truth_semantic_trees.union(is_semantic_trees), 0)
         semantic_trees = bool_semantic_trees.union(cc_trees)
@@ -211,20 +214,25 @@ def _full_unit_test(combined_model, question, label_data):
     print "ans:", ans
 
     if choice_formulas is None:
-        attempted = True
+        penalized = False
         if abs(ans - float(question.answer)) < 0.01:
             correct = True
         else:
             correct = False
     else:
-        attempted = True
         c = max(ans.iteritems(), key=lambda pair: pair[1].conf)[0]
-        if c == int(question.answer):
-            correct = True
+        if c > 0.98:
+            if c == int(question.answer):
+                correct = True
+                penalized = False
+            else:
+                correct = False
+                penalized = True
         else:
+            penalized = False
             correct = False
 
-    result = SimpleResult(question.key, False, attempted, correct)
+    result = SimpleResult(question.key, False, penalized, correct)
     return result
 
     # graph_parse.core_parse.display_points()
@@ -310,7 +318,7 @@ def full_test():
     ids6 = [1100, 1101, 1109, 1140, 1053]
     tr_ids = ids4+ids5+ids6
     te_ids = ids1+ids2+ids3
-    te_ids = [995]
+    te_ids = [971]
 
 
     all_questions = geoserver_interface.download_questions('test')
@@ -318,7 +326,7 @@ def full_test():
     all_annotations = geoserver_interface.download_semantics()
     all_labels = geoserver_interface.download_labels()
     correct = 0
-    attempted = 0
+    penalized = 0
     error = 0
     total = len(te_ids)
 
@@ -341,8 +349,8 @@ def full_test():
         print result
         if result.error:
             error += 1
-        if result.attempted:
-            attempted += 1
+        if result.penalized:
+            penalized += 1
         if result.correct:
             correct += 1
         print "-"*80
@@ -351,7 +359,7 @@ def full_test():
     print "-"*80
     print "duration:\t%.1f" % (end - start)
 
-    out = "total:\t\t%d\nattempted:\t%d\ncorrect:\t%d\nerror:\t\t%d" % (total, attempted, correct, error)
+    out = "total:\t\t%d\npenalized:\t%d\ncorrect:\t%d\nerror:\t\t%d" % (total, penalized, correct, error)
     print out
 
 if __name__ == "__main__":
