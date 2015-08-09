@@ -1,4 +1,5 @@
 from collections import defaultdict
+from geosolver.ontology.ontology_definitions import issubtype
 from geosolver.text.rule import UnaryRule, BinaryRule, TagRule
 
 __author__ = 'minjoon'
@@ -30,7 +31,7 @@ class TagFeatureFunction(FeatureFunction):
         out = []
 
         for ref_rt in self.return_type_set:
-            out.append(int(ref_rt == tr.signature.return_type))
+            out.append(int(issubtype(tr.signature.return_type, ref_rt)))
         for ref_pos in self.pos_set:
             out.append(int(ref_pos == sp.get_pos_by_span(tr.span)))
 
@@ -51,8 +52,8 @@ class UnaryFeatureFunction(FeatureFunction):
 
         self.nbr_rel_set = set()
         self.mid_pos_set = set()
-        self.graph_dist_set = {0, 1, 2}
-        self.plain_dist_set = {1, 2}
+        self.graph_dist_set = {0, 1, 2, 3, 4}
+        self.plain_dist_set = {1, 2, 3, 4}
         self.p_pos_set = set()
         self.c_pos_set = set()
         self.p_return_type_set = set()
@@ -94,7 +95,7 @@ class UnaryFeatureFunction(FeatureFunction):
             out.append(int(d == 1 and ref_rel == sp.relation_between_spans(p.span, c.span)))
         for ref_tag in self.mid_pos_set:
             out.append(int(d == 2 and ref_tag == sp.get_pos_by_index(sp.shortest_path_between_spans(p.span, c.span)[1])))
-        out.append(int(pd >= 0))
+        out.append(pd)
 
         """
         for ref_p_tag in self.p_pos_set:

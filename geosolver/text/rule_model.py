@@ -4,7 +4,9 @@ from operator import __mul__
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype
+from sklearn.svm import SVC
+from geosolver.grounding.states import MatchParse
+from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype, FormulaNode
 from geosolver.ontology.ontology_definitions import signatures
 from geosolver.text.feature_function import UnaryFeatureFunction, BinaryFeatureFunction
 from geosolver.text.rule import TagRule, UnaryRule, BinaryRule
@@ -19,6 +21,23 @@ def _normalize(counter):
     n = len(counter)
     new_counter = Counter({key: float(value) for key, value in counter.iteritems()})
     return new_counter
+
+def filter_tag_rules(unary_model, tag_rules, unary_rules, th):
+    filtered = set()
+    tag_dict = {}
+    for unary_rule in unary_rules:
+        child_tag = unary_rule.child_tag_rule
+        child_span = child_tag.span
+        if isinstance(child_tag.signature, VariableSignature) and unary_model.get_score(unary_rule) > th:
+            tag_dict[child_span] = child_tag
+
+    for tag_rule in tag_rules:
+        if tag_rule.span in tag_dict:
+            if tag_rule == tag_dict[tag_rule.span]:
+                filtered.add(tag_rule)
+        else:
+            filtered.add(tag_rule)
+    return tag_rules
 
 
 class Model(object):
@@ -49,10 +68,9 @@ class Model(object):
         return prs
 
 
+class TagModel(object):
+    pass
 
-class TagModel(Model):
-    def generate_tag_rules(self, syntax_parse):
-        return set()
 
 class NaiveTagModel(TagModel):
     """
@@ -80,39 +98,51 @@ class NaiveTagModel(TagModel):
     def generate_tag_rules(self, syntax_parse):
         tag_rules = set()
         for span in syntax_parse.iterate_spans():
+            prev_word = syntax_parse.get_word(span[0]-1)
+            if prev_word is not None:
+                prev_word = prev_word.lower()
             words = syntax_parse.get_words(span)
             if len(words) == 1:
+                return_types = []
                 word = words[0]
                 if is_number(word):
                     tag_rule = TagRule(syntax_parse, span, FunctionSignature(word, 'number', []))
                     tag_rules.add(tag_rule)
                     continue
                 elif word.startswith("@v"):
-                    tag_rule = TagRule(syntax_parse, span, VariableSignature((span,'number'), 'number', name=word))
-                    tag_rules.add(tag_rule)
-                    continue
+                    return_types.append('number')
 
                 elif word.islower() and len(word) == 1:
-                    t0 = TagRule(syntax_parse, span, VariableSignature((span,'number'), 'number', name=word))
-                    t1 = TagRule(syntax_parse, span, VariableSignature((span,'line'), 'line', name=word))
-                    t2 = TagRule(syntax_parse, span, VariableSignature((span,'angle'), 'angle', name=word))
-                    tag_rules.add(t0)
-                    tag_rules.add(t1)
-                    tag_rules.add(t2)
-                    continue
-
+                    if prev_word in ('line', 'lines'):
+                        return_types.append('line')
+                    elif prev_word in ('angle', 'angles'):
+                        return_types.append('angle')
+                    else:
+                        return_types.append('number')
 
                 elif word.isupper():
-                    return_types = []
-                    if len(word) == 1: return_types.extend(['angle', 'point', 'circle', 'line'])
-                    elif len(word) == 2: return_types.extend(['number', 'line', 'arc'])
+                    if len(word) == 1:
+                        if prev_word in ('circle', 'circles'):
+                            return_types.append('circle')
+                        elif prev_word in ('angle', 'angles'):
+                            return_types.append('angle')
+                        elif prev_word in ('line', 'lines'):
+                            return_types.append('line')
+                        else:
+                            return_types.append('point')
+                    elif len(word) == 2:
+                        if prev_word in ('arc', 'arcs'):
+                            return_types.append('arc')
+                        else:
+                            return_types.extend(['number', 'line'])
                     elif len(word) == 3: return_types.extend(['angle', 'triangle', 'number'])
                     elif len(word) == 4: return_types.extend(['quad'])
                     elif len(word) == 6: return_types.extend(['hexagon'])
                     else: return_types.extend(['polygon'])
-                    curr_tag_rules = [TagRule(syntax_parse, span, VariableSignature((span,rt), rt, name=word))
+                curr_tag_rules = [TagRule(syntax_parse, span, VariableSignature((span,rt), rt, name=word))
                                       for rt in return_types]
-                    for tag_rule in curr_tag_rules: tag_rules.add(tag_rule)
+                for tag_rule in curr_tag_rules: tag_rules.add(tag_rule)
+                if len(curr_tag_rules) > 0:
                     continue
 
             if words in self.lexicon:
@@ -128,14 +158,6 @@ class NaiveTagModel(TagModel):
     def print_lexicon(self):
         for words, entries in self.lexicon.iteritems():
             print "%s: %s" % (" ".join(words), ", ".join(" ".join(entry) for entry in entries))
-
-class RFTagModel(TagModel):
-    def __init__(self):
-        self.positive_tag_rules = []
-        self.negative_tag_rules = []
-        self.feature_function = None
-        self.classifier = None
-
 
 
 class SemanticModel(Model):
@@ -239,6 +261,7 @@ class CombinedModel(Model):
     def get_semantic_forest(self, syntax_parse):
         tag_rules = self.generate_tag_rules(syntax_parse)
         unary_rules = self.generate_unary_rules(tag_rules)
+        tag_rules = filter_tag_rules(self.unary_model, tag_rules, unary_rules, 0.5)
         binary_rules = self.generate_binary_rules(tag_rules)
         semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
         return semantic_forest
@@ -349,6 +372,7 @@ class RFUnaryModel(UnaryModel):
         self.negative_unary_rules = []
         self.feature_function = None
         self.classifier = None
+        self.scores = {}
 
     @staticmethod
     def val_func(p, c):
@@ -379,13 +403,18 @@ class RFUnaryModel(UnaryModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_unary_rules), 1: len(self.negative_unary_rules)}
-        self.classifier = RandomForestClassifier(class_weight=cw) # RandomForestClassifier()
+        self.classifier = RandomForestClassifier(class_weight='auto') # RandomForestClassifier()
+        self.classifier = SVC(probability=True, class_weight='auto')
         self.classifier.fit(X, y)
 
     def get_score(self, ur):
+        if ur in self.scores:
+            return self.scores[ur]
         x = self.feature_function.map(ur)
         probas = self.classifier.predict_proba([x])
-        return probas[0][1]
+        score = probas[0][1]
+        self.scores[ur] = score
+        return score
 
 
 class RFCoreModel(BinaryModel):
@@ -396,6 +425,7 @@ class RFCoreModel(BinaryModel):
         self.classifier = None
         self.feature_function_class = BinaryFeatureFunction
         self.classifier_class = RandomForestClassifier
+        self.scores = {}
 
     @staticmethod
     def val_func(p, a, b):
@@ -426,13 +456,19 @@ class RFCoreModel(BinaryModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
-        self.classifier = self.classifier_class(class_weight='auto')
+        # self.classifier = self.classifier_class(class_weight='auto')
+        self.classifier = SVC(probability=True, class_weight='auto')
         self.classifier.fit(X, y)
 
     def get_score(self, br):
+        if br in self.scores:
+            return self.scores[br]
         x = self.feature_function.map(br)
         probas = self.classifier.predict_proba([x])
-        return probas[0][1]
+        score = probas[0][1]
+        self.scores[br] = score
+        return score
+
 
 class RFIsModel(RFCoreModel):
     @staticmethod

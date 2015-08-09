@@ -34,10 +34,10 @@ def reduce_formulas(formulas):
         if formula.signature.id != "Equals":
             continue
         left, right = formula.children
-        if left.is_grounded(['What', 'Following']):
+        if left.is_grounded(['What', 'Which']):
             left, right = right, left
 
-        if isinstance(left.signature, VariableSignature) and right.is_grounded(['What', 'Following']):
+        if isinstance(left.signature, VariableSignature) and right.is_grounded(['What', 'Which']):
             variable_values[left.signature] = right
 
     tester = lambda node: isinstance(node, FormulaNode) and node.signature in variable_values

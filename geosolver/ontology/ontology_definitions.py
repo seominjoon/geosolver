@@ -61,6 +61,7 @@ class Node(object):
         self.parent = parent
         self.index = index
         self.children = children
+        self.valence = len(children)
         for idx, child in enumerate(children):
             if isinstance(child, Node):
                 child.parent = self
@@ -83,6 +84,12 @@ class Node(object):
         yield self
         for x in itertools.chain(*[iter(child) for child in self.children]):
             yield x
+
+    def __len__(self):
+        l = 1
+        for child in self.children:
+            l += child.__len__()
+        return l
 
     def is_singular(self):
         return len(self.children) == 1
@@ -155,6 +162,11 @@ class FormulaNode(Node):
             return getter(out)
         return out
 
+    def __hash__(self):
+        return hash((self.signature, tuple(self.children)))
+
+    def __eq__(self, other):
+        return self.signature == other.signature and tuple(self.children) == tuple(other.children)
 
     def __add__(self, other):
         current = signatures['Add']
@@ -393,9 +405,10 @@ function_signature_tuples = (
     ('IsArc', 'truth', ['arc']),
     ('IsAltitudeOf', 'truth', ['line', 'triangle']),
     ('HeightOf', 'number', ['polygon']),
-    ('HowMany', 'truth', ['number', 'number']),
     ('CircumferenceOf', 'number', ['circle']),
     ('HalfOf', 'number', ['number']),
+    ('DegreeUnit', 'number', ['number']),
+    ('WidthOf', 'number', ['quad']),
 )
 
 abbreviations = {

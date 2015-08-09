@@ -116,7 +116,7 @@ def IsRadiusLineOf(line, circle):
 def LineIsLine(l0, l1):
     if frozenset(l0) == frozenset(l1):
         return TruthValue(0)
-    TruthValue(np.inf)
+    return TruthValue(np.inf)
 
 def IsSideOf(line, polygon):
     for each in _polygon_to_lines(polygon):
@@ -362,6 +362,8 @@ def Two(entities):
     return TruthValue(np.inf)
 
 def Five(entities):
+    if not isinstance(entities, SetNode):
+        return TruthValue(np.inf)
     if len(entities.children) == 5:
         return TruthValue(0)
     return TruthValue(np.inf)
@@ -373,6 +375,9 @@ def Six(entities):
 
 def Not(truth):
     return truth.flip()
+
+def DegreeUnit(number):
+    return Mul(number, Degree())
 
 
 def SumOf(set_node):
@@ -427,6 +432,11 @@ def IsRightAngle(angle):
 def Find(number):
     return TruthValue(0)
 
+def IsRectLengthOf(number, quad):
+    l1 = distance_between_points(quad[0], quad[1])
+    l2 = distance_between_points(quad[1], quad[2])
+    return Equals(l1, number) | Equals(l2, number)
+
 
 def Pi():
     return np.pi
@@ -448,25 +458,28 @@ def _polygon_to_lines(polygon):
 def _polygon_to_angles(polygon):
     return [Angle(polygon[index-2], polygon[index-1], point) for index, point in enumerate(polygon)]
 
-def evaluate(function_node, assignment):
-    if isinstance(function_node, SetNode):
-        if function_node.head.return_type == 'truth':
-            out = reduce(operator.__and__, (evaluate(child, assignment) for child in function_node.children), True)
-            return out
-        return function_node
+def evaluate(formula, assignment):
+    if not formula.is_grounded(assignment.keys()):
+        return None
 
-    if isinstance(function_node.signature, VariableSignature):
-        return assignment[function_node.signature.id]
-    elif is_number(function_node.signature.id):
-        return float(function_node.signature.id)
+    if isinstance(formula, SetNode):
+        if formula.head.return_type == 'truth':
+            out = reduce(operator.__and__, (evaluate(child, assignment) for child in formula.children), True)
+            return out
+        return formula
+
+    if isinstance(formula.signature, VariableSignature):
+        return assignment[formula.signature.id]
+    elif is_number(formula.signature.id):
+        return float(formula.signature.id)
     else:
         evaluated_args = []
-        for arg in function_node.children:
+        for arg in formula.children:
             if isinstance(arg, FormulaNode):
                 evaluated_args.append(evaluate(arg, assignment))
             elif isinstance(arg, SetNode):
                 evaluated_args.append(SetNode([evaluate(arg_arg, assignment) for arg_arg in arg.children]))
             else:
                 evaluated_args.append(arg)
-        return getattr(this, function_node.signature.id)(*evaluated_args)
+        return getattr(this, formula.signature.id)(*evaluated_args)
 

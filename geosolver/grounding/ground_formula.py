@@ -1,7 +1,7 @@
 import itertools
 from geosolver.diagram.get_instances import get_all_instances, get_instances
 from geosolver.grounding.states import MatchParse
-from geosolver.ontology.ontology_semantics import evaluate, MeasureOf
+from geosolver.ontology.ontology_semantics import evaluate, MeasureOf, IsHypotenuseOf
 from geosolver.ontology.ontology_definitions import VariableSignature, signatures, FormulaNode, SetNode, is_singular, Node
 from geosolver.utils.num import is_number
 import numpy as np
@@ -121,6 +121,17 @@ def _ground_leaf(match_parse, leaf, references={}):
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
             return FormulaNode(signatures['Line'], [point_a, point_b])
+        elif variable_signature.name == 'hypotenuse':
+            def func(x):
+                l, t = x
+                formula = FormulaNode(signatures['IsHypotenuseOf'], (l,t))
+                tv = core_parse.evaluate(formula)
+                return tv.norm
+            lines = get_all_instances(graph_parse, 'line', True).values()
+            triangles = get_all_instances(graph_parse, 'triangle', True).values()
+            line, triangle = min(itertools.product(lines, triangles), key=func)
+            return line
+
         else:
             lines = get_all_instances(graph_parse, 'line', True)
             return SetNode(lines.values())
@@ -154,9 +165,8 @@ def _ground_leaf(match_parse, leaf, references={}):
         elif len(variable_signature.name) == 1 and variable_signature.name.isupper():
             angles = get_all_instances(graph_parse, 'angle', True)
             p = match_parse.match_dict[variable_signature.name][0]
-            for angle in angles.values():
-                if angle[1].signature == p.signature:
-                    formula = FormulaNode(signatures['Angle'], list(angle))
+            for formula in angles.values():
+                if formula.children[1].signature == p.signature:
                     measure = evaluate(FormulaNode(signatures['MeasureOf'], [formula]), core_parse.variable_assignment)
                     if measure > np.pi:
                         continue
@@ -164,8 +174,6 @@ def _ground_leaf(match_parse, leaf, references={}):
 
         elif len(variable_signature.name) == 1 and variable_signature.name.islower():
             return match_parse.match_dict[variable_signature.name][0]
-        else:
-            raise Exception()
     elif return_type == 'arc':
         if len(variable_signature.name) == 2 and variable_signature.name.isupper():
             point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
@@ -180,7 +188,7 @@ def _ground_leaf(match_parse, leaf, references={}):
             point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
             triangles = get_instances(graph_parse, 'triangle', True, *point_keys)
             return triangles.values()[0]
-        elif variable_signature.name == 'triangle':
+        else:
             triangles = get_all_instances(graph_parse, 'triangle', True)
             return SetNode(triangles.values())
     elif return_type == 'triangles':

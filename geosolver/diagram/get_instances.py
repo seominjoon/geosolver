@@ -186,10 +186,12 @@ def _get_angles(graph_parse, is_variable, a_key, b_key, c_key, ignore_trivial=Tr
                     return {}
         if is_variable:
             points = graph_parse.core_parse.point_variables
+            a, b, c = points[a_key], points[b_key], points[c_key]
+            angle = FormulaNode(signatures['Angle'], [a, b, c])
         else:
             points = graph_parse.intersection_points
-        a, b, c = points[a_key], points[b_key], points[c_key]
-        angle = instantiators['angle'](a, b, c)
+            a, b, c = points[a_key], points[b_key], points[c_key]
+            angle = instantiators['angle'](a, b, c)
         angle_key = (a_key, b_key, c_key)
         return {angle_key: angle}
     else:

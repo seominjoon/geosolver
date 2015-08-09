@@ -1,6 +1,7 @@
 import cv2
 
 from geosolver.diagram.draw_on_image import draw_point, draw_instance, draw_label
+from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.utils.prep import display_image
 
 __author__ = 'minjoon'
@@ -93,6 +94,9 @@ class CoreParse(object):
         self.point_variables = point_variables
         self.radius_variables = radius_variables
         self.variable_assignment = assignment
+
+    def evaluate(self, formula):
+        return evaluate(formula, self.variable_assignment)
 
     def get_image_points(self, **kwargs):
         image = self.image_segment_parse.get_colored_original_image()

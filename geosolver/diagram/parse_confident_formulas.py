@@ -1,5 +1,7 @@
 import itertools
+from geosolver.diagram.get_instances import get_all_instances
 from geosolver.ontology.ontology_definitions import FormulaNode, signatures, FunctionSignature
+import numpy as np
 
 __author__ = 'minjoon'
 
@@ -29,6 +31,16 @@ def parse_confident_formulas(graph_parse):
                 point_variable = core_parse.point_variables[point_key]
                 variable_node = FormulaNode(signatures['PointLiesOnCircle'], [point_variable, circle_variable])
                 confident_formulas.append(variable_node)
+
+    """
+    for key, angle in get_all_instances(graph_parse, 'angle', True).iteritems():
+        r = FormulaNode(signatures['Pi'], [])/2.0
+        formula = FormulaNode(signatures['Ge'], [r, FormulaNode(signatures['MeasureOf'], [angle])])
+        tv = graph_parse.core_parse.evaluate(formula)
+        if tv.norm == 0:
+            confident_formulas.append(formula)
+    """
+
 
     # Just enforce non collapsing between known labels?
     """

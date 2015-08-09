@@ -2,7 +2,7 @@ from geosolver import geoserver_interface
 from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.shortcuts import diagram_to_graph_parse
 from geosolver.grounding.ground_formula import ground_formula_nodes
-from geosolver.grounding.parse_match_formulas import parse_match_atoms
+from geosolver.grounding.parse_match_formulas import parse_match_formulas
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.solver.numeric_solver import NumericSolver
 from geosolver.ontology.ontology_definitions import FormulaNode, signatures, VariableSignature
@@ -29,7 +29,7 @@ def test_parse_match_atoms():
         diagram = open_image(question.diagram_path)
         graph_parse = diagram_to_graph_parse(diagram)
         match_parse = parse_match_from_known_labels(graph_parse, label_data)
-        match_atoms = parse_match_atoms(match_parse)
+        match_atoms = parse_match_formulas(match_parse)
         for match_atom in match_atoms:
             print match_atom
         graph_parse.core_parse.display_points()

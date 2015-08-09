@@ -7,7 +7,7 @@ from geosolver.utils.num import is_number
 __author__ = 'minjoon'
 
 
-def parse_match_atoms(match_parse):
+def parse_match_formulas(match_parse):
     assert isinstance(match_parse, MatchParse)
     match_atoms = []
     for label, terms in match_parse.match_dict.iteritems():

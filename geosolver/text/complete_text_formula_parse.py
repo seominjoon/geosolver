@@ -54,6 +54,7 @@ def _apply_cc(cc_formulas, core_formulas):
         a_node, b_node = formula_node.children
         a_sig, b_sig = a_node.signature, b_node.signature
         firsts.add(a_sig)
+        firsts.add(b_sig)
         graph.add_edge(a_sig, b_sig)
 
     def tester(node):

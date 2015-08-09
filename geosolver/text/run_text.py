@@ -3,15 +3,19 @@ import itertools
 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 from geosolver import geoserver_interface
 from geosolver.database.utils import split
+from geosolver.diagram.shortcuts import question_to_match_parse, questions_to_match_parses
+from geosolver.ontology.ontology_definitions import VariableSignature
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree
-from geosolver.text.opt_model import GreedyOptModel, TextGreedyOptModel
+from geosolver.text.opt_model import GreedyOptModel, TextGreedyOptModel, FullGreedyOptModel
 from geosolver.text.rule_model import NaiveTagModel, CombinedModel, \
-    RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel
+    RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel, filter_tag_rules
 from geosolver.text.semantic_forest import SemanticForest
 from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
+import cPickle as pickle
 
 __author__ = 'minjoon'
 
@@ -60,6 +64,7 @@ def train_semantic_model(tm, syntax_parses, annotations):
             assert isinstance(syntax_parse, SyntaxParse)
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in annotations[pk][number].values()]
+            # local_tag_rules = set(itertools.chain(*[t.get_tag_rules() for t in semantic_trees]))
             local_tag_rules = tm.generate_tag_rules(syntax_parse)
             local_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in semantic_trees]))
             local_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in semantic_trees]))
@@ -85,6 +90,9 @@ def train_semantic_model(tm, syntax_parses, annotations):
     return cm
 
 
+
+
+
 def evaluate_rule_model(combined_model, syntax_parses, annotations, thresholds):
     all_pos_unary_rules = []
     all_pos_core_rules = []
@@ -108,9 +116,13 @@ def evaluate_rule_model(combined_model, syntax_parses, annotations, thresholds):
             pos_unary_rules = set(itertools.chain(*[semantic_tree.get_unary_rules() for semantic_tree in pos_semantic_trees]))
             pos_binary_rules = set(itertools.chain(*[semantic_tree.get_binary_rules() for semantic_tree in pos_semantic_trees]))
 
-            tag_rules = combined_model.generate_tag_rules(syntax_parse)
+            tag_rules = combined_model.tag_model.generate_tag_rules(syntax_parse)
+            # tag_rules = set(itertools.chain(*[t.get_tag_rules() for t in pos_semantic_trees]))
 
             unary_rules = combined_model.generate_unary_rules(tag_rules)
+
+            tag_rules = filter_tag_rules(combined_model.unary_model, tag_rules, unary_rules, 0.9)
+
             binary_rules = combined_model.generate_binary_rules(tag_rules)
             core_rules = combined_model.core_model.generate_binary_rules(tag_rules)
             is_rules = combined_model.is_model.generate_binary_rules(tag_rules)
@@ -163,24 +175,26 @@ def evaluate_rule_model(combined_model, syntax_parses, annotations, thresholds):
     return unary_prs, core_prs, is_prs, cc_prs, core_tree_prs
 
 
-def evaluate_opt_model(opt_model, syntax_parses, annotations, thresholds):
-    assert isinstance(opt_model, GreedyOptModel)
-
-    combined_model = opt_model.combined_model
-
+def evaluate_opt_model(combined_model, syntax_parses, annotations, match_parses, thresholds):
     tps, fps, tns, fns = defaultdict(int), defaultdict(int), defaultdict(int), defaultdict(int)
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
         print "="*80
+        match_parse = match_parses[pk]
         for number, syntax_parse in local_syntax_parses.iteritems():
             print pk, number
+            opt_model = TextGreedyOptModel(combined_model)
+            # opt_model = FullGreedyOptModel(combined_model, match_parse)
+
             pos_semantic_trees = set(annotation_to_semantic_tree(syntax_parse, annotation)
                                      for annotation in annotations[pk][number].values())
 
-            pos_semantic_trees = set(t for t in pos_semantic_trees if t.content.signature != 'CC')
+            pos_semantic_trees = set(t for t in pos_semantic_trees if t.content.signature.id != 'CC')
 
             tag_rules = combined_model.generate_tag_rules(syntax_parse)
+            # tag_rules = set(itertools.chain(*[t.get_tag_rules() for t in pos_semantic_trees]))
             unary_rules = combined_model.generate_unary_rules(tag_rules)
+            tag_rules = filter_tag_rules(combined_model.unary_model, tag_rules, unary_rules, 0.9)
             binary_rules = combined_model.generate_binary_rules(tag_rules)
 
             semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
@@ -213,8 +227,8 @@ def evaluate_opt_model(opt_model, syntax_parses, annotations, thresholds):
     prs = {}
 
     for th in thresholds:
-        p = float(tps[th])/(tps[th]+fps[th])
-        r = float(tps[th])/(tps[th]+fns[th])
+        p = float(tps[th])/max(1,tps[th]+fps[th])
+        r = float(tps[th])/max(1,tps[th]+fns[th])
         prs[th] = p, r
 
     return prs
@@ -225,7 +239,9 @@ def test_rule_model():
     all_questions = geoserver_interface.download_questions(query)
     all_syntax_parses = questions_to_syntax_parses(all_questions)
     all_annotations = geoserver_interface.download_semantics(query)
-    (te_s, te_a), (tr_s, tr_a) = split((all_syntax_parses, all_annotations), 0.5)
+    all_labels = geoserver_interface.download_labels(query)
+
+    (tr_s, tr_a), (te_s, te_a) = split((all_syntax_parses, all_annotations), 0.5)
 
     tm = train_tag_model(all_syntax_parses, all_annotations)
     cm = train_semantic_model(tm, tr_s, tr_a)
@@ -247,12 +263,15 @@ def test_opt_model():
     all_questions = geoserver_interface.download_questions(query)
     all_syntax_parses = questions_to_syntax_parses(all_questions)
     all_annotations = geoserver_interface.download_semantics(query)
+    all_labels = geoserver_interface.download_labels(query)
 
-    (te_s, te_a), (tr_s, tr_a) = split([all_syntax_parses, all_annotations], 0.5)
+    (tr_s, tr_a, tr_q), (te_s, te_a, te_q) = split([all_syntax_parses, all_annotations, all_questions], 0.5)
     tm = train_tag_model(all_syntax_parses, all_annotations)
     cm = train_semantic_model(tm, tr_s, tr_a)
-    om = TextGreedyOptModel(cm)
-    prs = evaluate_opt_model(om, te_s, te_a, [0])
+
+    # te_m = questions_to_match_parses(te_q, all_labels)
+    prs = evaluate_opt_model(cm, te_s, te_a, all_questions, np.linspace(-2,2,21))
+
     ps, rs = zip(*prs.values())
     plt.plot(prs.keys(), ps, 'o', label='precision')
     plt.plot(prs.keys(), rs, 'o', label='recall')
@@ -261,5 +280,5 @@ def test_opt_model():
 
 
 if __name__ == "__main__":
-    test_rule_model()
-    # test_opt_model()
+    # test_rule_model()
+    test_opt_model()

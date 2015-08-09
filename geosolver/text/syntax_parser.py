@@ -17,6 +17,8 @@ class SyntaxParse(object):
         return tuple(self.words[idx] for idx in range(*span))
 
     def get_word(self, index):
+        if index < 0:
+            return None
         return self.words[index]
 
     def get_pos_by_index(self, index):

@@ -5,12 +5,11 @@ from geosolver.text.rule import UnaryRule, BinaryRule
 __author__ = 'minjoon'
 
 
-class SemanticTreeNode(object):
-    def __init__(self, content, children):
+class SemanticTreeNode(FormulaNode):
+    def __init__(self, content, children, parent=None, index=None):
+        super(SemanticTreeNode, self).__init__(content.signature, children, parent, index)
         self.syntax_parse = content.syntax_parse
         self.content = content
-        self.children = children
-        self.valence = len(children)
 
     def __repr__(self):
         if len(self.children) == 0:
@@ -25,6 +24,7 @@ class SemanticTreeNode(object):
     def __eq__(self, other):
         return self.content == other.content and tuple(self.children) == tuple(other.children)
 
+    """
     def __iter__(self):
         queue = deque()
         queue.appendleft(self)
@@ -33,15 +33,7 @@ class SemanticTreeNode(object):
             for child in current.children:
                 queue.appendleft(child)
             yield current
-
-    def __len__(self):
-        l = 1
-        for child in self.children:
-            l += child.__len__()
-        return l
-
-    def is_leaf(self):
-        return len(self.children) == 0
+    """
 
     def is_unary(self):
         return len(self.children) == 1

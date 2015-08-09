@@ -32,11 +32,11 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
 
     elif query_formula.has_signature("What"):
         if choice_formulas is None:
-            ns = NumericSolver(given_formulas)
+            ns = NumericSolver(given_formulas, assignment=assignment)
             ns.solve()
             out = ns.assignment['What']
         else:
-            ns = NumericSolver(given_formulas)
+            ns = NumericSolver(given_formulas, assignment=assignment)
             ns.solve()
             for key, choice_formula in choice_formulas.iteritems():
                 equal_formula = FormulaNode(signatures['Equals'], [ns.assignment['What'], choice_formula])
@@ -56,7 +56,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
             """
 
     elif query_formula.has_signature("Find"):
-        ns = NumericSolver(true_formulas)
+        ns = NumericSolver(true_formulas, assignment=assignment)
         ns.solve()
         # display_entities(ns)
         if choice_formulas is None:
@@ -70,7 +70,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
 
 
     elif query_formula.has_signature("Which"):
-        ns = NumericSolver(true_formulas)
+        ns = NumericSolver(true_formulas, assignment=assignment)
         ns.solve()
         for key, choice_formula in choice_formulas.iteritems():
             # print query_formula.children[1], ns.evaluate(query_formula.children[1])
