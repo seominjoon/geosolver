@@ -318,7 +318,7 @@ def full_test():
     ids6 = [1100, 1101, 1109, 1140, 1053]
     tr_ids = ids4+ids5+ids6
     te_ids = ids1+ids2+ids3
-    te_ids = [971]
+    te_ids = [1032]
 
 
     all_questions = geoserver_interface.download_questions('test')

@@ -78,7 +78,6 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
             tester = lambda node: node.signature.id == "Which"
             getter = lambda node: choice_formula
             replaced_formula = query_formula.replace_node(tester, getter)
-            # print replaced_formula
             out[key] = ns.evaluate(replaced_formula)
 
     # this won't be executed!

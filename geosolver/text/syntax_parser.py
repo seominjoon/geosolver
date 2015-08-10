@@ -22,6 +22,8 @@ class SyntaxParse(object):
         return self.words[index]
 
     def get_pos_by_index(self, index):
+        if index not in self.undirected.node:
+            return None
         tag = self.undirected.node[index]['tag']
         return tag
 
