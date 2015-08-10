@@ -9,7 +9,7 @@ from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
 from geosolver.diagram.shortcuts import question_to_match_parse
 from geosolver.expression.expression_parser import expression_parser
 from geosolver.expression.prefix_to_formula import prefix_to_formula
-from geosolver.grounding.ground_formula import ground_formula
+from geosolver.grounding.ground_formula import ground_formulas
 from geosolver.grounding.parse_match_formulas import parse_match_formulas
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
@@ -194,8 +194,7 @@ def _full_unit_test(combined_model, question, label_data):
 
         text_formula_parse = semantic_trees_to_text_formula_parse(semantic_trees)
         completed_formulas = complete_text_formula_parse(text_formula_parse)
-        grounded_formulas = [ground_formula(match_parse, formula, value_expr_formulas)
-                             for formula in completed_formulas+truth_expr_formulas]
+        grounded_formulas = ground_formulas(match_parse, completed_formulas+truth_expr_formulas, value_expr_formulas)
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
         all_formulas.extend(text_formulas)
 

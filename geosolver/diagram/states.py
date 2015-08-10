@@ -98,6 +98,9 @@ class CoreParse(object):
     def evaluate(self, formula):
         return evaluate(formula, self.variable_assignment)
 
+    def is_grounded(self, formula):
+        return formula.is_grounded(self.variable_assignment.keys())
+
     def get_image_points(self, **kwargs):
         image = self.image_segment_parse.get_colored_original_image()
         offset = self.image_segment_parse.diagram_image_segment.offset
