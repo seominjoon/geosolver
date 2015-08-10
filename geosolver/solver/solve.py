@@ -54,6 +54,7 @@ def solve(given_formulas, choice_formulas=None, assignment=None):
                 # print replaced_formula
                 out[key] = ns.evaluate(replaced_formula)
             """
+        # display_entities(ns)
 
     elif query_formula.has_signature("Find"):
         ns = NumericSolver(true_formulas, assignment=assignment)

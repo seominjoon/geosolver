@@ -60,6 +60,7 @@ def train_semantic_model(tm, syntax_parses, annotations):
     ccm = RFCCModel()
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
+        print "training:", pk
         for number, syntax_parse in local_syntax_parses.iteritems():
             assert isinstance(syntax_parse, SyntaxParse)
             semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)

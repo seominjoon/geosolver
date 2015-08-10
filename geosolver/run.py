@@ -14,16 +14,18 @@ from geosolver.grounding.parse_match_formulas import parse_match_formulas
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
 from geosolver.ontology.ontology_semantics import evaluate
 from geosolver.solver.solve import solve
+from geosolver.text.augment_formulas import augment_formulas
 from geosolver.text.opt_model import TextGreedyOptModel, GreedyOptModel, FullGreedyOptModel
 from geosolver.text.rule_model import CombinedModel
 from geosolver.text.run_text import train_semantic_model, questions_to_syntax_parses, train_tag_model
 from geosolver.text.semantic_trees_to_text_formula_parse import semantic_trees_to_text_formula_parse
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
-from geosolver.text.complete_text_formula_parse import complete_text_formula_parse
+from geosolver.text.complete_formulas import complete_formulas
 from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
 from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
+import cPickle as pickle
 
 __author__ = 'minjoon'
 
@@ -93,7 +95,7 @@ def _annotated_unit_test(query):
                          for key, expression in question.sentence_expressions[number].iteritems()}
         truth_expr_formulas, value_expr_formulas = _separate_expr_formulas(expr_formulas)
         text_formula_parse = semantic_trees_to_text_formula_parse(annotation_nodes)
-        completed_formulas = complete_text_formula_parse(text_formula_parse)
+        completed_formulas = complete_formulas(text_formula_parse)
         grounded_formulas = [ground_formula(match_parse, formula, value_expr_formulas)
                              for formula in completed_formulas+truth_expr_formulas]
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
@@ -158,21 +160,19 @@ def _full_unit_test(combined_model, question, label_data):
     choice_formulas = get_choice_formulas(question)
     match_parse = question_to_match_parse(question, label_data)
     match_formulas = parse_match_formulas(match_parse)
-    print match_parse.match_dict
-    print "match formulas:", match_formulas
     graph_parse = match_parse.graph_parse
     core_parse = graph_parse.core_parse
     # core_parse.display_points()
     # core_parse.primitive_parse.display_primitives()
 
-    opt_model = FullGreedyOptModel(combined_model, match_parse)
     # opt_model = TextGreedyOptModel(combined_model)
 
     diagram_formulas = parse_confident_formulas(match_parse.graph_parse)
     all_formulas = match_formulas + diagram_formulas
+
+    opt_model = FullGreedyOptModel(combined_model, match_parse)
     for number, sentence_words in question.sentence_words.iteritems():
         syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
-
 
         expr_formulas = {key: prefix_to_formula(expression_parser.parse_prefix(expression))
                          for key, expression in question.sentence_expressions[number].iteritems()}
@@ -183,17 +183,21 @@ def _full_unit_test(combined_model, question, label_data):
         is_semantic_trees = semantic_forest.get_semantic_trees_by_type("is")
         cc_trees = set(t for t in semantic_forest.get_semantic_trees_by_type('cc')
                        if opt_model.combined_model.get_tree_score(t) > 0.01)
-
-        """
         for cc_tree in cc_trees:
-            print "cc:", cc_tree
-        """
+            print "cc tree:", cc_tree, opt_model.combined_model.get_tree_score(cc_tree)
 
         bool_semantic_trees = opt_model.optimize(truth_semantic_trees.union(is_semantic_trees), 0)
-        semantic_trees = bool_semantic_trees.union(cc_trees)
+        # semantic_trees = bool_semantic_trees.union(cc_trees)
 
-        text_formula_parse = semantic_trees_to_text_formula_parse(semantic_trees)
-        completed_formulas = complete_text_formula_parse(text_formula_parse)
+        core_formulas = set(t.to_formula() for t in bool_semantic_trees)
+        cc_formulas = set(t.to_formula() for t in cc_trees)
+        augmented_formulas = augment_formulas(core_formulas)
+        completed_formulas = complete_formulas(augmented_formulas, cc_formulas)
+
+        print "completed formulas:"
+        for f in completed_formulas: print f
+        print ""
+
         grounded_formulas = ground_formulas(match_parse, completed_formulas+truth_expr_formulas, value_expr_formulas)
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
         all_formulas.extend(text_formulas)
@@ -219,9 +223,9 @@ def _full_unit_test(combined_model, question, label_data):
         else:
             correct = False
     else:
-        c = max(ans.iteritems(), key=lambda pair: pair[1].conf)[0]
-        if c > 0.98:
-            if c == int(question.answer):
+        idx, tv = max(ans.iteritems(), key=lambda pair: pair[1].conf)
+        if tv.conf > 0.98:
+            if idx == int(question.answer):
                 correct = True
                 penalized = False
             else:
@@ -317,13 +321,19 @@ def full_test():
     ids6 = [1100, 1101, 1109, 1140, 1053]
     tr_ids = ids4+ids5+ids6
     te_ids = ids1+ids2+ids3
-    te_ids = [1032]
+    te_ids = [977]
 
+    load = True
 
     all_questions = geoserver_interface.download_questions('test')
-    all_syntax_parses = questions_to_syntax_parses(all_questions)
+    if not load:
+        all_syntax_parses = questions_to_syntax_parses(all_questions)
+        pickle.dump(all_syntax_parses, open('syntax_parses.p', 'wb'))
+    else:
+        all_syntax_parses = pickle.load(open('syntax_parses.p', 'rb'))
     all_annotations = geoserver_interface.download_semantics()
     all_labels = geoserver_interface.download_labels()
+
     correct = 0
     penalized = 0
     error = 0
@@ -334,8 +344,12 @@ def full_test():
     tr_a = {id_: all_annotations[id_] for id_ in tr_ids}
     te_s = {id_: all_syntax_parses[id_] for id_ in te_ids}
 
-    tm = train_tag_model(all_syntax_parses, all_annotations)
-    cm = train_semantic_model(tm, tr_s, tr_a)
+    if not load:
+        tm = train_tag_model(all_syntax_parses, all_annotations)
+        cm = train_semantic_model(tm, tr_s, tr_a)
+        pickle.dump(cm, open('cm.p', 'wb'))
+    else:
+        cm = pickle.load(open('cm.p', 'rb'))
 
     for idx, (id_, syntax_parse) in enumerate(te_s.iteritems()):
         question = all_questions[id_]

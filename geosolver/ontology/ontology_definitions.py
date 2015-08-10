@@ -281,17 +281,25 @@ type_inheritances = (
     ('polygon', 'quad'),
     ('polygon', 'hexagon'),
     ('twod', 'sector'),
-    ('quad', 'para'),
-    ('quad', 'trapezoid'),
-    ('quad', 'rectangle'),
-    ('quad', 'rhombus'),
-    ('quad', 'square'),
+)
+
+high_order_type_inheritances = (
+    ('square', 'quad', 'IsSquare'),
+    ('para', 'quad', 'IsParallelogram'),
+    ('trapezoid', 'quad', 'IsTrapezoid'),
+    ('rectangle', 'quad', 'IsRectangle'),
+    ('rhombus', 'quad', 'IsRhombus'),
+    ('hypotenuse', 'line', 'IsHypotenuseOf'),
+    ('tangent', 'line', 'Tangent'),
+    ('secant', 'line', 'Secant'),
 )
 
 types = set().union(*[set(inheritance) for inheritance in type_inheritances])
 
 type_graph = nx.DiGraph()
 for parent, child in type_inheritances:
+    type_graph.add_edge(parent, child)
+for child, parent, _ in high_order_type_inheritances:
     type_graph.add_edge(parent, child)
 
 
@@ -306,6 +314,8 @@ def issubtype(child_type, parent_type):
         child_type = child_type[:-1]
     if is_plural(parent_type):
         parent_type = parent_type[:-1]
+    if child_type not in type_graph.nodes() or parent_type not in type_graph.nodes():
+        return False
     return nx.has_path(type_graph, parent_type, child_type)
 
 def is_singular(type_):

@@ -7,9 +7,9 @@ from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignatu
 __author__ = 'minjoon'
 
 
-def complete_text_formula_parse(text_formula_parse):
-    ised_formulas = _apply_is(text_formula_parse.is_formulas, text_formula_parse.core_formulas)
-    cced_formulas = _apply_cc(text_formula_parse.cc_formulas, ised_formulas)
+def complete_formulas(core_formulas, cc_formulas):
+    # ised_formulas = _apply_is(text_formula_parse.is_formulas, text_formula_parse.core_formulas)
+    cced_formulas = _apply_cc(cc_formulas, core_formulas)
     return cced_formulas
 
 def _apply_is(is_formulas, core_formulas):

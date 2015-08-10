@@ -10,7 +10,7 @@ class FeatureFunction(object):
 
 class TagFeatureFunction(FeatureFunction):
     def __init__(self, tag_rules):
-        self.return_type_set = set()
+        self.return_type_set = {'line', 'circle', 'arc', 'polygon', 'number', 'angle', 'truth'}
         self.pos_set = set()
         self.key_rels = ('compound',)
         self.key_nbrs = defaultdict(set)
@@ -22,7 +22,7 @@ class TagFeatureFunction(FeatureFunction):
                 if rel in self.key_rels:
                     self.key_nbrs[rel].add(sp.get_word(to))
 
-            self.return_type_set.add(tag_rule.signature.return_type)
+            # self.return_type_set.add(tag_rule.signature.return_type)
             self.pos_set.add(sp.get_pos_by_span(tag_rule.span))
 
     def map(self, tr):

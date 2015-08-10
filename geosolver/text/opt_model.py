@@ -1,6 +1,7 @@
 import itertools
+import logging
 import numpy as np
-from geosolver.grounding.ground_formula import ground_formula
+from geosolver.grounding.ground_formula import ground_formulas
 from geosolver.grounding.states import MatchParse
 from geosolver.text.rule import UnaryRule
 from geosolver.text.rule_model import CombinedModel
@@ -98,14 +99,13 @@ class FullGreedyOptModel(TextGreedyOptModel):
         super(FullGreedyOptModel, self).__init__(combined_model)
         assert isinstance(match_parse, MatchParse)
         self.match_parse = match_parse
+        self.core_parse = match_parse.graph_parse.core_parse
         self.diagram_scores = {}
 
     def optimize(self, semantic_trees, threshold):
-        """
         for t in semantic_trees:
-            print "%.3f %.3f %r" % (self.combined_model.get_tree_score(t), self.get_diagram_score(t), t)
+            print "%.3f %r %r" % (self.combined_model.get_tree_score(t), self.get_diagram_score(t), t)
         print ""
-        """
         return super(FullGreedyOptModel, self).optimize(semantic_trees, threshold)
 
     def get_diagram_score(self, semantic_tree):
@@ -114,11 +114,11 @@ class FullGreedyOptModel(TextGreedyOptModel):
         assert isinstance(semantic_tree, SemanticTreeNode)
         formula = semantic_tree.to_formula()
         try:
-            grounded_formula = ground_formula(self.match_parse, formula)
+            grounded_formula = ground_formulas(self.match_parse, [formula])[0]
             score = self.match_parse.graph_parse.core_parse.evaluate(grounded_formula).conf
-        except:
-            score = 0.0
-        # print "::: %.2f %r" % (score, semantic_tree)
+        except Exception as e:
+            # logging.exception(e)
+            score = None
         self.diagram_scores[semantic_tree] = score
         return score
 
@@ -127,7 +127,7 @@ class FullGreedyOptModel(TextGreedyOptModel):
             return 0.0
 
         def magic(text_score, diagram_score):
-            if text_score > diagram_score:
+            if diagram_score is None:
                 return text_score
             else:
                 return np.mean((text_score, diagram_score))
@@ -135,4 +135,5 @@ class FullGreedyOptModel(TextGreedyOptModel):
         # sum_log = sum(np.log(self.combined_model.get_tree_score(tree)) for tree in semantic_trees)
         cov = len(set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules()))
         sum_log = sum(np.log(magic(self.combined_model.get_tree_score(t), self.get_diagram_score(t))) for t in semantic_trees)
-        return cov + 0.5*sum_log
+        # sum_log = sum(np.log(magic(self.combined_model.get_tree_score(t), diagram_scores[t])) for t in semantic_trees)
+        return cov + 2*sum_log

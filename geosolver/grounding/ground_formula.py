@@ -11,7 +11,7 @@ __author__ = 'minjoon'
 
 def ground_formulas(match_parse, formulas, references={}):
     core_parse = match_parse.graph_parse.core_parse
-    singular_variables = itertools.chain(*[_get_singular_variable_nodes(formula) for formula in formulas])
+    singular_variables = set(itertools.chain(*[_get_singular_variables(formula) for formula in formulas]))
     grounded_variable_sets = []
     for variable in singular_variables:
         grounded_variable = _ground_variable(match_parse, variable, references)
@@ -23,7 +23,7 @@ def ground_formulas(match_parse, formulas, references={}):
     for combination in combinations:
         grounded_formulas = _combination_to_grounded_formulas(match_parse, formulas, combination, singular_variables)
         local_scores = [core_parse.evaluate(f) for f in grounded_formulas]
-        scores.append(sum(s for s in local_scores if s is not None))
+        scores.append(sum(s.conf for s in local_scores if s is not None))
         grounded_formulas_list.append(grounded_formulas)
     max_score, max_gf = max(zip(scores, grounded_formulas_list), key=lambda pair: pair[0])
     return max_gf
@@ -73,13 +73,13 @@ def _ground_formula(match_parse, formula, threshold=0.5):
     return final
 
 
-def _get_singular_variable_nodes(formula_node):
-    singular_variable_nodes = []
+def _get_singular_variables(formula_node):
+    singular_variables = []
     for each_node in formula_node:
         if isinstance(each_node, FormulaNode) and each_node.is_leaf() and \
                 isinstance(each_node.signature, VariableSignature) and not each_node.signature.name.endswith('s'):#is_singular(each_node.signature.return_type):
-            singular_variable_nodes.append(each_node)
-    return singular_variable_nodes
+            singular_variables.append(each_node)
+    return singular_variables
 
 
 def _apply_distribution(node):
@@ -147,6 +147,7 @@ def _ground_variable(match_parse, variable, references={}):
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
             return FormulaNode(signatures['Line'], [point_a, point_b])
+            """
         elif variable_signature.name == 'hypotenuse':
             def func(x):
                 l, t = x
@@ -157,13 +158,11 @@ def _ground_variable(match_parse, variable, references={}):
             triangles = get_all_instances(graph_parse, 'triangle', True).values()
             line, triangle = min(itertools.product(lines, triangles), key=func)
             return line
+            """
 
         else:
             lines = get_all_instances(graph_parse, 'line', True)
             return SetNode(lines.values())
-    elif return_type == 'lines':
-        lines = get_all_instances(graph_parse, 'line', True)
-        return SetNode(lines.values())
     elif return_type == 'circle':
         if len(variable_signature.name) == 1:
             center_label = variable_signature.name
@@ -220,9 +219,6 @@ def _ground_variable(match_parse, variable, references={}):
         else:
             triangles = get_all_instances(graph_parse, 'triangle', True)
             return SetNode(triangles.values())
-    elif return_type == 'triangles':
-        triangles = get_all_instances(graph_parse, 'triangle', True)
-        return SetNode(triangles.values())
     elif return_type == 'quad':
         if variable_signature.name.isupper() and len(variable_signature.name) == 4:
             point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
@@ -231,9 +227,6 @@ def _ground_variable(match_parse, variable, references={}):
         else:
             quads = get_all_instances(graph_parse, 'quad', True)
             return SetNode(quads.values())
-    elif return_type == 'quads':
-        quads = get_all_instances(graph_parse, 'quad', True)
-        return SetNode(quads.values())
     elif return_type == 'hexagon':
         if variable_signature.name.isupper() and len(variable_signature.name) == 6:
             point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
@@ -259,6 +252,4 @@ def _ground_variable(match_parse, variable, references={}):
         arcs = get_all_instances(graph_parse, 'arc', True)
         return SetNode(lines.values() + arcs.values())
 
-    print variable_signature.name in match_parse.match_dict
-    print variable.signature.id, variable.signature.name, variable.return_type
     raise Exception(repr(variable))

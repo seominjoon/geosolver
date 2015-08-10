@@ -5,6 +5,7 @@ from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from geosolver.grounding.ground_formula import _ground_variable
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_definitions import FunctionSignature, VariableSignature, issubtype, FormulaNode
 from geosolver.ontology.ontology_definitions import signatures
@@ -272,7 +273,6 @@ class CombinedModel(Model):
         return semantic_forest
 
 
-
 class NaiveUnaryModel(UnaryModel):
     def __init__(self, max_word_distance):
         self.max_word_distance = max_word_distance
@@ -408,8 +408,9 @@ class RFUnaryModel(UnaryModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_unary_rules), 1: len(self.negative_unary_rules)}
-        self.classifier = RandomForestClassifier(class_weight='auto') # RandomForestClassifier()
-        self.classifier = SVC(probability=True, class_weight='auto')
+        # self.classifier = RandomForestClassifier(class_weight='auto') # RandomForestClassifier()
+        # self.classifier = SVC(probability=True, class_weight='auto')
+        self.classifier = LogisticRegression(class_weight='auto')
         self.classifier.fit(X, y)
 
     def get_score(self, ur):
@@ -462,7 +463,8 @@ class RFCoreModel(BinaryModel):
 
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
         # self.classifier = self.classifier_class(class_weight='auto')
-        self.classifier = SVC(probability=True, class_weight='auto')
+        # self.classifier = SVC(probability=True, class_weight='auto')
+        self.classifier = LogisticRegression(class_weight='auto')
         self.classifier.fit(X, y)
 
     def get_score(self, br):
@@ -509,3 +511,25 @@ class RFCCModel(RFCoreModel):
                 self.positive_binary_rules.append(binary_rule)
             else:
                 self.negative_binary_rules.append(binary_rule)
+
+    def fit(self):
+        print "Fitting %s:" % self.__class__.__name__
+        print "# of positive examples:", len(self.positive_binary_rules)
+        print "# of negative examples:", len(self.negative_binary_rules)
+        self.feature_function = self.feature_function_class(self.positive_binary_rules + self.negative_binary_rules)
+        X = []
+        y = []
+        for pbr in self.positive_binary_rules:
+            X.append(self.feature_function.map(pbr))
+            y.append(1)
+        for nbr in self.negative_binary_rules:
+            X.append(self.feature_function.map(nbr))
+            y.append(0)
+
+        print "length of feature vector:", np.shape(X)[1]
+
+        cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
+        self.classifier = self.classifier_class(class_weight='auto')
+        # self.classifier = SVC(probability=True, class_weight='auto')
+        # self.classifier = LogisticRegression(class_weight='auto')
+        self.classifier.fit(X, y)

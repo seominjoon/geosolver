@@ -439,6 +439,23 @@ def IsRectLengthOf(number, quad):
     l2 = distance_between_points(quad[1], quad[2])
     return Equals(l1, number) | Equals(l2, number)
 
+def Is(a, b):
+    if is_number(a) or is_number(b):
+        return Equals(a, b)
+
+    a_name = a.__class__.__name__
+    b_name = b.__class__.__name__
+    if issubtype(a_name , 'polygon') or issubtype(a_name, 'line'):
+        truth = set(a) == set(b)
+    else:
+        truth = a == b
+
+    if truth:
+        return TruthValue(0)
+    else:
+        return TruthValue(np.inf)
+
+
 
 def Pi():
     return np.pi
@@ -483,5 +500,9 @@ def evaluate(formula, assignment):
                 evaluated_args.append(SetNode([evaluate(arg_arg, assignment) for arg_arg in arg.children]))
             else:
                 evaluated_args.append(arg)
-        return getattr(this, formula.signature.id)(*evaluated_args)
+        # FIXME : rather than try/catch, check type matching
+        try:
+            return getattr(this, formula.signature.id)(*evaluated_args)
+        except:
+            return TruthValue(np.inf)
 
