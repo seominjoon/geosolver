@@ -58,15 +58,18 @@ def _ground_formula(match_parse, formula, threshold=0.5):
     else:
         children = [_ground_formula(match_parse, child) for child in formula.children]
         if isinstance(formula, SetNode):
-            new_children = []
-            for child in children:
-                if child.has_constant():
-                    new_children.append(child)
-                else:
-                    tv = match_parse.graph_parse.core_parse.evaluate(child)
-                    if tv.conf > threshold:
+            if False: #formula.children[0].signature.return_type == 'truth':
+                new_children = []
+                for child in children:
+                    if child.has_constant():
                         new_children.append(child)
-            out = SetNode(new_children)
+                    else:
+                        tv = match_parse.graph_parse.core_parse.evaluate(child)
+                        if tv.conf > threshold:
+                            new_children.append(child)
+                out = SetNode(new_children)
+            else:
+                out = SetNode(children)
         else:
             out = FormulaNode(formula.signature, children)
     final = _apply_distribution(out)

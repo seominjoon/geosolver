@@ -51,6 +51,8 @@ class TagRule(object):
         return hash((self.span, self.signature))
 
     def __eq__(self, other):
+        if not isinstance(other, TagRule):
+            return False
         span = self.span == other.span
         sig = self.signature == other.signature
         return span and sig

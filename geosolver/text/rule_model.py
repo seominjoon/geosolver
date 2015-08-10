@@ -27,10 +27,13 @@ def filter_tag_rules(unary_model, tag_rules, unary_rules, th):
     filtered = set()
     tag_dict = {}
     for unary_rule in unary_rules:
+        parent_tag = unary_rule.parent_tag_rule
         child_tag = unary_rule.child_tag_rule
         child_span = child_tag.span
+        parent_span = parent_tag.span
         if isinstance(child_tag.signature, VariableSignature) and unary_model.get_score(unary_rule) > th:
             tag_dict[child_span] = child_tag
+            tag_dict[parent_span] = parent_tag
 
     for tag_rule in tag_rules:
         if tag_rule.span in tag_dict:
@@ -38,7 +41,16 @@ def filter_tag_rules(unary_model, tag_rules, unary_rules, th):
                 filtered.add(tag_rule)
         else:
             filtered.add(tag_rule)
-    return tag_rules
+
+    return filtered
+
+def filter_unary_rules(tag_rules, unary_rules):
+    filtered = set()
+    for unary_rule in unary_rules:
+        parent_tag, child_tag = unary_rule.parent_tag_rule, unary_rule.child_tag_rule
+        if parent_tag in tag_rules and child_tag in tag_rules:
+            filtered.add(unary_rule)
+    return filtered
 
 
 class Model(object):
@@ -267,7 +279,8 @@ class CombinedModel(Model):
     def get_semantic_forest(self, syntax_parse):
         tag_rules = self.generate_tag_rules(syntax_parse)
         unary_rules = self.generate_unary_rules(tag_rules)
-        tag_rules = filter_tag_rules(self.unary_model, tag_rules, unary_rules, 0.5)
+        tag_rules = filter_tag_rules(self.unary_model, tag_rules, unary_rules, 0.9)
+        unary_rules = filter_unary_rules(tag_rules, unary_rules)
         binary_rules = self.generate_binary_rules(tag_rules)
         semantic_forest = SemanticForest(tag_rules, unary_rules, binary_rules)
         return semantic_forest
@@ -357,6 +370,8 @@ class NaiveCCModel(NaiveBinaryModel):
         if a.signature.valence > 0:
             return False
         if b.signature.valence > 0:
+            return False
+        if a.signature.return_type != b.signature.return_type:
             return False
         return BinaryRule.val_func(p, a, b)
 

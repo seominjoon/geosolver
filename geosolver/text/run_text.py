@@ -12,7 +12,7 @@ from geosolver.ontology.ontology_definitions import VariableSignature
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree
 from geosolver.text.opt_model import GreedyOptModel, TextGreedyOptModel, FullGreedyOptModel
 from geosolver.text.rule_model import NaiveTagModel, CombinedModel, \
-    RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel, filter_tag_rules
+    RFUnaryModel, RFCoreModel, RFIsModel, RFCCModel, filter_tag_rules, NaiveCCModel
 from geosolver.text.semantic_forest import SemanticForest
 from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
 import cPickle as pickle
@@ -57,7 +57,7 @@ def train_semantic_model(tm, syntax_parses, annotations):
     um = RFUnaryModel()
     corem = RFCoreModel()
     ism = RFIsModel()
-    ccm = RFCCModel()
+    ccm = NaiveCCModel(3)
 
     for pk, local_syntax_parses in syntax_parses.iteritems():
         print "training:", pk
@@ -80,12 +80,12 @@ def train_semantic_model(tm, syntax_parses, annotations):
             um.update(local_tag_rules, local_unary_rules)
             corem.update(local_tag_rules, core_rules)
             ism.update(local_tag_rules, is_rules)
-            ccm.update(local_tag_rules, cc_rules)
+            #ccm.update(local_tag_rules, cc_rules)
 
     um.fit()
     corem.fit()
     ism.fit()
-    ccm.fit()
+    #ccm.fit()
 
     cm = CombinedModel(tm, um, corem, ism, ccm)
     return cm
