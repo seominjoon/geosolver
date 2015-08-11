@@ -5,7 +5,7 @@ from geosolver.diagram.computational_geometry import distance_between_line_and_p
     distance_between_points, angle_in_radian, cartesian_angle, signed_distance_between_cartesian_angles, \
     horizontal_angle, area_of_polygon, distance_between_points_squared, perpendicular_distance_between_line_and_point
 from geosolver.ontology.instantiator_definitions import instantiators
-from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype, SetNode
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype, SetNode, Node
 import sys
 from geosolver.utils.num import is_number
 import operator
@@ -478,6 +478,8 @@ def _polygon_to_angles(polygon):
     return [Angle(polygon[index-2], polygon[index-1], point) for index, point in enumerate(polygon)]
 
 def evaluate(formula, assignment):
+    if not isinstance(formula, Node):
+        return formula
     if not formula.is_grounded(assignment.keys()):
         return None
 
@@ -502,7 +504,8 @@ def evaluate(formula, assignment):
                 evaluated_args.append(arg)
         # FIXME : rather than try/catch, check type matching
         try:
-            return getattr(this, formula.signature.id)(*evaluated_args)
+            out = getattr(this, formula.signature.id)(*evaluated_args)
+            return out
         except:
             return TruthValue(np.inf)
 

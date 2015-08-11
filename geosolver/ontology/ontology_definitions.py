@@ -292,6 +292,7 @@ high_order_type_inheritances = (
     ('hypotenuse', 'line', 'IsHypotenuseOf'),
     ('tangent', 'line', 'Tangent'),
     ('secant', 'line', 'Secant'),
+    ('midpoint', 'point', 'IsMidpointOf'),
 )
 
 types = set().union(*[set(inheritance) for inheritance in type_inheritances])

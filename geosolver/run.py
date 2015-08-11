@@ -12,7 +12,7 @@ from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula import ground_formulas
 from geosolver.grounding.parse_match_formulas import parse_match_formulas
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
-from geosolver.ontology.ontology_semantics import evaluate
+from geosolver.ontology.ontology_semantics import evaluate, Equals
 from geosolver.solver.solve import solve
 from geosolver.text.augment_formulas import augment_formulas
 from geosolver.text.opt_model import TextGreedyOptModel, GreedyOptModel, FullGreedyOptModel
@@ -21,7 +21,7 @@ from geosolver.text.run_text import train_semantic_model, questions_to_syntax_pa
 from geosolver.text.semantic_trees_to_text_formula_parse import semantic_trees_to_text_formula_parse
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text.complete_formulas import complete_formulas
-from geosolver.text.syntax_parser import SyntaxParse, stanford_parser
+from geosolver.text.syntax_parser import stanford_parser
 from geosolver.ontology.utils import filter_formulas, reduce_formulas
 from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
@@ -202,7 +202,7 @@ def _full_unit_test(combined_model, question, label_data):
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
         all_formulas.extend(text_formulas)
 
-    reduced_formulas = reduce_formulas(all_formulas)
+    reduced_formulas = all_formulas # reduce_formulas(all_formulas)
     for reduced_formula in reduced_formulas:
         if reduced_formula.is_grounded(core_parse.variable_assignment.keys()):
             score = evaluate(reduced_formula, core_parse.variable_assignment)
@@ -218,7 +218,7 @@ def _full_unit_test(combined_model, question, label_data):
 
     if choice_formulas is None:
         penalized = False
-        if abs(ans - float(question.answer)) < 0.01:
+        if Equals(ans, float(question.answer)).conf > 0.98:
             correct = True
         else:
             correct = False
@@ -314,16 +314,16 @@ def annotated_test():
 def full_test():
     start = time.time()
     ids1 = [963, 968, 969, 971, 973, 974, 977, 985, 990, 993, 995, 1000, 1003, 1004, 1006, 1011, 1014, 1017, 1018, 1020,]
-    ids2 = [1025, 1030, 1031, 1032, 1035, 1037, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,] #1027
+    ids2 = [1025, 1030, 1031, 1032, 1035, 1038, 1039, 1040, 1042, 1043, 1045, 1047, 1050, 1051, 1052, 1054, 1056, 1058,] #1027, 1037
     ids3 = [1063, 1065, 1067, 1076, 1089, 1095, 1096, 1097, 1099, 1102, 1105, 1106, 1107, 1108, 1110, 1111, 1119, 1120, 1121] # 1103
     ids4 = [1122, 1123, 1124, 1127, 1141, 1142, 1143, 1145, 1146, 1147, 1149, 1150, 1151, 1152, 1070, 1083, 1090, 1092, 1144, 1148]
     ids5 = [975, 979, 981, 988, 989, 997, 1005, 1019, 1029, 1044, 1046, 1057, 1059, 1064, 1087, 1104, 1113, 1114, 1129, 1071]
     ids6 = [1100, 1101, 1109, 1140, 1053]
     tr_ids = ids4+ids5+ids6
     te_ids = ids1+ids2+ids3
-    te_ids = [1020]
+    #te_ids = [1058]
 
-    load = True
+    load = False
 
     all_questions = geoserver_interface.download_questions('test')
     if not load:
@@ -367,7 +367,7 @@ def full_test():
         if result.correct:
             correct += 1
         print "-"*80
-        print "%d/%d complete" % (idx+1, len(te_s))
+        print "%d/%d complete, %d correct, %d penalized, %d error" % (idx+1, len(te_s), correct, penalized, error)
     end = time.time()
     print "-"*80
     print "duration:\t%.1f" % (end - start)

@@ -26,6 +26,7 @@ def reduce_formulas(formulas):
     """
     Equals(m, 5), Equals(m, l) --> Equals(5, l)
     Idea: if we find something like m = 40, we replace m with 40 for every formula
+    Optional thing for boosting solver speed.
     :param formulas:
     :return:
     """

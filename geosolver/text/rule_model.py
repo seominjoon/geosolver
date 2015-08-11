@@ -423,7 +423,7 @@ class RFUnaryModel(UnaryModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_unary_rules), 1: len(self.negative_unary_rules)}
-        # self.classifier = RandomForestClassifier(class_weight='auto') # RandomForestClassifier()
+        # self.classifier = RandomForestClassifier(class_weight='auto', n_estimators=30) # RandomForestClassifier()
         # self.classifier = SVC(probability=True, class_weight='auto')
         self.classifier = LogisticRegression(class_weight='auto')
         self.classifier.fit(X, y)
@@ -477,7 +477,7 @@ class RFCoreModel(BinaryModel):
         print "length of feature vector:", np.shape(X)[1]
 
         cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
-        # self.classifier = self.classifier_class(class_weight='auto')
+        # self.classifier = self.classifier_class(class_weight='auto', n_estimators=30)
         # self.classifier = SVC(probability=True, class_weight='auto')
         self.classifier = LogisticRegression(class_weight='auto')
         self.classifier.fit(X, y)
@@ -503,6 +503,28 @@ class RFIsModel(RFCoreModel):
         if not (issubtype(a.signature.return_type, 'number') or issubtype(a.signature.return_type, 'entity')):
             return False
         return BinaryRule.val_func(p, a, b)
+
+    def fit(self):
+        print "Fitting %s:" % self.__class__.__name__
+        print "# of positive examples:", len(self.positive_binary_rules)
+        print "# of negative examples:", len(self.negative_binary_rules)
+        self.feature_function = self.feature_function_class(self.positive_binary_rules + self.negative_binary_rules)
+        X = []
+        y = []
+        for pbr in self.positive_binary_rules:
+            X.append(self.feature_function.map(pbr))
+            y.append(1)
+        for nbr in self.negative_binary_rules:
+            X.append(self.feature_function.map(nbr))
+            y.append(0)
+
+        print "length of feature vector:", np.shape(X)[1]
+
+        cw = {0: len(self.positive_binary_rules), 1: len(self.negative_binary_rules)}
+        # self.classifier = self.classifier_class(class_weight='auto', n_estimators=30)
+        # self.classifier = SVC(probability=True, class_weight='auto')
+        self.classifier = LogisticRegression(class_weight='auto')
+        self.classifier.fit(X, y)
 
 
 class RFCCModel(RFCoreModel):

@@ -136,11 +136,11 @@ def _ground_variable(match_parse, variable, references={}):
             new_leaf = FormulaNode(VariableSignature(variable.signature.id, "line", name=variable.signature.name), [])
             return FormulaNode(signatures['LengthOf'], [_ground_variable(match_parse, new_leaf)])
     elif return_type == 'point':
-        if variable_signature.name == 'point':
+        if len(variable_signature.name) == 1:
+            return match_parse.match_dict[variable_signature.name][0]
+        else:
             points = get_all_instances(graph_parse, 'point', True)
             return SetNode(points.values())
-        elif len(variable_signature.name) == 1:
-            return match_parse.match_dict[variable_signature.name][0]
     elif return_type == 'line':
         if len(variable_signature.name) == 1 and variable_signature.name in match_parse.match_dict:
             line = match_parse.match_dict[variable_signature.name][0]
@@ -255,4 +255,5 @@ def _ground_variable(match_parse, variable, references={}):
         arcs = get_all_instances(graph_parse, 'arc', True)
         return SetNode(lines.values() + arcs.values())
 
-    raise Exception(repr(variable))
+    #logging.warning("failed to ground variable: %r" % variable)
+    raise Exception()

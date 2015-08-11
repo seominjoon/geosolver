@@ -103,17 +103,24 @@ class FullGreedyOptModel(TextGreedyOptModel):
         self.diagram_scores = {}
 
     def optimize(self, semantic_trees, threshold):
+        """
         for t in semantic_trees:
             print "%.3f %r %r" % (self.combined_model.get_tree_score(t), self.get_diagram_score(t), t)
         print ""
-        return super(FullGreedyOptModel, self).optimize(semantic_trees, threshold)
+        """
+        out = super(FullGreedyOptModel, self).optimize(semantic_trees, threshold)
+        return out
 
 
     def get_diagram_score(self, semantic_tree):
+        assert isinstance(semantic_tree, SemanticTreeNode)
         if semantic_tree in self.diagram_scores:
             return self.diagram_scores[semantic_tree]
-        assert isinstance(semantic_tree, SemanticTreeNode)
         formula = semantic_tree.to_formula()
+        if formula.has_constant():
+            self.diagram_scores[semantic_tree] = None
+            return None
+
         try:
             grounded_formula = ground_formulas(self.match_parse, [formula])[0]
             score = self.match_parse.graph_parse.core_parse.evaluate(grounded_formula).conf
@@ -138,4 +145,7 @@ def magic(text_score, diagram_score):
     if diagram_score is None:
         return text_score
     else:
-        return np.mean((text_score, diagram_score))
+        if diagram_score > text_score:
+            return np.mean((text_score, diagram_score))
+        else:
+            return diagram_score

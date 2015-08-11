@@ -53,7 +53,7 @@ class UnaryFeatureFunction(FeatureFunction):
         self.nbr_rel_set = set()
         self.mid_pos_set = set()
         self.graph_dist_set = {0, 1, 2, 3, 4}
-        self.plain_dist_set = {1, 2, 3, 4}
+        self.plain_dist_set = set() #{1, 2, 3, 4}
         self.p_pos_set = set()
         self.c_pos_set = set()
         self.p_return_type_set = set()
@@ -95,7 +95,7 @@ class UnaryFeatureFunction(FeatureFunction):
             out.append(int(d == 1 and ref_rel == sp.relation_between_spans(p.span, c.span)))
         for ref_tag in self.mid_pos_set:
             out.append(int(d == 2 and ref_tag == sp.get_pos_by_index(sp.shortest_path_between_spans(p.span, c.span)[1])))
-        out.append(pd)
+        # out.append(pd)
 
         """
         for ref_p_tag in self.p_pos_set:
