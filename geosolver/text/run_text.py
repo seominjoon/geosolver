@@ -20,8 +20,8 @@ import cPickle as pickle
 __author__ = 'minjoon'
 
 
-def questions_to_syntax_parses(questions):
-    syntax_parses = {pk: {number: stanford_parser.get_best_syntax_parse(words)
+def questions_to_syntax_parses(questions, parser=True):
+    syntax_parses = {pk: {number: stanford_parser.get_best_syntax_parse(words, parser=parser)
                           for number, words in question.sentence_words.iteritems()}
                      for pk, question in questions.iteritems()}
     return syntax_parses

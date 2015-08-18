@@ -293,6 +293,8 @@ high_order_type_inheritances = (
     ('tangent', 'line', 'Tangent'),
     ('secant', 'line', 'Secant'),
     ('midpoint', 'point', 'IsMidpointOf'),
+    ('bisector', 'line', 'BisectsAngle'),
+    ('side', 'line', 'IsSideOf'),
 )
 
 types = set().union(*[set(inheritance) for inheritance in type_inheritances])
@@ -362,6 +364,7 @@ function_signature_tuples = (
     ('IsCenterOf', 'truth', ['point', 'twod']),
     ('IsDiameterLineOf', 'truth', ['line', 'circle']),
     ('IsAngle', 'truth', ['angle']),
+    ('IsSector', 'truth', ['sector']),
     ('Equilateral', 'truth', ['triangle']),
     ('Isosceles', 'truth', ['triangle']),
     ('IsSquare', 'truth', ['quad']),
@@ -373,6 +376,7 @@ function_signature_tuples = (
     ('IsRectLengthOf', 'truth', ['number', 'quad']),
     ('IsDiameterNumOf', 'truth', ['number', 'circle']),
     ('IsSideOf', 'truth', ['number', 'quad']),
+    ('SideOf', 'number', ['square']),
     ('PerimeterOf', 'number', ['polygon']),
     ('IsMidpointOf', 'truth', ['point', 'line']),
     ('IsWidthOf', 'truth', ['number', 'quad']),
@@ -420,6 +424,7 @@ function_signature_tuples = (
     ('HalfOf', 'number', ['number']),
     ('DegreeUnit', 'number', ['number']),
     ('WidthOf', 'number', ['quad']),
+    ('IsRhombus', 'truth', ['quad']),
 )
 
 abbreviations = {

@@ -110,8 +110,8 @@ class SyntaxParser(object):
         """
         raise Exception("This function must be overriden!")
 
-    def get_best_syntax_parse(self, words):
-        return self.get_syntax_parses(words, 1)[0]
+    def get_best_syntax_parse(self, words, parser=True):
+        return self.get_syntax_parses(words, 1, parser=parser)[0]
 
 
 class StanfordDependencyParser(SyntaxParser):
@@ -121,9 +121,12 @@ class StanfordDependencyParser(SyntaxParser):
     def __init__(self, server_url):
         self.server_url = server_url
 
-    def get_syntax_parses(self, words, k, unique=True):
+    def get_syntax_parses(self, words, k, unique=True, parser=True):
         # FIXME : this should be fixed at geoserver level
         words = {key: word.lstrip().rstrip() for key, word in words.iteritems()}
+        if not parser:
+            return [SyntaxParse(words, None, None, None, None)]
+
         sentence = [words[index] for index in sorted(words.keys())]
         neutral_sentence = [_neutralize(word) for word in sentence]
         params = {'words': '+'.join(neutral_sentence), 'k': k, 'paragraph': ' '.join(neutral_sentence)}

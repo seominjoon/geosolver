@@ -108,7 +108,8 @@ class UnaryRule(SemanticRule):
 
 class BinaryRule(SemanticRule):
     def __init__(self, parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
-        assert BinaryRule.val_func(parent_tag_rule, child_a_tag_rule, child_b_tag_rule)
+        if not BinaryRule.val_func(parent_tag_rule, child_a_tag_rule, child_b_tag_rule):
+            raise Exception("%r %r %r" % (parent_tag_rule, child_a_tag_rule, child_b_tag_rule))
         assert isinstance(parent_tag_rule, TagRule)
         assert isinstance(child_a_tag_rule, TagRule)
         assert isinstance(child_b_tag_rule, TagRule)

@@ -1,6 +1,7 @@
 from cStringIO import StringIO
 import logging
 import numbers
+from pprint import pprint
 import sys
 import time
 from geosolver import geoserver_interface
@@ -321,7 +322,7 @@ def full_test():
     ids6 = [1100, 1101, 1109, 1140, 1053]
     tr_ids = ids4+ids5+ids6
     te_ids = ids1+ids2+ids3
-    # te_ids = [1018]
+    te_ids = ids4+ids6
 
     load = False
 
@@ -376,6 +377,40 @@ def full_test():
     out = "total:\t\t%d\npenalized:\t%d\ncorrect:\t%d\nerror:\t\t%d" % (total, penalized, correct, error)
     print out
 
+def data_stat(query):
+    questions = geoserver_interface.download_questions(query)
+    syntax_parses = questions_to_syntax_parses(questions, parser=False)
+    annotations = geoserver_interface.download_semantics(query)
+    unary_rules = []
+    binary_rules = []
+    semantic_trees = []
+    for pk, local_syntax_parses in syntax_parses.iteritems():
+        print pk
+        for number, syntax_parse in local_syntax_parses.iteritems():
+            local_semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
+                              for annotation in annotations[pk][number].values()]
+            semantic_trees.extend(local_semantic_trees)
+            for semantic_tree in local_semantic_trees:
+                unary_rules.extend(semantic_tree.get_unary_rules())
+                binary_rules.extend(semantic_tree.get_binary_rules())
+
+    tag_model = train_tag_model(syntax_parses, annotations)
+
+    print "sentences: %d" % sum(len(question.sentence_words) for _, question in questions.iteritems())
+    print "words: %d" % (sum(len(words) for _, question in questions.iteritems() for _, words in question.sentence_words.iteritems()))
+    print "literals: %d" % len(semantic_trees)
+    print "unary rules: %d" % len(unary_rules)
+    print "binary rules: %d" % len(binary_rules)
+
+    print ""
+    print "LEXICON"
+    for key, s in tag_model.lexicon.iteritems():
+        print "%s: %s" % ("_".join(key), ", ".join(" ".join(ss) for ss in s))
+
+
+
+
 if __name__ == "__main__":
     # annotated_test()
-    full_test()
+    # full_test()
+    data_stat('aaai')
