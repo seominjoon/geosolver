@@ -2,10 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>This is test!</title>
+    <title>Demo</title>
 </head>
 <body>
-test!!!
+
+<script src="js/jquery.min.js"></script>
+<script>
+    var rootPath = "assets/";
+    var dirsJsonPath = rootPath + "dirs.json";
+    var basePath = rootPath + "968/";
+    var questionJsonPath = basePath + "question.json";
+    var textParseJsonPath = basePath + "text_parse.json";
+    var diagramParseJsonPath = basePath + "diagram_parse.json";
+    var optimizedJsonPath = basePath + "optimized.json";
+    var answerJsonPath = basePath + "answer.json";
+
+    $.getJSON( questionJsonPath, function( data ) {
+        var text = data.text;
+        var diagramPath = basePath + data.diagram_path;
+        $('#text').text(text);
+        $('#diagram').attr("src", diagramPath);
+    });
+
+    function loadFormulas(jsonPath, id) {
+        $.getJSON( jsonPath, function( data ) {
+            var textParseItems = [];
+            for (var i = 0; i < data.length; i++) {
+                textParseItems.push("<li>" + data[i].formula + "</li>");
+            }
+            $("#" + id).html(textParseItems.join(""));
+        });
+    }
+
+    loadFormulas(textParseJsonPath, "textParse");
+    loadFormulas(diagramParseJsonPath, "diagramParse");
+    loadFormulas(optimizedJsonPath, "optimized");
+
+    $.getJSON( answerJsonPath, function( data ) {
+       $('#answer').text(data.answer);
+    });
+
+</script>
+
+<p id="text"></p>
+<img id="diagram" src="">
+<h3>Text formulas</h3>
+<ul id="textParse"></ul>
+<h3>Diagram formulas</h3>
+<ul id="diagramParse"></ul>
+<h3>Optimized</h3>
+<ul id="optimized"></ul>
+<h3>Answer</h3>
+<p id="answer"></p>
 
 </body>
 </html>
