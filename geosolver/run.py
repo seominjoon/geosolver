@@ -4,6 +4,7 @@ import numbers
 from pprint import pprint
 import sys
 import time
+import signal
 from geosolver import geoserver_interface
 from geosolver.database.utils import split
 from geosolver.diagram.parse_confident_formulas import parse_confident_formulas
@@ -61,6 +62,7 @@ def annotated_unit_test(query):
     #myout = StringIO()
     #oldstdout = sys.stdout
     #sys.stdout = myout
+
     try:
         result = _annotated_unit_test(query)
     except Exception, e:
@@ -139,9 +141,13 @@ def full_unit_test(combined_model, question, label_data):
     :param id_:
     :return SimpleResult:
     """
-    #myout = StringIO()
-    #oldstdout = sys.stdout
-    #sys.stdout = myout
+    maxtime = 2400
+
+    def handler(signum, frame):
+        raise Exception("Timeout")
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(maxtime)
+
     try:
         result = _full_unit_test(combined_model, question, label_data)
     except Exception, e:
@@ -326,7 +332,13 @@ def full_test():
 
     load = False
 
-    all_questions = geoserver_interface.download_questions('test')
+    tr_questions = geoserver_interface.download_questions('aaai')
+    te_questions = geoserver_interface.download_questions('emnlp')
+    te_questions = geoserver_interface.download_questions(1053)
+    all_questions = dict(tr_questions.items() + te_questions.items())
+    tr_ids = tr_questions.keys()
+    te_ids = te_questions.keys()
+
     if not load:
         all_syntax_parses = questions_to_syntax_parses(all_questions)
         pickle.dump(all_syntax_parses, open('syntax_parses.p', 'wb'))
@@ -412,5 +424,5 @@ def data_stat(query):
 
 if __name__ == "__main__":
     # annotated_test()
-    # full_test()
-    data_stat('aaai')
+    full_test()
+    # data_stat('aaai')

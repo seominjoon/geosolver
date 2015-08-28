@@ -150,19 +150,6 @@ def _ground_variable(match_parse, variable, references={}):
             point_a = match_parse.match_dict[label_a][0]
             point_b = match_parse.match_dict[label_b][0]
             return FormulaNode(signatures['Line'], [point_a, point_b])
-            """
-        elif variable_signature.name == 'hypotenuse':
-            def func(x):
-                l, t = x
-                formula = FormulaNode(signatures['IsHypotenuseOf'], (l,t))
-                tv = core_parse.evaluate(formula)
-                return tv.norm
-            lines = get_all_instances(graph_parse, 'line', True).values()
-            triangles = get_all_instances(graph_parse, 'triangle', True).values()
-            line, triangle = min(itertools.product(lines, triangles), key=func)
-            return line
-            """
-
         else:
             lines = get_all_instances(graph_parse, 'line', True)
             return SetNode(lines.values())
@@ -199,9 +186,11 @@ def _ground_variable(match_parse, variable, references={}):
                     if measure > np.pi:
                         continue
                     return formula
-
         elif len(variable_signature.name) == 1 and variable_signature.name.islower():
             return match_parse.match_dict[variable_signature.name][0]
+        else:
+            angles = get_all_instances(graph_parse, 'angle', True)
+            return SetNode(angles.values())
     elif return_type == 'arc':
         if len(variable_signature.name) == 2 and variable_signature.name.isupper():
             point_keys = [match_parse.point_key_dict[label] for label in variable_signature.name]
@@ -255,5 +244,4 @@ def _ground_variable(match_parse, variable, references={}):
         arcs = get_all_instances(graph_parse, 'arc', True)
         return SetNode(lines.values() + arcs.values())
 
-    #logging.warning("failed to ground variable: %r" % variable)
-    raise Exception()
+    raise Exception("failed to ground variable: %r" % variable)
