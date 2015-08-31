@@ -1,18 +1,57 @@
-var Question = React.createClass({
+var QuestionKeyList = React.createClass({
+    onSubmit: function(e) {
+        e.preventDefault();
+        var questionKey = React.findDOMNode(this.refs.questionKey).value.trim();
+        this.props.updateQuestion(questionKey);
+        return;
+    },
     render: function() {
+        var questionNodes = this.props.questionKeys.map(function (questionKey) {
+            return (
+              <option questionKey={questionKey}>
+                  {questionKey}
+              </option>
+            );
+        });
         return (
-            <div className="question">
-                <h3>Question</h3>
+            <div className="questionList">
+                <h2>Questions</h2>
+                <form className="questionListForm" onSubmit={this.onSubmit}>
+                    <select ref="questionKey">
+                        {questionNodes}
+                    </select>
+                    <input type="submit" value="Go" />
+                </form>
             </div>
         );
     }
 });
 
-var QuestionList = React.createClass({
+var Choice = React.createClass({
     render: function() {
         return (
-            <div className="questionList">
-                <h2>Question List</h2>
+          <div className="choice">
+              {this.props.key}: {this.props.value}
+          </div>
+        );
+    }
+});
+
+var ChoiceList = React.createClass({
+    render: function() {
+
+        var choiceNodes = [];
+        for (var key in this.props.choices) {
+            if (this.props.choices.hasOwnProperty(key)) {
+                choiceNodes.push(
+                    <Choice key={key} value={this.props.choices[key]} />
+                );
+            }
+        }
+        return (
+            <div className="choiceList">
+                <h2>Choices</h2>
+                {choiceNodes}
             </div>
         );
     }
@@ -34,7 +73,7 @@ var Formula = React.createClass({
     render: function() {
         return (
             <div className="formula">
-                {this.props.formula.formula}: {this.props.formula.score}
+                {this.props.formula.simple}: {this.props.formula.score}
             </div>
         );
     }
@@ -42,7 +81,6 @@ var Formula = React.createClass({
 
 var FormulaList = React.createClass({
     render: function() {
-        console.log(this.props.formulas);
         var formulaNodes = this.props.formulas.map(function (formula) {
             return (
                 <Formula formula={formula}/>
@@ -84,15 +122,19 @@ var Demo = React.createClass({
     getInitialState: function() {
         return {questionKey: this.props.defaultQuestionKey}
     },
-    handleChooseQuestion: function(questionKey) {
+    updateQuestion: function(questionKey) {
+        console.log(questionKey);
+        this.setState({questionKey: questionKey});
     },
     render: function() {
         var questionUrl = this.props.baseUrl + this.state.questionKey + "/";
+        var question = getJSON(questionUrl+"question.json");
         return (
             <div className="demo">
                 <h1>Demo</h1>
-                <QuestionList onChooseQuestion={this.handleChooseQuestion} dirs={getJSON(this.props.baseUrl+"dirs.json")} />
-                <QuestionBox diagramUrl={questionUrl+"diagram.png"} question={getJSON(questionUrl+"question.json")} />
+                <QuestionKeyList updateQuestion={this.updateQuestion} questionKeys={getJSON(this.props.baseUrl+"dirs.json")} />
+                <QuestionBox diagramUrl={questionUrl+"diagram.png"} question={question} />
+                <ChoiceList choices={question.choices} />
                 <FormulaList className="textParse" title="Text Parse" formulas={getJSON(questionUrl+"text_parse.json")} />
                 <FormulaList className="diagramParse" title="Diagram Parse" formulas={getJSON(questionUrl+"diagram_parse.json")} />
                 <FormulaList className="optimized" title="Optimized" formulas={getJSON(questionUrl+"optimized.json")} />
