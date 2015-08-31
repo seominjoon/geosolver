@@ -1,0 +1,1 @@
+[{"simple": "PointLiesOnLine(point_4, Line(point_0, point_2))", "score": 0, "repr": "PointLiesOnLine($point_4:point,Line($point_0:point,$point_2:point))"}, {"simple": "PointLiesOnLine(point_1, Line(point_2, point_3))", "score": 0, "repr": "PointLiesOnLine($point_1:point,Line($point_2:point,$point_3:point))"}]
