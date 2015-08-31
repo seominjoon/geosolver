@@ -1,10 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 *.pyc
 .idea/
-.idea/geosolver.iml
-
-.idea/misc.xml
-
-.idea/workspace.xml
-
 *.p
+temp/
+

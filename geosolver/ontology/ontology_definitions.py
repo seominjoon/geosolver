@@ -37,6 +37,9 @@ class FunctionSignature(Signature):
     def __repr__(self):
         return self.name
 
+    def simple_repr(self):
+        return self.name
+
 
 
 class VariableSignature(Signature):
@@ -45,6 +48,9 @@ class VariableSignature(Signature):
 
     def __repr__(self):
         return "$%s:%s" % (self.name, self.return_type)
+
+    def simple_repr(self):
+        return self.name
 
     def is_ref(self):
         """
@@ -225,6 +231,13 @@ class FormulaNode(Node):
             return repr(self.signature)
         return "%r(%s)" % (self.signature, ",".join(repr(child) for child in self.children))
 
+    def simple_repr(self):
+        if len(self.children) == 0:
+            return self.signature.simple_repr()
+        else:
+            args_string = ", ".join(child.simple_repr() for child in self.children)
+            return "%s(%s)" % (self.signature.simple_repr(), args_string)
+
     def has_signature(self, id_):
         if self.signature.id == id_:
             return True
@@ -257,6 +270,9 @@ class SetNode(Node):
 
     def __repr__(self):
         return "{%s}" % ",".join(repr(child) for child in self.children)
+
+    def simple_repr(self):
+        return "{%s}" % ",".join(child.simple_repr() for child in self.children)
 
 
 type_inheritances = (

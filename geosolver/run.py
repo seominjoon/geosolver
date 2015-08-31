@@ -1,7 +1,9 @@
 from cStringIO import StringIO
+import json
 import logging
 import numbers
 from pprint import pprint
+import shutil
 import sys
 import time
 import signal
@@ -28,6 +30,7 @@ from geosolver.ontology.utils import filter_formulas, reduce_formulas
 from geosolver.ontology.utils import flatten_formulas
 from geosolver.utils.prep import open_image
 import cPickle as pickle
+import os.path
 
 __author__ = 'minjoon'
 
@@ -161,8 +164,27 @@ def full_unit_test(combined_model, question, label_data):
 
     # graph_parse.core_parse.display_points()
 
+demo_path = "../temp/demo"
+
 def _full_unit_test(combined_model, question, label_data):
     assert isinstance(combined_model, CombinedModel)
+
+    base_path = os.path.join(demo_path, str(question.key))
+    if not os.path.exists(base_path):
+        os.mkdir(base_path)
+    question_path = os.path.join(base_path, 'question.json')
+    text_parse_path = os.path.join(base_path, 'text_parse.json')
+    diagram_parse_path = os.path.join(base_path, 'diagram_parse.json')
+    optimized_path = os.path.join(base_path, 'optimized.json')
+    answer_path = os.path.join(base_path, 'answer.json')
+    diagram_path = os.path.join(base_path, 'diagram.png')
+    shutil.copy(question.diagram_path, diagram_path)
+    question_dict = {'text': question.text, 'diagram_path': 'diagram.png', 'choices': {number: " ".join(d.values()) for number, d in question.choice_words.iteritems()}}
+    text_parse_list = []
+    diagram_parse_list = []
+    optimized_list = []
+    answer_dict = {'answer': 'Unknown'}
+    json.dump(question_dict, open(question_path, 'wb'))
 
     choice_formulas = get_choice_formulas(question)
     match_parse = question_to_match_parse(question, label_data)
@@ -176,6 +198,8 @@ def _full_unit_test(combined_model, question, label_data):
 
     diagram_formulas = parse_confident_formulas(match_parse.graph_parse)
     all_formulas = match_formulas + diagram_formulas
+
+
 
     opt_model = FullGreedyOptModel(combined_model, match_parse)
     for number, sentence_words in question.sentence_words.iteritems():
@@ -205,6 +229,9 @@ def _full_unit_test(combined_model, question, label_data):
         for f in completed_formulas: print f
         print ""
 
+        for f in completed_formulas:
+            text_parse_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 0})
+
         grounded_formulas = ground_formulas(match_parse, completed_formulas+truth_expr_formulas, value_expr_formulas)
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
         all_formulas.extend(text_formulas)
@@ -220,6 +247,16 @@ def _full_unit_test(combined_model, question, label_data):
         print reduced_formula, score, scores
     # core_parse.display_points()
 
+    for f in diagram_formulas:
+        diagram_parse_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 0})
+    for f in reduced_formulas:
+        optimized_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 0})
+    json.dump(diagram_parse_list, open(diagram_parse_path, 'wb'))
+    json.dump(optimized_list, open(optimized_path, 'wb'))
+    json.dump(text_parse_list, open(text_parse_path, 'wb'))
+    json.dump(answer_dict, open(answer_path, 'wb'))
+
+    print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
     print "ans:", ans
 
@@ -330,11 +367,11 @@ def full_test():
     te_ids = ids1+ids2+ids3
     te_ids = ids4+ids6
 
-    load = False
+    load = True
 
     tr_questions = geoserver_interface.download_questions('aaai')
     te_questions = geoserver_interface.download_questions('emnlp')
-    te_questions = geoserver_interface.download_questions(1053)
+    te_keys = [968, 971, 973]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
     te_ids = te_questions.keys()
@@ -365,7 +402,7 @@ def full_test():
         cm = pickle.load(open('cm.p', 'rb'))
 
     print "test ids: %s" % ", ".join(str(k) for k in te_s.keys())
-    for idx, (id_, syntax_parse) in enumerate(te_s.iteritems()):
+    for idx, id_ in enumerate(te_keys):
         question = all_questions[id_]
         label = all_labels[id_]
         id_ = str(id_)
@@ -402,6 +439,7 @@ def data_stat(query):
             local_semantic_trees = [annotation_to_semantic_tree(syntax_parse, annotation)
                               for annotation in annotations[pk][number].values()]
             semantic_trees.extend(local_semantic_trees)
+            print local_semantic_trees
             for semantic_tree in local_semantic_trees:
                 unary_rules.extend(semantic_tree.get_unary_rules())
                 binary_rules.extend(semantic_tree.get_binary_rules())
@@ -425,4 +463,4 @@ def data_stat(query):
 if __name__ == "__main__":
     # annotated_test()
     full_test()
-    # data_stat('aaai')
+    # data_stat('emnlp')

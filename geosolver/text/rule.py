@@ -60,6 +60,10 @@ class TagRule(object):
     def __repr__(self):
         return "%s@%s[%s]" % (repr(self.signature), _span_to_string(self.span), self.string)
 
+    def simple_repr(self):
+        return self.signature.simple_repr()
+
+
 
 class SemanticRule(object):
     pass

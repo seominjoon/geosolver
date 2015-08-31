@@ -18,6 +18,8 @@ class SemanticTreeNode(FormulaNode):
             args_string = ", ".join(repr(child) for child in self.children)
             return "%r(%s)" % (self.content, args_string)
 
+
+
     def __hash__(self):
         return hash((self.content, tuple(self.children)))
 
