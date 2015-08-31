@@ -31,7 +31,7 @@ var Choice = React.createClass({
     render: function() {
         return (
           <div className="choice">
-              {this.props.key}: {this.props.value}
+              {this.props.myKey}: {this.props.myValue}
           </div>
         );
     }
@@ -44,7 +44,7 @@ var ChoiceList = React.createClass({
         for (var key in this.props.choices) {
             if (this.props.choices.hasOwnProperty(key)) {
                 choiceNodes.push(
-                    <Choice key={key} value={this.props.choices[key]} />
+                    <Choice myKey={key} myValue={this.props.choices[key]} />
                 );
             }
         }
@@ -123,7 +123,6 @@ var Demo = React.createClass({
         return {questionKey: this.props.defaultQuestionKey}
     },
     updateQuestion: function(questionKey) {
-        console.log(questionKey);
         this.setState({questionKey: questionKey});
     },
     render: function() {
