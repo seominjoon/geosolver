@@ -134,18 +134,20 @@ class FullGreedyOptModel(TextGreedyOptModel):
         if len(semantic_trees) == 0:
             return 0.0
 
-
         # sum_log = sum(np.log(self.combined_model.get_tree_score(tree)) for tree in semantic_trees)
         cov = len(set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules()))
-        sum_log = sum(np.log(magic(self.combined_model.get_tree_score(t), self.get_diagram_score(t))) for t in semantic_trees)
+        sum_log = sum(np.log(self.get_magic_score(t)) for t in semantic_trees)
         # sum_log = sum(np.log(magic(self.combined_model.get_tree_score(t), diagram_scores[t])) for t in semantic_trees)
         return cov + sum_log
 
-def magic(text_score, diagram_score):
-    if diagram_score is None:
-        return text_score
-    else:
-        if diagram_score > text_score:
-            return np.mean((text_score, diagram_score))
+    def get_magic_score(self, t):
+        text_score = self.combined_model.get_tree_score(t)
+        diagram_score = self.get_diagram_score(t)
+        if diagram_score is None:
+            return text_score
         else:
-            return diagram_score
+            if diagram_score > text_score:
+                return np.mean((text_score, diagram_score))
+            else:
+                return diagram_score
+

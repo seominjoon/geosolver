@@ -200,9 +200,6 @@ def _full_unit_test(combined_model, question, label_data):
     diagram_formulas = parse_confident_formulas(match_parse.graph_parse)
     all_formulas = match_formulas + diagram_formulas
 
-    for f in diagram_formulas:
-        diagram_parse_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 1.0})
-
     opt_model = FullGreedyOptModel(combined_model, match_parse)
     for number, sentence_words in question.sentence_words.iteritems():
         syntax_parse = stanford_parser.get_best_syntax_parse(sentence_words)
@@ -225,6 +222,15 @@ def _full_unit_test(combined_model, question, label_data):
         for t in truth_semantic_trees.union(is_semantic_trees).union(cc_trees):
             text_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
                                     'score': opt_model.combined_model.get_tree_score(t)})
+            diagram_score = opt_model.get_diagram_score(t)
+            if diagram_score is not None and diagram_score > 0:
+                diagram_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
+                                           'score': diagram_score})
+
+        for t in bool_semantic_trees:
+            optimized_list.append({'repr': repr(t), 'simple': t.simple_repr(),
+                                    'score': opt_model.get_magic_score(t)})
+
 
         core_formulas = set(t.to_formula() for t in bool_semantic_trees)
         cc_formulas = set(t.to_formula() for t in cc_trees)
@@ -245,7 +251,6 @@ def _full_unit_test(combined_model, question, label_data):
         if reduced_formula.is_grounded(core_parse.variable_assignment.keys()):
             score = evaluate(reduced_formula, core_parse.variable_assignment)
             scores = [evaluate(child, core_parse.variable_assignment) for child in reduced_formula.children]
-            optimized_list.append({'repr': repr(reduced_formula), 'simple': reduced_formula.simple_repr(), 'score': score.conf})
         else:
             score = None
             scores = None
@@ -391,7 +396,7 @@ def full_test():
     correct = 0
     penalized = 0
     error = 0
-    total = len(te_ids)
+    total = len(te_keys)
 
     #(te_s, te_a, te_l), (tr_s, tr_a, trl_l) = split([all_syntax_parses, all_annotations, all_labels], 0.7)
     tr_s = {id_: all_syntax_parses[id_] for id_ in tr_ids}
@@ -422,7 +427,7 @@ def full_test():
         if result.correct:
             correct += 1
         print "-"*80
-        print "%d/%d complete, %d correct, %d penalized, %d error" % (idx+1, len(te_s), correct, penalized, error)
+        print "%d/%d complete, %d correct, %d penalized, %d error" % (idx+1, len(te_keys), correct, penalized, error)
     end = time.time()
     print "-"*80
     print "duration:\t%.1f" % (end - start)
