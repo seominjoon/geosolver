@@ -42,11 +42,12 @@ class GeoserverInterface(object):
                 temp_filepath = os.path.join(temp_dir, temp_name)
                 urllib.urlretrieve(diagram_url, temp_filepath)
             choice_words = {int(number): {int(index): word for index, word in words.iteritems()} for number, words in pair['choice_words'].iteritems()}
+            choices = {int(number): text for number, text in pair['choices'].iteritems()}
             sentence_expressions ={int(number): {index: expr for index, expr in exprs.iteritems()} for number, exprs in pair['sentence_expressions'].iteritems()}
             sentence_words = {int(number): {int(index): word for index, word in words.iteritems()} for number, words in pair['sentence_words'].iteritems()}
             choice_expressions ={int(number): {index: expr for index, expr in exprs.iteritems()} for number, exprs in pair['choice_expressions'].iteritems()}
             answer = pair['answer']
-            question = Question(pair['pk'], pair['text'], sentence_words, sentence_expressions, temp_filepath, choice_words, choice_expressions, answer)
+            question = Question(pair['pk'], pair['text'], sentence_words, sentence_expressions, temp_filepath, choice_words, choice_expressions, answer, choices)
             questions[question.key] = question
         return questions
 

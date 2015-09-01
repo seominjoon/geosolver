@@ -179,11 +179,12 @@ def _full_unit_test(combined_model, question, label_data):
     answer_path = os.path.join(base_path, 'answer.json')
     diagram_path = os.path.join(base_path, 'diagram.png')
     shutil.copy(question.diagram_path, diagram_path)
-    question_dict = {'text': question.text, 'diagram_path': 'diagram.png', 'choices': {number: " ".join(d.values()) for number, d in question.choice_words.iteritems()}}
+    question_dict = {'text': question.text, 'diagram_path': 'diagram.png',
+                     'choices': {number: text for number, text in question.choices.iteritems()}}
     text_parse_list = []
     diagram_parse_list = []
     optimized_list = []
-    answer_dict = {'answer': 'Unknown'}
+    answer_dict = {'answer': question.answer}
     json.dump(question_dict, open(question_path, 'wb'))
 
     choice_formulas = get_choice_formulas(question)
@@ -199,7 +200,8 @@ def _full_unit_test(combined_model, question, label_data):
     diagram_formulas = parse_confident_formulas(match_parse.graph_parse)
     all_formulas = match_formulas + diagram_formulas
 
-
+    for f in diagram_formulas:
+        diagram_parse_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 1.0})
 
     opt_model = FullGreedyOptModel(combined_model, match_parse)
     for number, sentence_words in question.sentence_words.iteritems():
@@ -220,6 +222,10 @@ def _full_unit_test(combined_model, question, label_data):
         bool_semantic_trees = opt_model.optimize(truth_semantic_trees.union(is_semantic_trees), 0)
         # semantic_trees = bool_semantic_trees.union(cc_trees)
 
+        for t in truth_semantic_trees.union(is_semantic_trees).union(cc_trees):
+            text_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
+                                    'score': opt_model.combined_model.get_tree_score(t)})
+
         core_formulas = set(t.to_formula() for t in bool_semantic_trees)
         cc_formulas = set(t.to_formula() for t in cc_trees)
         augmented_formulas = augment_formulas(core_formulas)
@@ -229,8 +235,6 @@ def _full_unit_test(combined_model, question, label_data):
         for f in completed_formulas: print f
         print ""
 
-        for f in completed_formulas:
-            text_parse_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 0})
 
         grounded_formulas = ground_formulas(match_parse, completed_formulas+truth_expr_formulas, value_expr_formulas)
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
@@ -241,24 +245,24 @@ def _full_unit_test(combined_model, question, label_data):
         if reduced_formula.is_grounded(core_parse.variable_assignment.keys()):
             score = evaluate(reduced_formula, core_parse.variable_assignment)
             scores = [evaluate(child, core_parse.variable_assignment) for child in reduced_formula.children]
+            optimized_list.append({'repr': repr(reduced_formula), 'simple': reduced_formula.simple_repr(), 'score': score.conf})
         else:
             score = None
             scores = None
         print reduced_formula, score, scores
     # core_parse.display_points()
 
-    for f in diagram_formulas:
-        diagram_parse_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 0})
-    for f in reduced_formulas:
-        optimized_list.append({'repr': repr(f), 'simple': f.simple_repr(), 'score': 0})
     json.dump(diagram_parse_list, open(diagram_parse_path, 'wb'))
     json.dump(optimized_list, open(optimized_path, 'wb'))
     json.dump(text_parse_list, open(text_parse_path, 'wb'))
     json.dump(answer_dict, open(answer_path, 'wb'))
 
+    return SimpleResult(question.key, False, False, True) # Early termination
+
     print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
     print "ans:", ans
+
 
     if choice_formulas is None:
         penalized = False
