@@ -18,5 +18,8 @@
   "strict": true,
   "trailing": true,
   "smarttabs": true,
-  "expr": true
+  "expr": true,
+  "globals": {
+    "Promise": true
+  }
 }
