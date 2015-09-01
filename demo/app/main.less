@@ -164,7 +164,7 @@ section {
   button {
     font-size: @font-size-l;
     padding: @spacing @spacing-xxl;
-    margin: @spacing auto;
+    margin: @spacing auto 0;
     font-family: Lora;
     font-weight: 400;
   }
@@ -218,4 +218,81 @@ section {
 .loading-solution .loading {
   padding-top: @spacing-xxl * 6;
   padding-bottom: @spacing-xxl * 6;
+}
+
+@media screen and (max-width: 480px) {
+  header {
+    a {
+      display: none;
+    }
+  }
+
+  .section {
+    padding: @spacing;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: @spacing 0;
+  }
+
+  .intro {
+    display: none;
+  }
+
+  .question-list {
+    margin: 0 -@spacing;
+
+    .question {
+      border: none;
+      box-shadow: none;
+
+      > ul > li {
+        padding: @spacing;
+
+        img {
+          max-width: 90%;
+        }
+      }
+    }
+  }
+
+
+  .next-question,
+  .prev-question {
+    padding: @spacing-xsm;
+
+    svg {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .solve-button {
+    button {
+      width: 100%;
+    }
+  }
+
+  .formula-list {
+    padding-left: 0;
+
+    li {
+      em {
+        padding-left: @spacing-sm;
+      }
+    }
+  }
+
+  .loading-solution .loading {
+    padding-top: @spacing-xxl * 3;
+    padding-bottom: @spacing-xxl * 3;
+  }
+
+  .answer {
+    margin-bottom: 0;
+  }
 }
