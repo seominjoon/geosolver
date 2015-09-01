@@ -35,9 +35,12 @@ def _combination_to_grounded_formulas(match_parse, formulas, combination, singul
     grounded_formulas = []
     for formula in formulas:
         singular_grounded_formula = _assign_variables(formula, var_dict)
-        plural_grounded_formula = _ground_formula(match_parse, singular_grounded_formula)
-        grounded_formula = _apply_distribution(plural_grounded_formula)
-        grounded_formulas.append(grounded_formula)
+        try:
+            plural_grounded_formula = _ground_formula(match_parse, singular_grounded_formula)
+            grounded_formula = _apply_distribution(plural_grounded_formula)
+            grounded_formulas.append(grounded_formula)
+        except:
+            pass
     return grounded_formulas
 
 

@@ -3,6 +3,7 @@ import logging
 import numpy as np
 from geosolver.grounding.ground_formula import ground_formulas
 from geosolver.grounding.states import MatchParse
+from geosolver.text.complete_formulas import complete_formulas
 from geosolver.text.rule import UnaryRule
 from geosolver.text.rule_model import CombinedModel
 from geosolver.text.semantic_tree import SemanticTreeNode
@@ -22,7 +23,7 @@ class TextGreedyOptModel(GreedyOptModel):
         assert isinstance(combined_model, CombinedModel)
         self.combined_model = combined_model
 
-    def optimize(self, semantic_trees, threshold):
+    def optimize(self, semantic_trees, threshold, cc_trees=set()):
         selected = set()
         remaining = set(semantic_trees)
 
@@ -46,12 +47,21 @@ class TextGreedyOptModel(GreedyOptModel):
         print ""
         return selected
 
-    def objective_function(self, semantic_trees):
+    def objective_function(self, semantic_trees, cc_trees=set()):
         if len(semantic_trees) == 0:
             return 0.0
         sum_log = sum(np.log(self.combined_model.get_tree_score(tree)) for tree in semantic_trees)
-        cov = len(set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules()))
-        return cov + sum_log
+        return sum_log + self.get_coverage(semantic_trees, cc_trees)
+
+    def get_coverage(self, semantic_trees, cc_trees):
+        core_spans = set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules())
+        for cc_tree in cc_trees:
+            spans = set(tr.span for tr in cc_tree.get_tag_rules())
+            if len(spans.intersection(core_spans)) > 0:
+                core_spans = core_spans + spans
+        cov = len(core_spans)
+        return cov
+
 
     @staticmethod
     def pairwise_legal(a_tree, b_tree):
@@ -102,47 +112,48 @@ class FullGreedyOptModel(TextGreedyOptModel):
         self.core_parse = match_parse.graph_parse.core_parse
         self.diagram_scores = {}
 
-    def optimize(self, semantic_trees, threshold):
+    def optimize(self, semantic_trees, threshold, cc_trees=set()):
         """
         for t in semantic_trees:
             print "%.3f %r %r" % (self.combined_model.get_tree_score(t), self.get_diagram_score(t), t)
         print ""
         """
-        out = super(FullGreedyOptModel, self).optimize(semantic_trees, threshold)
+        out = super(FullGreedyOptModel, self).optimize(semantic_trees, threshold, cc_trees)
         return out
 
 
-    def get_diagram_score(self, semantic_tree):
-        assert isinstance(semantic_tree, SemanticTreeNode)
-        if semantic_tree in self.diagram_scores:
-            return self.diagram_scores[semantic_tree]
-        formula = semantic_tree.to_formula()
+    def get_diagram_score(self, formula, cc_formulas=set()):
+        if formula in self.diagram_scores:
+            return self.diagram_scores[formula]
         if formula.has_constant():
-            self.diagram_scores[semantic_tree] = None
+            self.diagram_scores[formula] = None
             return None
 
+        completed_formula = complete_formulas([formula], cc_formulas)
+
         try:
-            grounded_formula = ground_formulas(self.match_parse, [formula])[0]
+            grounded_formula = ground_formulas(self.match_parse, [completed_formula])[0]
             score = self.match_parse.graph_parse.core_parse.evaluate(grounded_formula).conf
         except Exception as e:
             # logging.exception(e)
             score = None
-        self.diagram_scores[semantic_tree] = score
+        self.diagram_scores[formula] = score
         return score
 
-    def objective_function(self, semantic_trees):
+    def objective_function(self, semantic_trees, cc_trees=set()):
         if len(semantic_trees) == 0:
             return 0.0
 
         # sum_log = sum(np.log(self.combined_model.get_tree_score(tree)) for tree in semantic_trees)
-        cov = len(set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules()))
-        sum_log = sum(np.log(self.get_magic_score(t)) for t in semantic_trees)
+        cov = self.get_coverage(semantic_trees, cc_trees)
+        sum_log = sum(np.log(self.get_magic_score(t, cc_trees)) for t in semantic_trees)
         # sum_log = sum(np.log(magic(self.combined_model.get_tree_score(t), diagram_scores[t])) for t in semantic_trees)
         return cov + sum_log
 
-    def get_magic_score(self, t):
+    def get_magic_score(self, t, cc_trees):
         text_score = self.combined_model.get_tree_score(t)
-        diagram_score = self.get_diagram_score(t)
+        cc_formulas = set(t.to_formula() for t in cc_trees)
+        diagram_score = self.get_diagram_score(t.to_formula(), cc_formulas=cc_formulas)
         if diagram_score is None:
             return text_score
         else:

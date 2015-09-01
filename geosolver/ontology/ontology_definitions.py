@@ -169,9 +169,13 @@ class FormulaNode(Node):
         return out
 
     def __hash__(self):
+        if isinstance(self.signature, FunctionSignature) and self.signature.is_symmetric:
+            return hash((self.signature, frozenset(self.children)))
         return hash((self.signature, tuple(self.children)))
 
     def __eq__(self, other):
+        if isinstance(self.signature, FunctionSignature) and self.signature.is_symmetric:
+            return self.signature == other.signature and frozenset(self.children) == frozenset(other.children)
         return self.signature == other.signature and tuple(self.children) == tuple(other.children)
 
     def __add__(self, other):
@@ -213,10 +217,6 @@ class FormulaNode(Node):
     def __rpow__(self, power, modulo=None):
         current = signatures['Pow']
         return FormulaNode(current, [power, self])
-
-    def __eq__(self, other):
-        current = signatures['Equals']
-        return FormulaNode(current, [self, other])
 
     def __ge__(self, other):
         current = signatures['Ge']

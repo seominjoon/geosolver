@@ -198,7 +198,7 @@ def _full_unit_test(combined_model, question, label_data):
     # opt_model = TextGreedyOptModel(combined_model)
 
     diagram_formulas = parse_confident_formulas(match_parse.graph_parse)
-    all_formulas = match_formulas + diagram_formulas
+    all_formulas = set(match_formulas + diagram_formulas)
 
     opt_model = FullGreedyOptModel(combined_model, match_parse)
     for number, sentence_words in question.sentence_words.iteritems():
@@ -216,20 +216,20 @@ def _full_unit_test(combined_model, question, label_data):
         for cc_tree in cc_trees:
             print "cc tree:", cc_tree, opt_model.combined_model.get_tree_score(cc_tree)
 
-        bool_semantic_trees = opt_model.optimize(truth_semantic_trees.union(is_semantic_trees), 0)
+        bool_semantic_trees = opt_model.optimize(truth_semantic_trees.union(is_semantic_trees), 0, cc_trees)
         # semantic_trees = bool_semantic_trees.union(cc_trees)
 
         for t in truth_semantic_trees.union(is_semantic_trees).union(cc_trees):
             text_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
                                     'score': opt_model.combined_model.get_tree_score(t)})
-            diagram_score = opt_model.get_diagram_score(t)
+            diagram_score = opt_model.get_diagram_score(t.to_formula(), cc_trees)
             if diagram_score is not None and diagram_score > 0:
                 diagram_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
                                            'score': diagram_score})
 
         for t in bool_semantic_trees:
             optimized_list.append({'repr': repr(t), 'simple': t.simple_repr(),
-                                    'score': opt_model.get_magic_score(t)})
+                                    'score': opt_model.get_magic_score(t, cc_trees)})
 
 
         core_formulas = set(t.to_formula() for t in bool_semantic_trees)
@@ -241,10 +241,9 @@ def _full_unit_test(combined_model, question, label_data):
         for f in completed_formulas: print f
         print ""
 
-
         grounded_formulas = ground_formulas(match_parse, completed_formulas+truth_expr_formulas, value_expr_formulas)
         text_formulas = filter_formulas(flatten_formulas(grounded_formulas))
-        all_formulas.extend(text_formulas)
+        all_formulas = all_formulas.union(text_formulas)
 
     reduced_formulas = all_formulas # reduce_formulas(all_formulas)
     for reduced_formula in reduced_formulas:
@@ -262,7 +261,7 @@ def _full_unit_test(combined_model, question, label_data):
     json.dump(text_parse_list, open(text_parse_path, 'wb'))
     json.dump(answer_dict, open(answer_path, 'wb'))
 
-    return SimpleResult(question.key, False, False, True) # Early termination
+    # return SimpleResult(question.key, False, False, True) # Early termination
 
     print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
@@ -380,7 +379,7 @@ def full_test():
 
     tr_questions = geoserver_interface.download_questions('aaai')
     te_questions = geoserver_interface.download_questions('emnlp')
-    te_keys = [968, 971, 973]
+    te_keys = [1119] #[968, 971, 973, 990, 1018]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
     te_ids = te_questions.keys()
@@ -434,6 +433,10 @@ def full_test():
 
     out = "total:\t\t%d\npenalized:\t%d\ncorrect:\t%d\nerror:\t\t%d" % (total, penalized, correct, error)
     print out
+
+    dirs_path = os.path.join(demo_path, 'dirs.json')
+    json.dump([str(x) for x in te_keys], open(dirs_path, 'wb'))
+
 
 def data_stat(query):
     questions = geoserver_interface.download_questions(query)

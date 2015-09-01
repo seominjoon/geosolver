@@ -484,7 +484,7 @@ def evaluate(formula, assignment):
         return None
 
     if isinstance(formula, SetNode):
-        if formula.head.return_type == 'truth':
+        if issubtype(formula.head.return_type, 'boolean'):
             out = reduce(operator.__and__, (evaluate(child, assignment) for child in formula.children), True)
             return out
         return formula
