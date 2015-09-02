@@ -219,7 +219,7 @@ def arc_midpoint(arc):
     radius = circle.radius
     caa = cartesian_angle(circle.center, arc.a)
     cab = cartesian_angle(circle.center, arc.b)
-    cam = (caa+cab)/2.0
+    cam = caa + signed_distance_between_cartesian_angles(caa, cab)/2.0
     mp = instantiators['point'](radius*np.cos(cam), radius*np.sin(cam))
     return mp
 

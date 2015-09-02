@@ -78,6 +78,9 @@ def parse_match_from_known_labels(graph_parse, known_labels):
             a_point = graph_parse.point_variables[a_key]
             b_point = graph_parse.point_variables[b_key]
             formula = FormulaNode(signatures['Arc'], [circle, a_point, b_point])
+            if len(arr) > 0 and arr[0] == 'angle':
+                formula = FormulaNode(signatures['MeasureOf'], [formula])
+                formula = FormulaNode(signatures['Div'], [formula, FormulaNode(signatures['Degree'], [])])
         if label not in match_dict:
             match_dict[label] = []
         elif issubtype(formula.return_type, 'entity'):

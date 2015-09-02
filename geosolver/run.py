@@ -379,7 +379,7 @@ def full_test():
 
     tr_questions = geoserver_interface.download_questions('aaai')
     te_questions = geoserver_interface.download_questions('emnlp')
-    te_keys = [1120] #[968, 971, 973, 990, 1018]
+    te_keys = [1121] #[968, 971, 973, 990, 1018]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
     te_ids = te_questions.keys()

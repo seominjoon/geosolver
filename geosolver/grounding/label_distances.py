@@ -27,7 +27,8 @@ def label_distance_to_line(label_point, line, is_length):
 
 
 def label_distance_to_arc(label_point, arc):
-    return distance_between_points(label_point, arc_midpoint(arc))
+    angle = instantiators['angle'](arc.a, arc.circle.center, arc.b)
+    return label_distance_to_angle(label_point, angle)
 
 
 def label_distance_to_angle(label_point, angle):
