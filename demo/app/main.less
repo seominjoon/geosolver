@@ -85,8 +85,13 @@ section {
     margin-top: 0;
   }
 
-  &:last-child {
+  &:last-child,
+  &.last-section {
     border-bottom: 0;
+  }
+
+  &.last-section {
+    padding-bottom: 0;
   }
 }
 
@@ -150,6 +155,17 @@ section {
 
 .choice-list {
   list-style-type: none;
+
+  li {
+    padding: 5px @spacing-xsm;
+
+    &.is-selected {
+      padding: @spacing-xsm;
+      background: @green;
+      color: #fff;
+      border-radius: 4px;
+    }
+  }
 }
 
 .prev-question,
@@ -178,10 +194,6 @@ section {
 
 .proof > .flex-row {
   flex-wrap: nowrap;
-
-  &:first-child {
-    margin-right: @spacing-sm;
-  }
 }
 
 .proof h2 {
@@ -220,9 +232,10 @@ section {
   border: 1px solid @light-gray;
   box-shadow: inset 1px 1px 3px 0 @shadow;
   list-style-type: none;
-  max-height: 160px;
+  max-height: 300px;
   overflow: auto;
   padding: 0;
+  margin-bottom: 0;
 
   li {
     justify-content: center;
@@ -254,20 +267,6 @@ section {
   .choice-list {
     max-width: 400px;
     font-size: @font-size;
-
-    li {
-      padding: 5px @spacing-xsm;
-
-      &.is-selected {
-        padding: @spacing-xsm;
-      }
-    }
-  }
-
-  .is-selected {
-    background: @green;
-    color: #fff;
-    border-radius: 4px;
   }
 }
 
@@ -302,6 +301,10 @@ section {
       padding-right: 0;
     }
   }
+}
+
+.ask-again {
+  padding-bottom: @spacing;
 }
 
 @media screen and (max-width: 800px) {
@@ -346,6 +349,7 @@ section {
 
       > ul > li {
         padding: @spacing-sm;
+        display: block;
 
         img {
           max-width: 90%;
@@ -393,6 +397,7 @@ section {
 .expand {
   padding: @spacing-sm;
   background: @lighter-gray;
+  font-weight: 700;
   flex-shrink: 0;
   font-size: @font-size;
   color: @blue;

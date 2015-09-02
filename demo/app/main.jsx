@@ -92,11 +92,6 @@ const ChoiceList = React.createClass({
 });
 
 const FormulaList = React.createClass({
-  getInitialState: function() {
-    return {
-      expanded: this.props.expanded
-    };
-  },
   render: function() {
     const formulas = (
       this.props.formulas.length > 0
@@ -107,11 +102,6 @@ const FormulaList = React.createClass({
           })
         : <li className="empty">Empty</li>
     );
-    const list = (this.state.expanded
-      ? <ul className="formula-list">{formulas}</ul>
-      : null
-    );
-    const text = (this.state.expanded ? 'Hide' : 'Show');
     return (
         <div className={this.props.className}>
           <div className="flex-row">
@@ -119,26 +109,11 @@ const FormulaList = React.createClass({
               <h2>{this.props.title}:</h2>
               <div className="description">{this.props.description}</div>
             </div>
-            <a className="flex-right expand btn btn-light-gray"
-                onClick={() => { this.setState({ expanded: !this.state.expanded });}}>
-              {text} {this.props.formulas.length} Formulas
+            <a className="flex-right expand">
+              {this.props.formulas.length} Formulas
             </a>
           </div>
-          {list}
-        </div>
-    );
-  }
-});
-
-const Answer = React.createClass({
-  render: function() {
-    return (
-        <div className="answer section">
-          <h2>Answer</h2>
-          <ChoiceList choices={this.props.choices} selected={this.props.answer.answer} />
-          <div className="solve-button">
-            <button onClick={this.props.onAskAgain}>Ask Another</button>
-          </div>
+          <ul className="formula-list">{formulas}</ul>
         </div>
     );
   }
@@ -177,9 +152,7 @@ const Demo = React.createClass({
   solveQuestion() {
     const start = Date.now();
 
-    this.setState({ displaySolution: true, solutionLoading: true }, () => {
-      scrollTo(React.findDOMNode(this.refs.solution).offsetTop);
-    });
+    this.setState({ isSolving: true });
 
     const question = this.state.questions[this.state.selectedQuestionIndex];
     const questionUrl = this.props.baseUrl + question.key + "/";
@@ -198,19 +171,19 @@ const Demo = React.createClass({
     Promise.all([tp,dp,op, ap]).then(() => {
       // Simulated latency
       setTimeout(() => {
-        this.setState({ solutionLoading: false });
+        this.setState({ isSolving: false, displaySolution: true });
       }, Math.max(0, Math.random() * 2000 - (Date.now() - start)));
     });
   },
 
   selectPrevQuestion() {
     const prev = Math.max(0, this.state.selectedQuestionIndex - 1);
-    this.setState({ selectedQuestionIndex: prev });
+    this.setState({ selectedQuestionIndex: prev, answer: undefined, optimizedFormulas: undefined, diagramFormulas: undefined, textFormulas: undefined, displaySolution: false });
   },
 
   selectNextQuestion() {
     const next = Math.min(this.state.questions.length - 1, this.state.selectedQuestionIndex + 1);
-    this.setState({ selectedQuestionIndex: next });
+    this.setState({ selectedQuestionIndex: next, answer: undefined, optimizedFormulas: undefined, diagramFormulas: undefined, textFormulas: undefined, displaySolution: false });
   },
 
   render: function() {
@@ -226,7 +199,8 @@ const Demo = React.createClass({
             <img src={this.props.baseUrl + q.key + "/diagram.png"} />
             <div className="question-text">
               {q.text}
-              <ChoiceList choices={q.choices} />
+              <ChoiceList choices={q.choices}
+                  selected={!this.state.isSolving && this.state.answer ? this.state.answer.answer : false} />
             </div>
           </li>
         );
@@ -240,7 +214,7 @@ const Demo = React.createClass({
         } else {
           const askAgain = () => {
             scrollTo(0, () => {
-              this.setState({ displaySolution: false });
+              this.setState({ displaySolution: false, answer: undefined });
             });
           };
           solutionContents = (
@@ -249,8 +223,10 @@ const Demo = React.createClass({
                 <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from the question text." formulas={this.state.textFormulas} />
                 <FormulaList className="proof diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
               </div>
-              <FormulaList className="proof section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas} expanded={true} />
-              <Answer answer={this.state.answer} choices={this.state.questions[this.state.selectedQuestionIndex].choices} onAskAgain={askAgain} />
+              <FormulaList className="proof section last-section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas}/>
+              <div className="solve-button ask-again">
+                <button onClick={askAgain}>Ask Another</button>
+              </div>
             </div>
           );
         }
@@ -266,6 +242,21 @@ const Demo = React.createClass({
       const hasPrev = this.state.selectedQuestionIndex > 0;
       const transform = prefixed('transform', 'translate3d(' + (-100 * this.state.selectedQuestionIndex) + '%,0,0)');
 
+      let button;
+      if (this.state.answer && !this.state.isSolving) {
+        const displaySolution = () => {
+          scrollTo(React.findDOMNode(this.refs.solution).offsetTop);
+        };
+        button = <button onClick={displaySolution}>Show Explanation</button>;
+      } else {
+        button = (
+          <button onClick={this.solveQuestion}
+              disabled={this.state.isSolving}>
+            {this.state.isSolving ? "Solving..." : "Solve"}
+          </button>
+        );
+      }
+
       contents = (
         <section>
           <div className="section">
@@ -276,7 +267,7 @@ const Demo = React.createClass({
               <button className="btn-transparent next-question" onClick={this.selectNextQuestion} disabled={!hasNext}>{icon}</button>
             </div>
             <div className="solve-button">
-              <button onClick={this.solveQuestion}>Solve</button>
+              {button}
             </div>
           </div>
           {solutionContents}
