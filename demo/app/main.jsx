@@ -217,9 +217,11 @@ const Demo = React.createClass({
           };
           solutionContents = (
             <div className="solution" ref="solution">
-              <FormulaList className="proof section text-parse" title="Text Parse" description="The information extracted from the question text." formulas={this.state.textFormulas} />
-              <FormulaList className="proof section diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
-              <FormulaList className="proof section optimized" title="Optimization" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas} />
+              <div className="extractions flex-row section">
+                <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from the question text." formulas={this.state.textFormulas} />
+                <FormulaList className="proof diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
+              </div>
+              <FormulaList className="proof section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas} />
               <Answer answer={this.state.answer} onAskAgain={askAgain} />
             </div>
           );

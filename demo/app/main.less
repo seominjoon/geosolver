@@ -29,7 +29,7 @@ h4 {
 }
 
 section {
-  max-width: 940px;
+  max-width: 1600px;
 }
 
 .provided-by {
@@ -49,8 +49,12 @@ section {
   }
 }
 
-.section {
+.section,
+.section .proof {
   padding: @spacing-xl;
+}
+
+.section {
   border-bottom: 2px solid @lighter-gray;
 
   h2:first-child {
@@ -218,6 +222,27 @@ section {
 .loading-solution .loading {
   padding-top: @spacing-xxl * 6;
   padding-bottom: @spacing-xxl * 6;
+}
+
+.extractions {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  > * {
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .extractions {
+    display: block;
+
+    > * {
+      width: auto;
+    }
+  }
 }
 
 @media screen and (max-width: 480px) {
