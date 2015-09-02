@@ -1,1 +1,0 @@
-[{"simple": "Equals(Which, 180)", "score": 0.18292998796100537, "repr": "Equals@5[equal]($Which:ground@0[Which], 180@6[180])"}, {"simple": "Equals(180, Which)", "score": 0.050144869853046149, "repr": "Equals@5[equal](180@6[180], $Which:ground@0[Which])"}]
