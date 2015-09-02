@@ -54,7 +54,10 @@ class TextGreedyOptModel(GreedyOptModel):
         return sum_log + self.get_coverage(semantic_trees, cc_trees)
 
     def get_coverage(self, semantic_trees, cc_trees):
-        core_spans = set(tr.span for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules())
+        tag_rules = list(tr for semantic_tree in semantic_trees for tr in semantic_tree.get_tag_rules())
+        if sum(tr.signature.id in ['What', 'Which', 'Find'] for tr in tag_rules) > 1:
+            return -np.inf
+        core_spans = set(tr.span for tr in tag_rules)
         for cc_tree in cc_trees:
             spans = set(tr.span for tr in cc_tree.get_tag_rules())
             if len(spans.intersection(core_spans)) > 0:
