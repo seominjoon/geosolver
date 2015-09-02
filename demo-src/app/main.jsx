@@ -220,10 +220,10 @@ const Demo = React.createClass({
           solutionContents = (
             <div className="solution" ref="solution">
               <div className="extractions flex-row section">
-                <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from the question text." formulas={this.state.textFormulas} />
+                <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from text." formulas={this.state.textFormulas} />
                 <FormulaList className="proof diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
               </div>
-              <FormulaList className="proof section last-section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas}/>
+              <FormulaList className="proof section last-section optimized" title="Optimized" description="The combined information from text and diagram." formulas={this.state.optimizedFormulas}/>
               <div className="solve-button ask-again">
                 <button onClick={askAgain}>Ask Another</button>
               </div>
@@ -278,11 +278,11 @@ const Demo = React.createClass({
       <div>
         <header className="padded flex-row">
           <div>
-            <h1>GeoSolver Demo</h1>
+            <h1>GeoS Demo</h1>
           </div>
           <div className="provided-by flex-row">
             <a href="http://allenai.org" target="_blank"><img src="assets/images/ai2_logo.png" width="360" height="71" /></a>
-            <a href="https://www.cs.washington.edu/" target="_blank"><img src="assets/images/uw.png" width="75" height="75" /></a>
+            <a href="https://www.cs.washington.edu/" target="_blank"><img src="assets/images/uw.png" width="100" height="100" /></a>
           </div>
         </header>
         <main>
