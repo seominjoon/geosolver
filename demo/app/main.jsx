@@ -76,7 +76,15 @@ const ChoiceList = React.createClass({
     let choices = [];
     for (let key in this.props.choices) {
       if (this.props.choices.hasOwnProperty(key)) {
-        choices.push(<li key={key}>({key}) {this.props.choices[key]}</li>);
+        const isSelected = parseInt(key, 10) === parseInt(this.props.selected, 10);
+        const className = isSelected ? 'is-selected flex-row' : '';
+        const icon = isSelected ? <span className="flex-right icon-check"></span> : '';
+        choices.push(
+          <li key={key} className={className}>
+            <span>({String.fromCharCode(parseInt(key, 10) + 64)}) {this.props.choices[key].replace('*\\degree', '°')}</span>
+            {icon}
+          </li>
+        );
       }
     }
     return <ul className="choice-list">{choices}</ul>;
@@ -84,19 +92,39 @@ const ChoiceList = React.createClass({
 });
 
 const FormulaList = React.createClass({
+  getInitialState: function() {
+    return {
+      expanded: this.props.expanded
+    };
+  },
   render: function() {
     const formulas = (
       this.props.formulas.length > 0
-        ? this.props.formulas.map(function (formula, index) {
-            return <li key={index}>{formula.simple}: <em>{formula.score}</em></li>;
+        ? this.props.formulas.sort(function(a, b) {
+            return b.score - a.score;
+          }).map(function (formula, index) {
+            return <li key={index}>{formula.simple}: <em>{Math.round(formula.score * 100) / 100}</em></li>;
           })
         : <li className="empty">Empty</li>
     );
+    const list = (this.state.expanded
+      ? <ul className="formula-list">{formulas}</ul>
+      : null
+    );
+    const text = (this.state.expanded ? 'Hide' : 'Show');
     return (
         <div className={this.props.className}>
-          <h2>{this.props.title}:</h2>
-          <p className="description">{this.props.description}</p>
-          <ul className="formula-list">{formulas}</ul>
+          <div className="flex-row">
+            <div>
+              <h2>{this.props.title}:</h2>
+              <div className="description">{this.props.description}</div>
+            </div>
+            <a className="flex-right expand btn btn-light-gray"
+                onClick={() => { this.setState({ expanded: !this.state.expanded });}}>
+              {text} {this.props.formulas.length} Formulas
+            </a>
+          </div>
+          {list}
         </div>
     );
   }
@@ -106,10 +134,8 @@ const Answer = React.createClass({
   render: function() {
     return (
         <div className="answer section">
-          <h2 className="flex-row">
-            <span>Answer: {this.props.answer.answer}</span>
-            <span className="flex-right icon-check"></span>
-          </h2>
+          <h2>Answer</h2>
+          <ChoiceList choices={this.props.choices} selected={this.props.answer.answer} />
           <div className="solve-button">
             <button onClick={this.props.onAskAgain}>Ask Another</button>
           </div>
@@ -196,10 +222,12 @@ const Demo = React.createClass({
 
       const questions = this.state.questions.map(q => {
         return (
-          <li key={q.key}>
-            <p><img src={this.props.baseUrl + q.key + "/diagram.png"} /></p>
-            <p>{q.text}</p>
-            <ChoiceList choices={q.choices} />
+          <li key={q.key} className="flex-row">
+            <img src={this.props.baseUrl + q.key + "/diagram.png"} />
+            <div className="question-text">
+              {q.text}
+              <ChoiceList choices={q.choices} />
+            </div>
           </li>
         );
       });
@@ -221,8 +249,8 @@ const Demo = React.createClass({
                 <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from the question text." formulas={this.state.textFormulas} />
                 <FormulaList className="proof diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
               </div>
-              <FormulaList className="proof section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas} />
-              <Answer answer={this.state.answer} onAskAgain={askAgain} />
+              <FormulaList className="proof section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas} expanded={true} />
+              <Answer answer={this.state.answer} choices={this.state.questions[this.state.selectedQuestionIndex].choices} onAskAgain={askAgain} />
             </div>
           );
         }
@@ -240,9 +268,6 @@ const Demo = React.createClass({
 
       contents = (
         <section>
-          <div className="intro section">
-            <h2>The GeoSolver is an end-to-end geometric question solver.</h2>
-          </div>
           <div className="section">
             <h2>Select a Question:</h2>
             <div className="question-list flex-row">
