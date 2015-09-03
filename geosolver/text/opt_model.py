@@ -132,10 +132,10 @@ class FullGreedyOptModel(TextGreedyOptModel):
             self.diagram_scores[formula] = None
             return None
 
-        completed_formula = complete_formulas([formula], cc_formulas)
+        completed_formulas = complete_formulas([formula], cc_formulas)
 
         try:
-            grounded_formula = ground_formulas(self.match_parse, [completed_formula])[0]
+            grounded_formula = ground_formulas(self.match_parse, completed_formulas)[0]
             score = self.match_parse.graph_parse.core_parse.evaluate(grounded_formula).conf
         except Exception as e:
             # logging.exception(e)

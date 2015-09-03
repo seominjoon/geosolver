@@ -63,6 +63,13 @@ class TagRule(object):
     def simple_repr(self):
         return self.signature.simple_repr()
 
+    def serialized(self):
+        out = {}
+        out['class'] = self.__class__.__name__
+        out['span'] = list(self.span)
+        out['signature'] = self.signature.serialized()
+        return out
+
 
 
 class SemanticRule(object):

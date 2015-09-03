@@ -47,7 +47,8 @@ def _combination_to_grounded_formulas(match_parse, formulas, combination, singul
 def _assign_variables(formula_node, var_dict):
     tester = lambda node: isinstance(node, FormulaNode) and node.is_leaf() and node.signature in var_dict
     getter = lambda node: var_dict[node.signature]
-    assert isinstance(formula_node, FormulaNode)
+    if not isinstance(formula_node, FormulaNode):
+        raise Exception("%s: %r" % (formula_node.__class__.__name__, formula_node))
     out_node = formula_node.replace_node(tester, getter)
     return out_node
 

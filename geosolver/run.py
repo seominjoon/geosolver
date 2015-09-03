@@ -176,16 +176,14 @@ def _full_unit_test(combined_model, question, label_data):
     text_parse_path = os.path.join(base_path, 'text_parse.json')
     diagram_parse_path = os.path.join(base_path, 'diagram_parse.json')
     optimized_path = os.path.join(base_path, 'optimized.json')
-    answer_path = os.path.join(base_path, 'answer.json')
+    entity_list_path = os.path.join(base_path, 'entity_map.png')
     diagram_path = os.path.join(base_path, 'diagram.png')
     shutil.copy(question.diagram_path, diagram_path)
-    question_dict = {'text': question.text, 'diagram_path': 'diagram.png',
-                     'choices': {number: text for number, text in question.choices.iteritems()}}
     text_parse_list = []
     diagram_parse_list = []
     optimized_list = []
-    answer_dict = {'answer': question.answer}
-    json.dump(question_dict, open(question_path, 'wb'))
+    entity_list = []
+    json.dump(question._asdict(), open(question_path, 'wb'))
 
     choice_formulas = get_choice_formulas(question)
     match_parse = question_to_match_parse(question, label_data)
@@ -220,15 +218,15 @@ def _full_unit_test(combined_model, question, label_data):
         # semantic_trees = bool_semantic_trees.union(cc_trees)
 
         for t in truth_semantic_trees.union(is_semantic_trees).union(cc_trees):
-            text_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
+            text_parse_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                     'score': opt_model.combined_model.get_tree_score(t)})
             diagram_score = opt_model.get_diagram_score(t.to_formula(), cc_trees)
-            if diagram_score is not None and diagram_score > 0:
-                diagram_parse_list.append({'repr': repr(t), 'simple': t.simple_repr(),
+            if diagram_score is not None:
+                diagram_parse_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                            'score': diagram_score})
 
         for t in bool_semantic_trees:
-            optimized_list.append({'repr': repr(t), 'simple': t.simple_repr(),
+            optimized_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                     'score': opt_model.get_magic_score(t, cc_trees)})
 
 
@@ -259,7 +257,6 @@ def _full_unit_test(combined_model, question, label_data):
     json.dump(diagram_parse_list, open(diagram_parse_path, 'wb'))
     json.dump(optimized_list, open(optimized_path, 'wb'))
     json.dump(text_parse_list, open(text_parse_path, 'wb'))
-    json.dump(answer_dict, open(answer_path, 'wb'))
 
     # return SimpleResult(question.key, False, False, True) # Early termination
 
@@ -379,7 +376,7 @@ def full_test():
 
     tr_questions = geoserver_interface.download_questions('aaai')
     te_questions = geoserver_interface.download_questions('emnlp')
-    te_keys = [1121] #[968, 971, 973, 990, 1018]
+    te_keys = [968, 971, 973, 1018]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
     te_ids = te_questions.keys()

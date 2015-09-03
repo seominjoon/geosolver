@@ -24,6 +24,13 @@ class Signature(object):
     def __hash__(self):
         return hash(self.id)
 
+    def simple_repr(self):
+        return self.name
+
+    def serialized(self):
+        return {"id": self.id, "return_type": self.return_type, "valence": self.valence, "name": self.name,
+                "class": self.__class__.__name__}
+
 class FunctionSignature(Signature):
     def __init__(self, id_, return_type, arg_types, arg_pluralities=None, is_symmetric=False, name=None):
         super(FunctionSignature, self).__init__(id_, return_type, len(arg_types), name=name)
@@ -40,6 +47,10 @@ class FunctionSignature(Signature):
     def simple_repr(self):
         return self.name
 
+    def serialized(self):
+        out = super(FunctionSignature, self).serialized()
+        out['arg_types'] = list(self.arg_types)
+        return out
 
 
 class VariableSignature(Signature):
@@ -72,6 +83,11 @@ class Node(object):
             if isinstance(child, Node):
                 child.parent = self
                 child.index = idx
+
+    def serialized(self):
+        serialized_children = [child.serialized() for child in self.children]
+        out = {'children': serialized_children, 'class': self.__class__.__name__}
+        return out
 
     def is_leaf(self):
         return len(self.children) == 0
@@ -137,7 +153,6 @@ class FormulaNode(Node):
         self.signature = signature
         super(FormulaNode, self).__init__(children, parent, index)
         self.return_type = signature.return_type
-
 
     def replace_signature(self, tester, getter):
         """
@@ -238,6 +253,11 @@ class FormulaNode(Node):
             args_string = ", ".join(child.simple_repr() for child in self.children)
             return "%s(%s)" % (self.signature.simple_repr(), args_string)
 
+    def serialized(self):
+        out = super(FormulaNode, self).serialized()
+        out['signature'] = self.signature.serialized()
+        return out
+
     def has_signature(self, id_):
         if self.signature.id == id_:
             return True
@@ -273,6 +293,11 @@ class SetNode(Node):
 
     def simple_repr(self):
         return "{%s}" % ",".join(child.simple_repr() for child in self.children)
+
+    def serialized(self):
+        out = super(SetNode, self).serialized()
+        out['head'] = self.head.serialized()
+        return out
 
 
 type_inheritances = (
