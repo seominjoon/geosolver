@@ -220,7 +220,7 @@ const Demo = React.createClass({
           solutionContents = (
             <div className="solution" ref="solution">
               <div className="extractions flex-row section">
-                <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from the question text." formulas={this.state.textFormulas} />
+                <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from the question." formulas={this.state.textFormulas} />
                 <FormulaList className="proof diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
               </div>
               <FormulaList className="proof section last-section optimized" title="Solution" description="The information optimized over text and diagram." formulas={this.state.optimizedFormulas}/>
@@ -276,13 +276,15 @@ const Demo = React.createClass({
     }
     return (
       <div>
-        <header className="padded flex-row">
-          <div>
-            <h1>GeoSolver Demo</h1>
-          </div>
-          <div className="provided-by flex-row">
-            <a href="http://allenai.org" target="_blank"><img src="assets/images/ai2_logo.png" width="360" height="71" /></a>
-            <a href="https://www.cs.washington.edu/" target="_blank"><img src="assets/images/uw.png" width="75" height="75" /></a>
+        <header>
+          <div className="padded flex-row">
+            <div>
+              <h1>GeoSolver Demo</h1>
+            </div>
+            <div className="provided-by flex-row">
+              <a href="http://allenai.org" target="_blank"><img src="assets/images/ai2_logo.png" width="94" height="71" /></a>
+              <a href="https://www.cs.washington.edu/" target="_blank"><img src="assets/images/uw.png" width="75" height="75" /></a>
+            </div>
           </div>
         </header>
         <main>

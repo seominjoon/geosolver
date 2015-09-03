@@ -1,4 +1,5 @@
 @import '../node_modules/syrup/less/syrup.less';
+@icon-font-base-dir: 'assets/fonts/';
 @import url(http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic);
 
 body,
@@ -13,8 +14,8 @@ header {
   border-top-width: 2px;
   box-shadow: 1px 1px 3px 0 @shadow;
 
-  &.padded {
-    padding: @spacing-sm;
+  .padded {
+    padding: @spacing-sm @spacing-l;
   }
 }
 
@@ -43,8 +44,13 @@ h3 {
   font-size: @font-size;
 }
 
-section {
+section,
+header > div {
   max-width: 980px;
+}
+
+header > div {
+  margin: 0 auto;
 }
 
 .provided-by {
@@ -208,6 +214,7 @@ section {
   font-style: italic;
   margin-top: 0;
   color: @gray;
+  font-size: @font-size-sm;
 }
 
 .loading {
@@ -254,7 +261,7 @@ section {
     }
 
     &:nth-child(odd) {
-      background: @lighter-gray;
+      background: lighten(@lighter-gray, 2%);
     }
   }
 }
