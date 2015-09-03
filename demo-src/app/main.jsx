@@ -214,7 +214,11 @@ const Demo = React.createClass({
         } else {
           const askAgain = () => {
             scrollTo(0, () => {
-              this.setState({ displaySolution: false, answer: undefined });
+              let nextIndex = this.state.selectedQuestionIndex + 1;
+              if (nextIndex >= this.state.questions.length) {
+                nextIndex = 0;
+              }
+              this.setState({ displaySolution: false, answer: undefined, selectedQuestionIndex: nextIndex });
             });
           };
           solutionContents = (
