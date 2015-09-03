@@ -97,8 +97,18 @@ const FormulaList = React.createClass({
       this.props.formulas.length > 0
         ? this.props.formulas.sort(function(a, b) {
             return b.score - a.score;
-          }).map(function (formula, index) {
-            return <li key={index}>{formula.simple}: <em>{Math.round(formula.score * 100) / 100}</em></li>;
+          }).map((formula, index) => {
+            const classes = [
+              formula.isAligned ? 'is-aligned' : '',
+              formula.isActive ? 'is-active' : ''
+            ].join(' ').trim();
+            const update = (this.props.updateActiveAlignment ? () => this.props.updateActiveAlignment(formula.simple) : null);
+            return (
+              <li key={index} className={classes}
+                  onMouseEnter={update} onMouseLeave={this.props.removeActiveAlignment}>
+                {formula.simple}: <em>{Math.round(formula.score * 100) / 100}</em>
+              </li>
+            );
           })
         : <li className="empty">Empty</li>
     );
@@ -186,6 +196,18 @@ const Demo = React.createClass({
     this.setState({ selectedQuestionIndex: next, answer: undefined, optimizedFormulas: undefined, diagramFormulas: undefined, textFormulas: undefined, displaySolution: false });
   },
 
+  updateActiveAlignment(formula) {
+    this.setState({
+      activeFormula: formula
+    });
+  },
+
+  removeActiveAlignment() {
+    this.setState({
+      activeFormula: undefined
+    });
+  },
+
   render: function() {
 
     let contents;
@@ -221,15 +243,52 @@ const Demo = React.createClass({
               this.setState({ displaySolution: false, answer: undefined, selectedQuestionIndex: nextIndex });
             });
           };
+
+          const textFormulas = this.state.textFormulas.filter((tf, index, self) => {
+            let i = 0;
+            for(; i < self.length; i++) {
+              if (tf.simple === self[i].simple) {
+                break;
+              }
+            }
+            return i === index;
+          }).map(tf => {
+            tf.isActive = this.state.activeFormula === tf.simple;
+            tf.isAligned = this.state.diagramFormulas.some(df => df.simple === tf.simple);
+            return tf;
+          });
+
+          const diagramFormulas = this.state.diagramFormulas.filter((df, index, self) => {
+            let i = 0;
+            for(; i < self.length; i++) {
+              if (df.simple === self[i].simple) {
+                break;
+              }
+            }
+            return i === index;
+          }).map(df => {
+            df.isActive = this.state.activeFormula === df.simple;
+            df.isAligned = this.state.textFormulas.some(tf => df.simple === tf.simple);
+            return df;
+          });
+
           solutionContents = (
             <div className="solution" ref="solution">
               <div className="extractions flex-row section">
-                <FormulaList className="proof text-parse" title="Text Parse" description="The information extracted from text." formulas={this.state.textFormulas} />
-                <FormulaList className="proof diagram-parse" title="Diagram Parse" description="The information extracted from diagram." formulas={this.state.diagramFormulas} />
+                <FormulaList className="proof text-parse" title="Text Parse"
+                    description="The information extracted from text."
+                    updateActiveAlignment={this.updateActiveAlignment}
+                    removeActiveAlignment={this.removeActiveAlignment}
+                    formulas={textFormulas} />
+                <FormulaList className="proof diagram-parse" title="Diagram Parse"
+                    description="The information extracted from diagram."
+                    updateActiveAlignment={this.updateActiveAlignment}
+                    removeActiveAlignment={this.removeActiveAlignment}
+                    formulas={diagramFormulas} />
               </div>
               <FormulaList className="proof section last-section optimized" title="Optimized" description="The combined information from text and diagram." formulas={this.state.optimizedFormulas}/>
               <div className="solve-button ask-again">
-                <button onClick={askAgain}>Ask Another</button>
+                <button onClick={askAgain}>Ask Another Question</button>
               </div>
             </div>
           );

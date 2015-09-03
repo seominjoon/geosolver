@@ -263,6 +263,21 @@ header > div {
     &:nth-child(odd) {
       background: lighten(@lighter-gray, 2%);
     }
+
+    &.is-aligned {
+      color: @blue;
+      font-weight: 700;
+      transition: color 0.3s linear;
+
+      &.is-active {
+        background: @blue;
+
+        &,
+        em {
+          color: #fff;
+        }
+      }
+    }
   }
 }
 
@@ -326,17 +341,34 @@ header > div {
       width: auto;
     }
   }
-}
 
-@media screen and (max-width: 480px) {
   header {
     a {
       display: none;
     }
   }
 
-  .section {
-    padding: @spacing-sm;
+  .section,
+  .extractions .proof,
+  .ask-again {
+    &,
+    &:last-child,
+    &:first-child {
+      padding: @spacing-sm;
+    }
+  }
+
+  .solve-button {
+    padding: @spacing-sm 0 0;
+  }
+
+  .extractions .proof {
+    &,
+    &:last-child,
+    &:first-child {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 
   p,
@@ -382,6 +414,7 @@ header > div {
   .solve-button {
     button {
       width: 100%;
+      padding: @spacing-sm;
     }
   }
 
@@ -406,6 +439,7 @@ header > div {
 }
 
 .expand {
+  margin-left: @spacing-sm;
   padding: @spacing-sm;
   background: @lighter-gray;
   font-weight: 700;
