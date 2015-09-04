@@ -5,11 +5,18 @@ const React = require('react');
 const QuestionList = require('./question-list.jsx');
 
 const Actions = require('./actions.js');
+const Views = require('./views.js');
 
 class Solution extends React.Component {
   reset() {
     this.props.dispatcher.dispatch({
       actionType: Actions.RESET_AND_SELECT_ANOTHER
+    });
+  }
+  goBack() {
+    this.props.dispatcher.dispatch({
+      actionType: Actions.CHANGE_VIEW,
+      view: Views.VIEW_OPTIMIZED_FORMULAS
     });
   }
   render() {
@@ -27,6 +34,7 @@ class Solution extends React.Component {
           </div>
         </div>
         <footer className="flex-row padded">
+          <button className="btn-prev" onClick={this.goBack.bind(this)}>Previous</button>
           <div className="instructions">The optimized formulas are converted into the formula above and used to solve the question.</div>
           <button className="flex-right" onClick={this.reset.bind(this)}>Ask Another Question</button>
         </footer>

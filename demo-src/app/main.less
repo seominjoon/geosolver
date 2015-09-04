@@ -32,6 +32,10 @@ footer {
     color: #000;
     font-weight: 700;
   }
+
+  .btn-prev {
+    margin-right: @spacing;
+  }
 }
 
 p,
@@ -61,7 +65,7 @@ body,
 }
 
 // This sets up the viewport such that the footer in each section sticks to the bottom
-.viewport, main, main > div {
+.viewport, main, main > div, .not-scrollable {
   overflow: hidden;
 }
 
@@ -236,13 +240,15 @@ button {
 
   .formula-list-container {
     width: 50%;
+  }
+}
 
-    h2 {
-      margin: 0;
-      padding: @spacing-xsm;
-      color: @gray;
-      font-weight: 400;
-    }
+.formula-list-container {
+  h2 {
+    margin: 0;
+    padding: @spacing-xsm;
+    color: @gray;
+    font-weight: 400;
   }
 }
 

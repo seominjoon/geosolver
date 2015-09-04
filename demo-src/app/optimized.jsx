@@ -43,22 +43,29 @@ class Optimized extends React.Component {
       view: Views.VIEW_SOLUTION
     });
   }
+  goBack() {
+    this.props.dispatcher.dispatch({
+      actionType: Actions.CHANGE_VIEW,
+      view: Views.VIEW_PARSED_FORMULAS
+    });
+  }
   render() {
     return (
       <div className="flex-column flex-grow">
-        <div className="flex-column flex-grow scrollable">
+        <div className="flex-column flex-grow not-scrollable">
           <QuestionList
               questions={this.props.questions}
               dispatcher={this.props.dispatcher}
               selectedIndex={this.props.selectedIndex}
               activeFormula={this.props.activeFormula}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
-          <div className="formula-list-container padded">
+            <div className="formula-list-container padded scrollable">
             <h2>Optimized List of Formulas:</h2>
             {this.formulaList(this.props.solution.optimizedFormulas)}
           </div>
         </div>
         <footer className="flex-row padded">
+          <button className="btn-prev" onClick={this.goBack.bind(this)}>Previous</button>
           <div className="instructions">GeoS combined the extracted formulas into the optimized list shown above.</div>
           <button className="flex-right" onClick={this.advance.bind(this)}>Next</button>
         </footer>

@@ -678,6 +678,14 @@ var Optimized = (function (_React$Component) {
       });
     }
   }, {
+    key: 'goBack',
+    value: function goBack() {
+      this.props.dispatcher.dispatch({
+        actionType: Actions.CHANGE_VIEW,
+        view: Views.VIEW_PARSED_FORMULAS
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return React.createElement(
@@ -685,7 +693,7 @@ var Optimized = (function (_React$Component) {
         { className: 'flex-column flex-grow' },
         React.createElement(
           'div',
-          { className: 'flex-column flex-grow scrollable' },
+          { className: 'flex-column flex-grow not-scrollable' },
           React.createElement(QuestionList, {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
@@ -694,7 +702,7 @@ var Optimized = (function (_React$Component) {
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
-            { className: 'formula-list-container padded' },
+            { className: 'formula-list-container padded scrollable' },
             React.createElement(
               'h2',
               null,
@@ -706,6 +714,11 @@ var Optimized = (function (_React$Component) {
         React.createElement(
           'footer',
           { className: 'flex-row padded' },
+          React.createElement(
+            'button',
+            { className: 'btn-prev', onClick: this.goBack.bind(this) },
+            'Previous'
+          ),
           React.createElement(
             'div',
             { className: 'instructions' },
@@ -809,10 +822,10 @@ var Parse = (function (_React$Component) {
     value: function render() {
       return React.createElement(
         'div',
-        { className: 'flex-column flex-grow' },
+        { className: 'flex-column flex-grow not-scrollable' },
         React.createElement(
           'div',
-          { className: 'flex-column flex-grow scrollable' },
+          { className: 'flex-column flex-grow not-scrollable' },
           React.createElement(QuestionList, {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
@@ -821,7 +834,7 @@ var Parse = (function (_React$Component) {
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
-            { className: 'parsed-formulas flex-row' },
+            { className: 'parsed-formulas flex-row scrollable' },
             React.createElement(
               'div',
               { className: 'formula-list-container padded' },
@@ -1422,6 +1435,7 @@ var React = require('react');
 var QuestionList = require('./question-list.jsx');
 
 var Actions = require('./actions.js');
+var Views = require('./views.js');
 
 var Solution = (function (_React$Component) {
   _inherits(Solution, _React$Component);
@@ -1437,6 +1451,14 @@ var Solution = (function (_React$Component) {
     value: function reset() {
       this.props.dispatcher.dispatch({
         actionType: Actions.RESET_AND_SELECT_ANOTHER
+      });
+    }
+  }, {
+    key: 'goBack',
+    value: function goBack() {
+      this.props.dispatcher.dispatch({
+        actionType: Actions.CHANGE_VIEW,
+        view: Views.VIEW_OPTIMIZED_FORMULAS
       });
     }
   }, {
@@ -1472,6 +1494,11 @@ var Solution = (function (_React$Component) {
           'footer',
           { className: 'flex-row padded' },
           React.createElement(
+            'button',
+            { className: 'btn-prev', onClick: this.goBack.bind(this) },
+            'Previous'
+          ),
+          React.createElement(
             'div',
             { className: 'instructions' },
             'The optimized formulas are converted into the formula above and used to solve the question.'
@@ -1491,7 +1518,7 @@ var Solution = (function (_React$Component) {
 
 module.exports = Solution;
 
-},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question-list.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/util.js":[function(require,module,exports){
+},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question-list.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx","./views.js":"/Users/skone/Projects/geosolver/demo-src/app/views.js","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/util.js":[function(require,module,exports){
 'use strict';
 
 var prefixes = ['Moz', 'Webkit', 'Ms', 'O'];
