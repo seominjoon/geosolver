@@ -23,9 +23,7 @@ class Solution extends React.Component {
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
           <div className="formula-list-container padded">
             <h2>The Resulting Formula is used to Solve the Question:</h2>
-            <pre>
-              Some crazy formula.
-            </pre>
+            <p>{this.props.solution.solutionFormula}</p>
           </div>
         </div>
         <footer className="flex-row padded">

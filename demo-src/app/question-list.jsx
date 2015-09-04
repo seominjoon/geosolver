@@ -35,13 +35,17 @@ class QuestionList extends React.Component {
     });
   }
   render() {
-
     const questions = this.props.questions.map((q, i) => {
-      const selected = this.props.selectedIndex === i ? this.props.selectedAnswerKey : undefined;
+      const isSelectedQuestion = this.props.selectedIndex === i;
+      const selected = isSelectedQuestion ? this.props.selectedAnswerKey : undefined;
+      const activeFormula = isSelectedQuestion ? this.props.activeFormula : undefined;
       return (
         <li key={q.key}>
-          <Question questionKey={q.key} text={q.text} choices={q.choices}
-              selected={selected} />
+          <Question questionKey={q.key}
+              text={q.text}
+              choices={q.choices}
+              selected={selected}
+              activeFormula={activeFormula} />
         </li>
       );
     });

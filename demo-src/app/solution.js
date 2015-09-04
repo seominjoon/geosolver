@@ -21,13 +21,14 @@ const withAlignments = (formulas, alignmentTargets) => {
 };
 
 class QuestionSolution {
-  constructor(question, textFormulas, diagramFormulas, optimizedFormulas, answer) {
+  constructor(question, textFormulas, diagramFormulas, optimizedFormulas, solutionFormula, answer) {
     const uniqueTextFormulas = uniqueSortedFormulas(textFormulas);
     const uniqueDiagramFormulas = uniqueSortedFormulas(diagramFormulas);
     this.question = question;
     this.textFormulas = withAlignments(uniqueTextFormulas, uniqueDiagramFormulas);
     this.diagramFormulas = withAlignments(uniqueDiagramFormulas, uniqueTextFormulas);
     this.optimizedFormulas = uniqueSortedFormulas(optimizedFormulas);
+    this.solutionFormula = solutionFormula;
     this.answer = answer.answer;
   }
 }

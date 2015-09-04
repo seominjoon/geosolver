@@ -51,6 +51,7 @@ class Parse extends React.Component {
               questions={this.props.questions}
               dispatcher={this.props.dispatcher}
               selectedIndex={this.props.selectedIndex}
+              activeFormula={this.props.activeFormula}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
           <div className="parsed-formulas flex-row">
             <div className="formula-list-container padded">

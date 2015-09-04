@@ -25,11 +25,12 @@ header {
 
 footer {
   border-top-color: @light-gray;
-  color: @gray;
 
   .instructions {
     padding: @spacing-sm;
     background: @lighter-gray;
+    color: #000;
+    font-weight: 700;
   }
 }
 
@@ -251,8 +252,8 @@ button {
 
   li {
     border-bottom: 1px solid @light-gray;
-    color: @blue;
     cursor: pointer;
+    color: @blue;
     padding: @spacing-xsm;
 
     &.is-active,
@@ -270,240 +271,20 @@ button {
   }
 }
 
-//
-// .proof > .flex-row {
-//   flex-wrap: nowrap;
-// }
-//
-// .proof h2 {
-//   margin-bottom: 0;
-// }
-//
-// .description {
-//   font-style: italic;
-//   margin-top: 0;
-//   color: @gray;
-//   font-size: @font-size-sm;
-// }
-//
-// .solve-button {
-//   text-align: center;
-//   padding-top: @spacing-l;
-//
-//   button {
-//     font-size: @font-size-l;
-//     padding: @spacing @spacing-xxl;
-//     margin: 0;
-//     font-family: Lora;
-//     font-weight: 400;
-//   }
-// }
-//
-// .formula-list {
-//   border: 1px solid @light-gray;
-//   box-shadow: inset 1px 1px 3px 0 @shadow;
-//   list-style-type: none;
-//   // max-height: 300px;
-//   // overflow: auto;
-//   padding: 0;
-//   margin-bottom: 0;
-//
-//   li {
-//     justify-content: center;
-//     padding: @spacing-xsm;
-//     display: flex;
-//     font-size: @font-size-sm;
-//
-//     em {
-//       margin-left: auto;
-//       font-size: @font-size-sm;
-//       color: @gray;
-//     }
-//
-//     &:nth-child(odd) {
-//       background: lighten(@lighter-gray, 2%);
-//     }
-//
-//     &.is-aligned {
-//       color: @blue;
-//       font-weight: 700;
-//       transition: color 0.3s linear;
-//
-//       &.is-active {
-//         background: @blue;
-//
-//         &,
-//         em {
-//           color: #fff;
-//         }
-//       }
-//     }
-//   }
-// }
-//
-// .answer {
-//   padding: @spacing-l;
-//   margin-bottom: @spacing-l;
-//   border-bottom: none;
-//
-//   h2 {
-//     margin-bottom: 0;
-//   }
-//
-//   .choice-list {
-//     max-width: 400px;
-//     font-size: @font-size;
-//   }
-// }
-//
-// .empty {
-//   color: @light-gray;
-//   font-style: italic;
-// }
-//
-// .icon-check {
-//   font-size: @font-size;
-// }
-//
-// .loading-solution .loading {
-//   padding-top: @spacing-xxl * 5;
-//   padding-bottom: @spacing-xxl * 5;
-// }
-//
-// .extractions {
-//   flex-wrap: nowrap;
-//   align-items: flex-start;
-//
-//   > * {
-//     flex-shrink: 0;
-//     flex-grow: 0;
-//     width: 50%;
-//
-//     &:first-child {
-//       padding-left: 0;
-//     }
-//
-//     &:last-child {
-//       padding-right: 0;
-//     }
-//   }
-// }
-//
-// .ask-again {
-//   padding-bottom: @spacing;
-// }
-//
-// @media screen and (max-width: 800px) {
-//   .extractions {
-//     display: block;
-//
-//     > * {
-//       width: auto;
-//     }
-//   }
-//
-//   header {
-//     a {
-//       display: none;
-//     }
-//   }
-//
-//   .section,
-//   .extractions .proof,
-//   .ask-again {
-//     &,
-//     &:last-child,
-//     &:first-child {
-//       padding: @spacing-sm;
-//     }
-//   }
-//
-//   .solve-button {
-//     padding: @spacing-sm 0 0;
-//   }
-//
-//   .extractions .proof {
-//     &,
-//     &:last-child,
-//     &:first-child {
-//       padding-left: 0;
-//       padding-right: 0;
-//     }
-//   }
-//
-//   p,
-//   h1,
-//   h2,
-//   h3,
-//   h4 {
-//     margin: @spacing 0;
-//   }
-//
-//   .intro {
-//     display: none;
-//   }
-//
-//   .question-list {
-//     margin: 0 -@spacing-sm;
-//
-//     .question {
-//       border: none;
-//       box-shadow: none;
-//
-//       > ul > li {
-//         padding: @spacing-sm;
-//         display: block;
-//
-//         img {
-//           max-width: 90%;
-//         }
-//       }
-//     }
-//   }
-//
-//
-//   .next-question,
-//   .prev-question {;
-//
-//     svg {
-//       width: 40px;
-//       height: 40px;
-//     }
-//   }
-//
-//   .solve-button {
-//     button {
-//       width: 100%;
-//       padding: @spacing-sm;
-//     }
-//   }
-//
-//   .formula-list {
-//     padding-left: 0;
-//
-//     li {
-//       em {
-//         padding-left: @spacing-sm;
-//       }
-//     }
-//   }
-//
-//   .loading-solution .loading {
-//     padding-top: @spacing-xxl * 3;
-//     padding-bottom: @spacing-xxl * 3;
-//   }
-//
-//   .answer {
-//     margin-bottom: 0;
-//   }
-// }
-//
-// .expand {
-//   margin-left: @spacing-sm;
-//   padding: @spacing-sm;
-//   background: @lighter-gray;
-//   font-weight: 700;
-//   flex-shrink: 0;
-//   font-size: @font-size;
-//   color: @blue;
-// }
+.question-diagram-container {
+  position: relative;
+
+  svg {
+    stroke: @blue;
+    stroke-width: 4px;
+    fill: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+.is-active-text {
+  color: @blue;
+  text-decoration: underline;
+}

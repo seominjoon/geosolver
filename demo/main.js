@@ -57,7 +57,11 @@ module.exports = {
   solveQuestion: function solveQuestion(question) {
     var start = Date.now();
     var questionBaseUrl = 'assets/' + question.key + '/';
-    return Promise.all([getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'), getJson(questionBaseUrl + 'answer.json')]).then(function (solutionParts) {
+    return Promise.all([getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'),
+    // TODO (codeviking): Replace with actual call to obtain solution formula
+    new Promise(function (resolve) {
+      resolve("isCircle(x) * isPointOnLine(3, AO)");
+    }), getJson(questionBaseUrl + 'answer.json')]).then(function (solutionParts) {
       return new Promise(function (resolve) {
         setTimeout(function () {
           resolve(new (_bind.apply(QuestionSolution, [null].concat([question], _toConsumableArray(solutionParts))))());
@@ -686,6 +690,7 @@ var Optimized = (function (_React$Component) {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
             selectedIndex: this.props.selectedIndex,
+            activeFormula: this.props.activeFormula,
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
@@ -812,6 +817,7 @@ var Parse = (function (_React$Component) {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
             selectedIndex: this.props.selectedIndex,
+            activeFormula: this.props.activeFormula,
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
@@ -934,12 +940,17 @@ var QuestionList = (function (_React$Component2) {
       var _this = this;
 
       var questions = this.props.questions.map(function (q, i) {
-        var selected = _this.props.selectedIndex === i ? _this.props.selectedAnswerKey : undefined;
+        var isSelectedQuestion = _this.props.selectedIndex === i;
+        var selected = isSelectedQuestion ? _this.props.selectedAnswerKey : undefined;
+        var activeFormula = isSelectedQuestion ? _this.props.activeFormula : undefined;
         return React.createElement(
           'li',
           { key: q.key },
-          React.createElement(Question, { questionKey: q.key, text: q.text, choices: q.choices,
-            selected: selected })
+          React.createElement(Question, { questionKey: q.key,
+            text: q.text,
+            choices: q.choices,
+            selected: selected,
+            activeFormula: activeFormula })
         );
       });
 
@@ -1186,6 +1197,10 @@ var QuestionChoiceList = (function (_React$Component) {
   return QuestionChoiceList;
 })(React.Component);
 
+var PATTERN_KEYWORDS = /\(([^()]+)\)/;
+var PATTERN_PARENS = /[()]/;
+var PATTERN_SPACE = /\s+/;
+
 var Question = (function (_React$Component2) {
   _inherits(Question, _React$Component2);
 
@@ -1196,16 +1211,73 @@ var Question = (function (_React$Component2) {
   }
 
   _createClass(Question, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var container = React.findDOMNode(this.refs.diagramContainer);
+      this.width = container.offsetWidth;
+      this.height = container.offsetHeight;
+    }
+  }, {
     key: 'render',
     value: function render() {
+
+      var svg = undefined;
+      var text = this.props.text;
+      if (this.props.activeFormula) {
+        var viewBox = '0 0 ' + this.width + ' ' + this.height;
+        // TODO (codeviking): Replace with actual polygons
+        var random = Math.random();
+        if (random >= 0.75) {
+          svg = React.createElement(
+            'svg',
+            { viewBox: viewBox, width: this.width, height: this.height },
+            React.createElement('polygon', { points: '60,20 100,40 100,80 60,100 20,80 20,40' })
+          );
+        } else if (random < 0.75 && random >= 0.5) {
+          svg = React.createElement(
+            'svg',
+            { viewBox: viewBox, width: this.width, height: this.height },
+            React.createElement('line', { x1: '0', y1: '0', x2: '200', y2: '200' })
+          );
+        } else if (random < 0.5 && random >= 0.25) {
+          svg = React.createElement(
+            'svg',
+            { viewBox: viewBox, width: this.width, height: this.height },
+            React.createElement('rect', { x: '10', y: '10', width: '100', height: '100' })
+          );
+        } else {
+          svg = React.createElement(
+            'svg',
+            { viewBox: viewBox, width: this.width, height: this.height },
+            React.createElement('circle', { cx: '50', cy: '50', r: '40' })
+          );
+        }
+
+        var keywords = this.props.activeFormula.simple.match(PATTERN_KEYWORDS).pop().replace(PATTERN_PARENS, '').split(',');
+
+        if (keywords.length > 0) {
+          keywords.forEach(function (keyword) {
+            var index = text.indexOf(keyword);
+            if (index >= 0) {
+              text = [text.substring(0, index), '<span class="is-active-text">' + keyword + '</span>', text.substring(index + keyword.length)].join('');
+            }
+          });
+        }
+      }
+
       return React.createElement(
         'div',
         { className: 'question flex-row' },
-        React.createElement('img', { src: 'assets/' + this.props.questionKey + '/diagram.png' }),
+        React.createElement(
+          'div',
+          { className: 'question-diagram-container', ref: 'diagramContainer' },
+          React.createElement('img', { src: 'assets/' + this.props.questionKey + '/diagram.png' }),
+          svg
+        ),
         React.createElement(
           'div',
           { className: 'question-text' },
-          this.props.text,
+          React.createElement('div', { dangerouslySetInnerHTML: { __html: text } }),
           React.createElement(QuestionChoiceList, { choices: this.props.choices, selected: this.props.selected })
         )
       );
@@ -1319,7 +1391,7 @@ var withAlignments = function withAlignments(formulas, alignmentTargets) {
   });
 };
 
-var QuestionSolution = function QuestionSolution(question, textFormulas, diagramFormulas, optimizedFormulas, answer) {
+var QuestionSolution = function QuestionSolution(question, textFormulas, diagramFormulas, optimizedFormulas, solutionFormula, answer) {
   _classCallCheck(this, QuestionSolution);
 
   var uniqueTextFormulas = uniqueSortedFormulas(textFormulas);
@@ -1328,6 +1400,7 @@ var QuestionSolution = function QuestionSolution(question, textFormulas, diagram
   this.textFormulas = withAlignments(uniqueTextFormulas, uniqueDiagramFormulas);
   this.diagramFormulas = withAlignments(uniqueDiagramFormulas, uniqueTextFormulas);
   this.optimizedFormulas = uniqueSortedFormulas(optimizedFormulas);
+  this.solutionFormula = solutionFormula;
   this.answer = answer.answer;
 };
 
@@ -1389,9 +1462,9 @@ var Solution = (function (_React$Component) {
               'The Resulting Formula is used to Solve the Question:'
             ),
             React.createElement(
-              'pre',
+              'p',
               null,
-              'Some crazy formula.'
+              this.props.solution.solutionFormula
             )
           )
         ),

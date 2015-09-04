@@ -41,6 +41,10 @@ module.exports = {
       getJson(`${questionBaseUrl}text_parse.json`),
       getJson(`${questionBaseUrl}diagram_parse.json`),
       getJson(`${questionBaseUrl}optimized.json`),
+      // TODO (codeviking): Replace with actual call to obtain solution formula
+      new Promise(resolve => {
+        resolve("isCircle(x) * isPointOnLine(3, AO)");
+      }),
       getJson(`${questionBaseUrl}answer.json`)
     ]).then(solutionParts => {
       return new Promise(resolve => {
