@@ -21,15 +21,14 @@ class SelectQuestion extends React.Component {
               dispatcher={this.props.dispatcher}
               selectedIndex={this.props.selectedIndex}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
+          <div className="solve-button-container">
+            <button
+                onClick={this.solveSelectedQuestion.bind(this)}
+                disabled={this.props.isSolving}>
+              {this.props.isSolving ? 'Solving...' : 'Solve Question'}
+            </button>
+          </div>
         </div>
-        <footer className="flex-row padded">
-          <div className="instructions">Select a question from those available above.</div>
-          <button className="flex-right"
-              onClick={this.solveSelectedQuestion.bind(this)}
-              disabled={this.props.isSolving}>
-            {this.props.isSolving ? 'Solving...' : 'Solve Question'}
-          </button>
-        </footer>
       </div>
     );
   }
