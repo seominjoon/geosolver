@@ -145,7 +145,12 @@ class Node(object):
             return child.get_grounded_subformula(ids)
         return None
 
-
+    def zip(self, other):
+        if self.is_leaf() or not isinstance(other, Node) or other.is_leaf():
+            return ZippedNode([self, other], [])
+        assert len(self.children) == len(other.children)
+        children = [sc.zip(oc) for sc, oc in zip(self.children, other.children)]
+        return ZippedNode([self, other], children)
 
 
 class FormulaNode(Node):
@@ -283,6 +288,17 @@ class FormulaNode(Node):
         return all(not isinstance(child, Node) or child.is_grounded(ids) for child in self.children)
 
 
+class ZippedNode(Node):
+    def __init__(self, nodes, children):
+        super(ZippedNode, self).__init__(children)
+        self.nodes = nodes
+
+    def __repr__(self):
+        if len(self.children) == 0:
+            return "[%s]" % (",".join(repr(node) for node in self.nodes))
+        return "[%s](%s)" % (",".join(repr(node) for node in self.nodes), ",".join(repr(child) for child in self.children))
+
+
 class SetNode(Node):
     def __init__(self, children, parent=None, index=None, head_index=0):
         super(SetNode, self).__init__(children, parent, index)
@@ -298,6 +314,7 @@ class SetNode(Node):
         out = super(SetNode, self).serialized()
         out['head'] = self.head.serialized()
         return out
+
 
 
 type_inheritances = (

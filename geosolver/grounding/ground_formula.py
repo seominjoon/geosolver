@@ -1,4 +1,5 @@
 import itertools
+import logging
 from geosolver.diagram.get_instances import get_all_instances, get_instances
 from geosolver.grounding.states import MatchParse
 from geosolver.ontology.ontology_semantics import evaluate, MeasureOf, IsHypotenuseOf
@@ -139,6 +140,9 @@ def _ground_variable(match_parse, variable, references={}):
         elif len(variable_signature.name) == 2 and variable_signature.name.isupper():
             new_leaf = FormulaNode(VariableSignature(variable.signature.id, "line", name=variable.signature.name), [])
             return FormulaNode(signatures['LengthOf'], [_ground_variable(match_parse, new_leaf)])
+        else:
+            # ABC: number -> just variable
+            return variable
     elif return_type == 'point':
         if len(variable_signature.name) == 1:
             return match_parse.match_dict[variable_signature.name][0]
@@ -248,4 +252,5 @@ def _ground_variable(match_parse, variable, references={}):
         arcs = get_all_instances(graph_parse, 'arc', True)
         return SetNode(lines.values() + arcs.values())
 
-    raise Exception("failed to ground variable: %r" % variable)
+    logging.error("failed to ground variable: %r" % variable)
+    return variable

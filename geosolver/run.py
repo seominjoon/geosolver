@@ -16,6 +16,7 @@ from geosolver.expression.prefix_to_formula import prefix_to_formula
 from geosolver.grounding.ground_formula import ground_formulas
 from geosolver.grounding.parse_match_formulas import parse_match_formulas
 from geosolver.grounding.parse_match_from_known_labels import parse_match_from_known_labels
+from geosolver.ontology.ontology_definitions import FormulaNode, VariableSignature, issubtype
 from geosolver.ontology.ontology_semantics import evaluate, Equals
 from geosolver.solver.solve import solve
 from geosolver.text.augment_formulas import augment_formulas
@@ -33,7 +34,8 @@ import cPickle as pickle
 import os.path
 
 __author__ = 'minjoon'
-
+from json import encoder
+encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 
 class SimpleResult(object):
     def __init__(self, id_, error, penalized, correct, duration=-1, message=""):
@@ -164,6 +166,32 @@ def full_unit_test(combined_model, question, label_data):
 
     # graph_parse.core_parse.display_points()
 
+def semantic_tree_to_serialized_entities(match_parse, semantic_tree, sentence_number):
+    formula = semantic_tree.to_formula()
+    entities = []
+    grounded_formula = ground_formulas(match_parse, [formula])[0]
+    zipped_formula = grounded_formula.zip(semantic_tree)
+    for zipped_node in zipped_formula:
+        formula_node, tree_node = zipped_node.nodes
+        if issubtype(formula_node.return_type, 'entity'):
+            coords = match_parse.graph_parse.core_parse.evaluate(formula_node)
+            if coords is not None:
+                entity = {"content": tree_node.content.serialized(), "coords": serialize_entity(coords),
+                          "sentence_number": sentence_number}
+                entities.append(entity)
+
+    return entities
+
+def serialize_entity(entity):
+    try:
+        return [serialize_entity(each) for each in entity]
+    except:
+        return float("%.2f" % entity)
+
+
+
+
+
 demo_path = "../temp/demo"
 
 def _full_unit_test(combined_model, question, label_data):
@@ -176,7 +204,7 @@ def _full_unit_test(combined_model, question, label_data):
     text_parse_path = os.path.join(base_path, 'text_parse.json')
     diagram_parse_path = os.path.join(base_path, 'diagram_parse.json')
     optimized_path = os.path.join(base_path, 'optimized.json')
-    entity_list_path = os.path.join(base_path, 'entity_map.png')
+    entity_list_path = os.path.join(base_path, 'entity_map.json')
     diagram_path = os.path.join(base_path, 'diagram.png')
     shutil.copy(question.diagram_path, diagram_path)
     text_parse_list = []
@@ -225,6 +253,9 @@ def _full_unit_test(combined_model, question, label_data):
                 diagram_parse_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                            'score': diagram_score})
 
+            local_entities = semantic_tree_to_serialized_entities(match_parse, t, number)
+            entity_list.extend(local_entities)
+
         for t in bool_semantic_trees:
             optimized_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                     'score': opt_model.get_magic_score(t, cc_trees)})
@@ -257,8 +288,9 @@ def _full_unit_test(combined_model, question, label_data):
     json.dump(diagram_parse_list, open(diagram_parse_path, 'wb'))
     json.dump(optimized_list, open(optimized_path, 'wb'))
     json.dump(text_parse_list, open(text_parse_path, 'wb'))
+    json.dump(entity_list, open(entity_list_path, 'wb'))
 
-    # return SimpleResult(question.key, False, False, True) # Early termination
+    return SimpleResult(question.key, False, False, True) # Early termination
 
     print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
