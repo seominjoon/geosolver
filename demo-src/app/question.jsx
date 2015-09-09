@@ -28,7 +28,6 @@ class QuestionChoiceList extends React.Component {
 
 const PATTERN_KEYWORDS = /\(([^()]+)\)/;
 const PATTERN_PARENS = /[()]/;
-const PATTERN_SPACE = /\s+/;
 
 class Question extends React.Component {
 

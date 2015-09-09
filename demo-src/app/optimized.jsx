@@ -52,14 +52,14 @@ class Optimized extends React.Component {
   render() {
     return (
       <div className="flex-column flex-grow">
-        <div className="flex-column flex-grow not-scrollable">
+        <div className="flex-column flex-grow scrollable">
           <QuestionList
               questions={this.props.questions}
               dispatcher={this.props.dispatcher}
               selectedIndex={this.props.selectedIndex}
               activeFormula={this.props.activeFormula}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
-            <div className="formula-list-container padded scrollable">
+          <div className="formula-list-container padded">
             <h2>Optimized List of Formulas:</h2>
             {this.formulaList(this.props.solution.optimizedFormulas)}
           </div>
