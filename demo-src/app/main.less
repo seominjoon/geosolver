@@ -26,6 +26,10 @@ header {
 footer {
   border-top-color: @light-gray;
 
+  &.flex-row {
+    flex-wrap: nowrap;
+  }
+
   .instructions {
     padding: @spacing-sm;
     background: @lighter-gray;
@@ -33,6 +37,7 @@ footer {
     font-weight: 700;
   }
 
+  .instructions,
   .btn-prev {
     margin-right: @spacing;
   }
@@ -86,6 +91,16 @@ button {
   font-weight: 400;
   padding: @spacing-sm @spacing-l;
   text-shadow: 1px 1px 0 #000;
+}
+
+.solve-button-container {
+  text-align: center;
+
+  button {
+    padding: @spacing;
+    min-width: @spacing-xl * 10;
+
+  }
 }
 
 .flex-row,
@@ -293,4 +308,8 @@ button {
 .is-active-text {
   color: @blue;
   text-decoration: underline;
+}
+
+@media screen and (max-width: 1024px) {
+
 }

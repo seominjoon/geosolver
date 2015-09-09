@@ -1348,22 +1348,17 @@ var SelectQuestion = (function (_React$Component) {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
             selectedIndex: this.props.selectedIndex,
-            selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined })
-        ),
-        React.createElement(
-          'footer',
-          { className: 'flex-row padded' },
+            selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
-            { className: 'instructions' },
-            'Select a question from those available above.'
-          ),
-          React.createElement(
-            'button',
-            { className: 'flex-right',
-              onClick: this.solveSelectedQuestion.bind(this),
-              disabled: this.props.isSolving },
-            this.props.isSolving ? 'Solving...' : 'Solve Question'
+            { className: 'solve-button-container' },
+            React.createElement(
+              'button',
+              {
+                onClick: this.solveSelectedQuestion.bind(this),
+                disabled: this.props.isSolving },
+              this.props.isSolving ? 'Solving...' : 'Solve Question'
+            )
           )
         )
       );
