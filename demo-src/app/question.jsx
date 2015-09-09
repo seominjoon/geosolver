@@ -189,43 +189,14 @@ class Question extends React.Component {
           return "";
         }
       });
-      console.log(svgs);
       const viewBox = `0 0 ${this.width} ${this.height}`;
-      svg = (
+      svg = svgs.map(shape => {
+        return (
           <svg viewBox={viewBox} width={this.width} height={this.height}>
-            // TODO (seominjoon): How to show multiple svgs?
-            {svgs[1]}
-          </svg>
-      );
-
-      /*
-      const random = Math.random();
-      if (random >= 0.75) {
-        svg = (
-          <svg viewBox={viewBox} width={this.width} height={this.height}>
-            <polygon points="60,20 100,40 100,80 60,100 20,80 20,40" />
+            {shape}
           </svg>
         );
-      } else if (random < 0.75 && random >= 0.5) {
-        svg = (
-          <svg viewBox={viewBox} width={this.width} height={this.height}>
-            <line x1="0" y1="0" x2="200" y2="200" />
-          </svg>
-        );
-      } else if (random < 0.5 && random >= 0.25) {
-        svg = (
-          <svg viewBox={viewBox} width={this.width} height={this.height}>
-            <rect x="10" y="10" width="100" height="100"/>
-          </svg>
-        );
-      } else {
-        svg = (
-          <svg viewBox={viewBox} width={this.width} height={this.height}>
-            <circle cx="50" cy="50" r="40" />
-          </svg>
-        );
-      }
-      */
+      });
 
       const keywords =
         this.props.activeFormula.simple.match(PATTERN_KEYWORDS)
