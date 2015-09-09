@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>GeoS - Geometry Problem Solver</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+
+        a {
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">GeoS</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#about-header">About</a>
+                </li>
+                <li>
+                    <a href="#demos-header">Demos</a>
+                </li>
+                <li>
+                    <a href="#papers-header">Papers</a>
+                </li>
+                <li>
+                    <a href="#data-header">Data</a>
+                </li>
+                <li>
+                    <a href="#source-code-header">Source Code</a>
+                </li>
+            </ul>
+            <div class="pull-right">
+                <img src="assets/ai2_logo.svg" height="40">
+                <img src="assets/uw_stacked.png" height="30">
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="jumbotron text-center">
+                <h1>GeoS</h1>
+                <p>
+                  End-to-End Geometry Problem Solver
+                </p>
+                <p><a class="btn btn-primary btn-lg" href="demo/" role="button">Interactive Demo</a></p>
+            </div>
+            <h3 id="about-header" class="page-header">About</h3>
+            <p>
+                GeoS is an end-to-end system that solves high school geometry questions.
+                Its input is question text in natural language and diagram in raster graphics,
+                and its output is the answer to the question.
+            </p>
+            <h3 id="demos-header"class="page-header">Demos</h3>
+                <ul>
+                    <li>
+                        <a>G-Aligner</a>: Aligning geometric entities in text and diagram.
+                    </li>
+                    <li>
+                        <a>GeoS</a>: Solving geometry problems.
+                    </li>
+                </ul>
+            <h3 id="papers-header" class="page-header">Papers</h3>
+                <ul>
+                    <li>
+                        <a href="assets/emnlp2015.pdf">Solving geometry problems: combining text and diagram interpretation</a><br>
+                        Minjoon Seo, Hannaneh Hajishirzi, Ali Farhadi, Oren Etzioni, and Clint Malcolm<br>
+                        In Proceedings of EMNLP, 2015.
+                    </li>
+                    <li>
+                        <a href="assets/aaai2014.pdf">Diagram understanding in geometry questions</a><br>
+                        Minjoon Seo, Hannaneh Hajishirzi, Ali Farhadi, and Oren Etzioni<br>
+                        In Proceedings of AAAI, 2014.
+                    </li>
+                </ul>
+            <h3 id="data-header" class="page-header">Data</h3>
+            <ul>
+                <li>
+                    <a href="assets/data/aaai.zip">Training questions</a>: high school geometry questions
+                </li>
+                <li>
+                    <a href="assets/data/practice.zip">Practice questions</a>: SAT practice questions
+                </li>
+            </ul>
+            <h3 id="source-code-header" class="page-header">Source Code</h3>
+            <p>
+                <a href="https://github.com/seominjoon/geosolver">View the Project on GitHub</a><br>
+                <small>seominjoon/geosolver</small>
+            </p>
+            <h3 id="ack-header" class="page-header">Acknowledgements</h3>
+            <p>
+                The research was supported by the Allen Institute for AI, Allen Distinguished Investigator Award, and NSF (IIS-1352249).
+            </p>
+        </div>
+    </div>
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+<!-- jQuery Version 1.11.1 -->
+<script src="js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
