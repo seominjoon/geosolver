@@ -45,7 +45,8 @@ class QuestionList extends React.Component {
               text={q.text}
               choices={q.choices}
               selected={selected}
-              activeFormula={activeFormula} />
+              activeFormula={activeFormula}
+              entityMap={this.props.entityMap}/>
         </li>
       );
     });

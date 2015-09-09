@@ -38,6 +38,7 @@ module.exports = {
     const start = Date.now();
     const questionBaseUrl = `assets/${question.key}/`;
     return Promise.all([
+      getJson(`${questionBaseUrl}entity_map.json`),
       getJson(`${questionBaseUrl}text_parse.json`),
       getJson(`${questionBaseUrl}diagram_parse.json`),
       getJson(`${questionBaseUrl}optimized.json`),
@@ -45,7 +46,7 @@ module.exports = {
       new Promise(resolve => {
         resolve("isCircle(x) * isPointOnLine(3, AO)");
       }),
-      getJson(`${questionBaseUrl}answer.json`)
+      getJson(`${questionBaseUrl}answer.json`),
     ]).then(solutionParts => {
       return new Promise(resolve => {
         setTimeout(

@@ -21,10 +21,11 @@ const withAlignments = (formulas, alignmentTargets) => {
 };
 
 class QuestionSolution {
-  constructor(question, textFormulas, diagramFormulas, optimizedFormulas, solutionFormula, answer) {
+  constructor(question, entityMap, textFormulas, diagramFormulas, optimizedFormulas, solutionFormula, answer) {
     const uniqueTextFormulas = uniqueSortedFormulas(textFormulas);
     const uniqueDiagramFormulas = uniqueSortedFormulas(diagramFormulas);
     this.question = question;
+    this.entityMap = entityMap;
     this.textFormulas = withAlignments(uniqueTextFormulas, uniqueDiagramFormulas);
     this.diagramFormulas = withAlignments(uniqueDiagramFormulas, uniqueTextFormulas);
     this.optimizedFormulas = uniqueSortedFormulas(optimizedFormulas);

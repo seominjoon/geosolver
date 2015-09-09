@@ -57,7 +57,7 @@ module.exports = {
   solveQuestion: function solveQuestion(question) {
     var start = Date.now();
     var questionBaseUrl = 'assets/' + question.key + '/';
-    return Promise.all([getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'),
+    return Promise.all([getJson(questionBaseUrl + 'entity_map.json'), getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'),
     // TODO (codeviking): Replace with actual call to obtain solution formula
     new Promise(function (resolve) {
       resolve("isCircle(x) * isPointOnLine(3, AO)");
@@ -472,6 +472,7 @@ var Parse = (function (_React$Component) {
             dispatcher: this.props.dispatcher,
             selectedIndex: this.props.selectedIndex,
             activeFormula: this.props.activeFormula,
+            entityMap: this.props.solution.entityMap,
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
@@ -604,7 +605,8 @@ var QuestionList = (function (_React$Component2) {
             text: q.text,
             choices: q.choices,
             selected: selected,
-            activeFormula: activeFormula })
+            activeFormula: activeFormula,
+            entityMap: _this.props.entityMap })
         );
       });
 
@@ -851,6 +853,165 @@ var QuestionChoiceList = (function (_React$Component) {
   return QuestionChoiceList;
 })(React.Component);
 
+var SemanticTreeNode = (function () {
+  function SemanticTreeNode(content, children) {
+    _classCallCheck(this, SemanticTreeNode);
+
+    this.content = content;
+    this.children = children;
+  }
+
+  _createClass(SemanticTreeNode, [{
+    key: 'toString',
+    value: function toString() {
+      var out = this.content.toString();
+      if (this.children.length === 0) {
+        return out;
+      }
+      out += "(";
+      for (var i = 0; i < this.children.length; i++) {
+        out += this.children[i].toString();
+      }
+      out += ")";
+      return out;
+    }
+  }, {
+    key: 'getTagRules',
+    value: function getTagRules() {
+      var out = [this.content];
+      for (var i = 0; i < this.children.length; i++) {
+        out = out.concat(this.children[i].getTagRules());
+      }
+      return out;
+    }
+  }]);
+
+  return SemanticTreeNode;
+})();
+
+function dictToSemanticTreeNode(dict, sentence_number) {
+  var content = dictToTagRule(dict.content, sentence_number);
+  var children = [];
+  for (var i = 0; i < dict.children.length; i++) {
+    children.push(dictToSemanticTreeNode(dict.children[i], sentence_number));
+  }
+  var stn = new SemanticTreeNode(content, children);
+  return stn;
+}
+
+var TagRule = (function () {
+  function TagRule(sentence_number, span, signature) {
+    _classCallCheck(this, TagRule);
+
+    this.sentence_number = sentence_number;
+    this.span = span;
+    this.signature = signature;
+  }
+
+  _createClass(TagRule, [{
+    key: 'toString',
+    value: function toString() {
+      return this.signature.toString();
+    }
+  }, {
+    key: 'getKey',
+    value: function getKey() {
+      return this.sentence_number.toString() + "_" + "_" + this.signature.getKey();
+    }
+  }]);
+
+  return TagRule;
+})();
+
+function dictToTagRule(dict, sentence_number) {
+  var signature = dictToSignature(dict.signature);
+  return new TagRule(sentence_number, dict.span, signature);
+}
+
+var FunctionSignature = (function () {
+  function FunctionSignature(id, return_type, arg_types, name) {
+    _classCallCheck(this, FunctionSignature);
+
+    this.id = id;
+    this.return_type = return_type;
+    this.arg_types = arg_types;
+    this.name = name;
+  }
+
+  _createClass(FunctionSignature, [{
+    key: 'toString',
+    value: function toString() {
+      return this.return_type + " " + this.name;
+    }
+  }, {
+    key: 'getKey',
+    value: function getKey() {
+      return this.id.toString();
+    }
+  }]);
+
+  return FunctionSignature;
+})();
+
+var VariableSignature = (function () {
+  function VariableSignature(id, return_type, name) {
+    _classCallCheck(this, VariableSignature);
+
+    this.id = id;
+    this.return_type = return_type;
+    this.name = name;
+  }
+
+  _createClass(VariableSignature, [{
+    key: 'toString',
+    value: function toString() {
+      return this.return_type + " " + this.name;
+    }
+  }, {
+    key: 'getKey',
+    value: function getKey() {
+      return this.id.toString();
+    }
+  }]);
+
+  return VariableSignature;
+})();
+
+function dictToSignature(dict) {
+  if (dict['class'] === "FunctionSignature") {
+    return new FunctionSignature(dict.id, dict.return_type, dict.arg_types, dict.name);
+  } else {
+    return new VariableSignature(dict.id, dict.return_type, dict.name);
+  }
+}
+
+function listToEntityMap(list) {
+  var map = {};
+  for (var i = 0; i < list.length; i++) {
+    var curr = list[i];
+    var tagRule = dictToTagRule(curr.content, curr.sentence_number);
+    map[tagRule.getKey()] = curr.coords;
+  }
+  return map;
+}
+
+function getSvg(tagRule, coords) {
+  var svg = undefined;
+  if (tagRule.signature.return_type === "circle") {
+    svg = React.createElement('circle', { cx: coords[0][0], cy: coords[0][1], r: coords[1] });
+  } else if (tagRule.signature.return_type == "line") {
+    svg = React.createElement('line', { x1: coords[0][0], y1: coords[0][1], x2: coords[1][0], y2: coords[1][1] });
+  } else if (tagRule.signature.return_type == "point") {
+    svg = React.createElement('circle', { cx: coords[0], cy: coords[1], r: '5' });
+  } else {
+    var string = coords.map(function (point) {
+      return point.join(",");
+    }).join(" ");
+    svg = React.createElement('polygon', { points: string });
+  }
+  return svg;
+}
+
 var PATTERN_KEYWORDS = /\(([^()]+)\)/;
 var PATTERN_PARENS = /[()]/;
 
@@ -877,34 +1038,55 @@ var Question = (function (_React$Component2) {
       var svg = undefined;
       var text = this.props.text;
       if (this.props.activeFormula) {
+        var tree = dictToSemanticTreeNode(this.props.activeFormula.tree, this.props.activeFormula.sentence_number);
+        var tagRules = tree.getTagRules();
+        var entityMap = listToEntityMap(this.props.entityMap);
+        console.log(tagRules);
+        var svgs = tagRules.map(function (tagRule) {
+          if (tagRule.getKey() in entityMap) {
+            console.log(entityMap[tagRule.getKey()]);
+            return getSvg(tagRule, entityMap[tagRule.getKey()]);
+          } else {
+            return "";
+          }
+        });
+        console.log(svgs);
         var viewBox = '0 0 ' + this.width + ' ' + this.height;
-        // TODO (codeviking): Replace with actual polygons
-        var random = Math.random();
+        svg = React.createElement(
+          'svg',
+          { viewBox: viewBox, width: this.width, height: this.height },
+          '// TODO (seominjoon) : How to show multiple svgs?',
+          svgs[1]
+        );
+
+        /*
+        const random = Math.random();
         if (random >= 0.75) {
-          svg = React.createElement(
-            'svg',
-            { viewBox: viewBox, width: this.width, height: this.height },
-            React.createElement('polygon', { points: '60,20 100,40 100,80 60,100 20,80 20,40' })
+          svg = (
+            <svg viewBox={viewBox} width={this.width} height={this.height}>
+              <polygon points="60,20 100,40 100,80 60,100 20,80 20,40" />
+            </svg>
           );
         } else if (random < 0.75 && random >= 0.5) {
-          svg = React.createElement(
-            'svg',
-            { viewBox: viewBox, width: this.width, height: this.height },
-            React.createElement('line', { x1: '0', y1: '0', x2: '200', y2: '200' })
+          svg = (
+            <svg viewBox={viewBox} width={this.width} height={this.height}>
+              <line x1="0" y1="0" x2="200" y2="200" />
+            </svg>
           );
         } else if (random < 0.5 && random >= 0.25) {
-          svg = React.createElement(
-            'svg',
-            { viewBox: viewBox, width: this.width, height: this.height },
-            React.createElement('rect', { x: '10', y: '10', width: '100', height: '100' })
+          svg = (
+            <svg viewBox={viewBox} width={this.width} height={this.height}>
+              <rect x="10" y="10" width="100" height="100"/>
+            </svg>
           );
         } else {
-          svg = React.createElement(
-            'svg',
-            { viewBox: viewBox, width: this.width, height: this.height },
-            React.createElement('circle', { cx: '50', cy: '50', r: '40' })
+          svg = (
+            <svg viewBox={viewBox} width={this.width} height={this.height}>
+              <circle cx="50" cy="50" r="40" />
+            </svg>
           );
         }
+        */
 
         var keywords = this.props.activeFormula.simple.match(PATTERN_KEYWORDS).pop().replace(PATTERN_PARENS, '').split(',');
 
@@ -1039,12 +1221,13 @@ var withAlignments = function withAlignments(formulas, alignmentTargets) {
   });
 };
 
-var QuestionSolution = function QuestionSolution(question, textFormulas, diagramFormulas, optimizedFormulas, solutionFormula, answer) {
+var QuestionSolution = function QuestionSolution(question, entityMap, textFormulas, diagramFormulas, optimizedFormulas, solutionFormula, answer) {
   _classCallCheck(this, QuestionSolution);
 
   var uniqueTextFormulas = uniqueSortedFormulas(textFormulas);
   var uniqueDiagramFormulas = uniqueSortedFormulas(diagramFormulas);
   this.question = question;
+  this.entityMap = entityMap;
   this.textFormulas = withAlignments(uniqueTextFormulas, uniqueDiagramFormulas);
   this.diagramFormulas = withAlignments(uniqueDiagramFormulas, uniqueTextFormulas);
   this.optimizedFormulas = uniqueSortedFormulas(optimizedFormulas);
