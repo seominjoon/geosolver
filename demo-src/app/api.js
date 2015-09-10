@@ -42,7 +42,6 @@ module.exports = {
       getJson(`${questionBaseUrl}text_parse.json`),
       getJson(`${questionBaseUrl}diagram_parse.json`),
       getJson(`${questionBaseUrl}optimized.json`),
-      // TODO (codeviking): Replace with actual call to obtain solution formula
       getJson(`${questionBaseUrl}solution.json`),
       /*
       new Promise(resolve => {

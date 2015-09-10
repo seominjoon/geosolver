@@ -57,9 +57,7 @@ module.exports = {
   solveQuestion: function solveQuestion(question) {
     var start = Date.now();
     var questionBaseUrl = 'assets/' + question.key + '/';
-    return Promise.all([getJson(questionBaseUrl + 'entity_map.json'), getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'),
-    // TODO (codeviking): Replace with actual call to obtain solution formula
-    getJson(questionBaseUrl + 'solution.json'),
+    return Promise.all([getJson(questionBaseUrl + 'entity_map.json'), getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'), getJson(questionBaseUrl + 'solution.json'),
     /*
     new Promise(resolve => {
       resolve("isCircle(x) * isPointOnLine(3, AO)");
