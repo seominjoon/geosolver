@@ -164,6 +164,51 @@ function getSvg(tagRule, coords) {
 const PATTERN_KEYWORDS = /\(([^()]+)\)/;
 const PATTERN_PARENS = /[()]/;
 
+class Word extends React.Component {
+  render () {
+    if(this.props.active) {
+      return (
+          <span class="is-active-text">{this.props.word}</span>
+      );
+    } else {
+      return (
+        <span class="is-inactive-text">{this.props.word}</span>
+      );
+    }
+  }
+}
+
+class Sentence extends React.Component {
+  render () {
+    let words = this.props.words.map(function (key, value) {
+      let active = false;
+      if (key in this.props.indices) {
+        active = true;
+      }
+      return (
+          <Word active={active} word={value}/>
+      );
+    });
+    return (
+        <span>{words}</span>
+    );
+  }
+}
+
+class Paragraph extends React.Component {
+  render () {
+    console.log(this.props.words);
+    let sentences = this.props.words.map(function (key, value) {
+      return (
+          <Sentence words={value} indices={this.props.indices[key]} />
+      );
+    });
+    return (
+        <div >{sentences}</div>
+    );
+  }
+}
+
 class Question extends React.Component {
 
   componentDidMount() {
@@ -173,17 +218,22 @@ class Question extends React.Component {
   }
 
   render() {
-
     let svg;
     let text = this.props.text;
+    let indices = {};
+    let words = this.props.words;
+    Object.keys(this.props.words).forEach(function (key) {
+      indices[key] = new Set();
+    });
     if(this.props.activeFormula) {
       var tree = dictToSemanticTreeNode(this.props.activeFormula.tree, this.props.activeFormula.sentence_number);
       let tagRules = tree.getTagRules();
+      tagRules.forEach(function(tagRule) {
+        indices[tagRule.sentence_number].add(tagRule.span[0].toString());
+      });
       var entityMap = listToEntityMap(this.props.entityMap);
-      console.log(tagRules);
       let svgs = tagRules.map(function(tagRule) {
         if (tagRule.getKey() in entityMap) {
-          console.log(entityMap[tagRule.getKey()]);
           return getSvg(tagRule, entityMap[tagRule.getKey()]);
         } else {
           return "";
@@ -216,6 +266,19 @@ class Question extends React.Component {
           }
         });
       }
+      text = "";
+      Object.keys(words).forEach(function(sentence_number) {
+        let d = words[sentence_number];
+        Object.keys(d).forEach(function(index) {
+          let word = d[index];
+          if (indices[sentence_number].has(index.toString())) {
+            text += `<span class="is-active-text">${word}</span>`;
+          } else {
+            text += word;
+          }
+          text += " ";
+        });
+      });
     }
 
     return (
