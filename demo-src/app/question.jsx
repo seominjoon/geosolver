@@ -164,51 +164,6 @@ function getSvg(tagRule, coords) {
 const PATTERN_KEYWORDS = /\(([^()]+)\)/;
 const PATTERN_PARENS = /[()]/;
 
-class Word extends React.Component {
-  render () {
-    if(this.props.active) {
-      return (
-          <span class="is-active-text">{this.props.word}</span>
-      );
-    } else {
-      return (
-        <span class="is-inactive-text">{this.props.word}</span>
-      );
-    }
-  }
-}
-
-class Sentence extends React.Component {
-  render () {
-    let words = this.props.words.map(function (key, value) {
-      let active = false;
-      if (key in this.props.indices) {
-        active = true;
-      }
-      return (
-          <Word active={active} word={value}/>
-      );
-    });
-    return (
-        <span>{words}</span>
-    );
-  }
-}
-
-class Paragraph extends React.Component {
-  render () {
-    console.log(this.props.words);
-    let sentences = this.props.words.map(function (key, value) {
-      return (
-          <Sentence words={value} indices={this.props.indices[key]} />
-      );
-    });
-    return (
-        <div >{sentences}</div>
-    );
-  }
-}
-
 class Question extends React.Component {
 
   componentDidMount() {
@@ -219,9 +174,10 @@ class Question extends React.Component {
 
   render() {
     let svg;
-    let text = this.props.text;
+    let text = "";
     let indices = {};
     let words = this.props.words;
+    let sentence_expressions = this.props.sentence_expressions;
     Object.keys(this.props.words).forEach(function (key) {
       indices[key] = new Set();
     });
@@ -254,32 +210,25 @@ class Question extends React.Component {
             .replace(PATTERN_PARENS, '')
             .split(',');
 
-      if (keywords.length > 0) {
-        keywords.forEach((keyword) => {
-          const index = text.indexOf(keyword);
-          if (index >= 0) {
-            text = [
-              text.substring(0, index),
-              `<span class="is-active-text">${keyword}</span>`,
-              text.substring(index + keyword.length)
-            ].join('');
-          }
-        });
-      }
-      text = "";
-      Object.keys(words).forEach(function(sentence_number) {
-        let d = words[sentence_number];
-        Object.keys(d).forEach(function(index) {
-          let word = d[index];
-          if (indices[sentence_number].has(index.toString())) {
-            text += `<span class="is-active-text">${word}</span>`;
-          } else {
-            text += word;
-          }
-          text += " ";
-        });
-      });
     }
+    Object.keys(words).forEach(function(sentence_number) {
+      let d = words[sentence_number];
+      Object.keys(d).forEach(function(index) {
+        let word = d[index];
+        if (word in sentence_expressions[sentence_number]) {
+          word = sentence_expressions[sentence_number][word];
+        }
+        if (word == "holds") return;
+        if (" . , ? ".indexOf(word) < 0) {
+          text += " ";
+        }
+        if (indices[sentence_number].has(index.toString())) {
+          text += `<span class="is-active-text">${word}</span>`;
+        } else {
+          text += word;
+        }
+      });
+    });
 
     return (
       <div className="question flex-row">

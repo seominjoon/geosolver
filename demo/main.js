@@ -59,9 +59,12 @@ module.exports = {
     var questionBaseUrl = 'assets/' + question.key + '/';
     return Promise.all([getJson(questionBaseUrl + 'entity_map.json'), getJson(questionBaseUrl + 'text_parse.json'), getJson(questionBaseUrl + 'diagram_parse.json'), getJson(questionBaseUrl + 'optimized.json'),
     // TODO (codeviking): Replace with actual call to obtain solution formula
-    new Promise(function (resolve) {
+    getJson(questionBaseUrl + 'solution.json'),
+    /*
+    new Promise(resolve => {
       resolve("isCircle(x) * isPointOnLine(3, AO)");
-    }), getJson(questionBaseUrl + 'answer.json')]).then(function (solutionParts) {
+    }),*/
+    getJson(questionBaseUrl + 'answer.json')]).then(function (solutionParts) {
       return new Promise(function (resolve) {
         setTimeout(function () {
           resolve(new (_bind.apply(QuestionSolution, [null].concat([question], _toConsumableArray(solutionParts))))());
@@ -607,6 +610,7 @@ var QuestionList = (function (_React$Component2) {
             selected: selected,
             activeFormula: activeFormula,
             words: q.sentence_words,
+            sentence_expressions: q.sentence_expressions,
             entityMap: _this.props.entityMap })
         );
       });
@@ -1016,96 +1020,8 @@ function getSvg(tagRule, coords) {
 var PATTERN_KEYWORDS = /\(([^()]+)\)/;
 var PATTERN_PARENS = /[()]/;
 
-var Word = (function (_React$Component2) {
-  _inherits(Word, _React$Component2);
-
-  function Word() {
-    _classCallCheck(this, Word);
-
-    _get(Object.getPrototypeOf(Word.prototype), 'constructor', this).apply(this, arguments);
-  }
-
-  _createClass(Word, [{
-    key: 'render',
-    value: function render() {
-      if (this.props.active) {
-        return React.createElement(
-          'span',
-          { 'class': 'is-active-text' },
-          this.props.word
-        );
-      } else {
-        return React.createElement(
-          'span',
-          { 'class': 'is-inactive-text' },
-          this.props.word
-        );
-      }
-    }
-  }]);
-
-  return Word;
-})(React.Component);
-
-var Sentence = (function (_React$Component3) {
-  _inherits(Sentence, _React$Component3);
-
-  function Sentence() {
-    _classCallCheck(this, Sentence);
-
-    _get(Object.getPrototypeOf(Sentence.prototype), 'constructor', this).apply(this, arguments);
-  }
-
-  _createClass(Sentence, [{
-    key: 'render',
-    value: function render() {
-      var words = this.props.words.map(function (key, value) {
-        var active = false;
-        if (key in this.props.indices) {
-          active = true;
-        }
-        return React.createElement(Word, { active: active, word: value });
-      });
-      return React.createElement(
-        'span',
-        null,
-        words
-      );
-    }
-  }]);
-
-  return Sentence;
-})(React.Component);
-
-var Paragraph = (function (_React$Component4) {
-  _inherits(Paragraph, _React$Component4);
-
-  function Paragraph() {
-    _classCallCheck(this, Paragraph);
-
-    _get(Object.getPrototypeOf(Paragraph.prototype), 'constructor', this).apply(this, arguments);
-  }
-
-  _createClass(Paragraph, [{
-    key: 'render',
-    value: function render() {
-      console.log(this.props.words);
-      var sentences = this.props.words.map(function (key, value) {
-        return React.createElement(Sentence, { words: value, indices: this.props.indices[key] });
-      });
-      return React.createElement(
-        'div',
-        null,
-        sentences
-      );
-    }
-  }]);
-
-  return Paragraph;
-})(React.Component);
-
-var Question = (function (_React$Component5) {
-  _inherits(Question, _React$Component5);
+var Question = (function (_React$Component2) {
+  _inherits(Question, _React$Component2);
 
   function Question() {
     _classCallCheck(this, Question);
@@ -1126,9 +1042,10 @@ var Question = (function (_React$Component5) {
       var _this = this;
 
       var svg = undefined;
-      var text = this.props.text;
+      var text = "";
       var indices = {};
       var words = this.props.words;
+      var sentence_expressions = this.props.sentence_expressions;
       Object.keys(this.props.words).forEach(function (key) {
         indices[key] = new Set();
       });
@@ -1162,30 +1079,26 @@ var Question = (function (_React$Component5) {
           });
 
           var keywords = _this.props.activeFormula.simple.match(PATTERN_KEYWORDS).pop().replace(PATTERN_PARENS, '').split(',');
-
-          if (keywords.length > 0) {
-            keywords.forEach(function (keyword) {
-              var index = text.indexOf(keyword);
-              if (index >= 0) {
-                text = [text.substring(0, index), '<span class="is-active-text">' + keyword + '</span>', text.substring(index + keyword.length)].join('');
-              }
-            });
-          }
-          text = "";
-          Object.keys(words).forEach(function (sentence_number) {
-            var d = words[sentence_number];
-            Object.keys(d).forEach(function (index) {
-              var word = d[index];
-              if (indices[sentence_number].has(index.toString())) {
-                text += '<span class="is-active-text">' + word + '</span>';
-              } else {
-                text += word;
-              }
-              text += " ";
-            });
-          });
         })();
       }
+      Object.keys(words).forEach(function (sentence_number) {
+        var d = words[sentence_number];
+        Object.keys(d).forEach(function (index) {
+          var word = d[index];
+          if (word in sentence_expressions[sentence_number]) {
+            word = sentence_expressions[sentence_number][word];
+          }
+          if (word == "holds") return;
+          if (" . , ? ".indexOf(word) < 0) {
+            text += " ";
+          }
+          if (indices[sentence_number].has(index.toString())) {
+            text += '<span class="is-active-text">' + word + '</span>';
+          } else {
+            text += word;
+          }
+        });
+      });
 
       return React.createElement(
         'div',

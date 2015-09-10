@@ -47,6 +47,7 @@ class QuestionList extends React.Component {
               selected={selected}
               activeFormula={activeFormula}
               words={q.sentence_words}
+              sentence_expressions={q.sentence_expressions}
               entityMap={this.props.entityMap}/>
         </li>
       );
