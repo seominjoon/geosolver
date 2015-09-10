@@ -148,8 +148,13 @@ function getSvg(tagRule, coords) {
     );
   } else if (tagRule.signature.return_type == "point") {
     svg = (
-        <circle cx={coords[0]} cy={coords[1]} r="5" />
+        <circle cx={coords[0]} cy={coords[1]} r="5"/>
     );
+  } else if (tagRule.signature.return_type == "angle") {
+    // TODO: coords is a list of three points; how can i draw two lines only? (0 to 1, and 1 to 2)
+    svg = (
+        <line x1={coords[0][0]} y1={coords[0][1]} x2={coords[1][0]} y2={coords[1][1]} />
+    )
   } else {
     const string = coords.map(function(point) {
       return point.join(",");
