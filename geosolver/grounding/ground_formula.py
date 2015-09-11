@@ -194,7 +194,7 @@ def _ground_variable(match_parse, variable, references={}):
                     if measure > np.pi:
                         continue
                     return formula
-        elif len(variable_signature.name) == 1 and variable_signature.name.islower():
+        elif len(variable_signature.name) == 1 and variable_signature.name.islower() and variable_signature.name in match_parse.match_dict:
             return match_parse.match_dict[variable_signature.name][0]
         else:
             angles = get_all_instances(graph_parse, 'angle', True)

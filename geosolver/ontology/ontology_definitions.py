@@ -146,9 +146,8 @@ class Node(object):
         return None
 
     def zip(self, other):
-        if self.is_leaf() or not isinstance(other, Node) or other.is_leaf():
+        if self.is_leaf() or not isinstance(other, Node) or other.is_leaf() or len(self.children) != len(other.children):
             return ZippedNode([self, other], [])
-        assert len(self.children) == len(other.children)
         children = [sc.zip(oc) for sc, oc in zip(self.children, other.children)]
         return ZippedNode([self, other], children)
 

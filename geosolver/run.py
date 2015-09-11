@@ -166,21 +166,44 @@ def full_unit_test(combined_model, question, label_data):
 
     # graph_parse.core_parse.display_points()
 
-def semantic_tree_to_serialized_entities(match_parse, semantic_tree, sentence_number):
+def semantic_tree_to_serialized_entities(match_parse, semantic_tree, sentence_number, value_expr_formulas):
+    offset = match_parse.graph_parse.core_parse.image_segment_parse.diagram_image_segment.offset
     formula = semantic_tree.to_formula()
     entities = []
-    grounded_formula = ground_formulas(match_parse, [formula])[0]
+    grounded_formula = ground_formulas(match_parse, [formula], value_expr_formulas)[0]
     zipped_formula = grounded_formula.zip(semantic_tree)
     for zipped_node in zipped_formula:
         formula_node, tree_node = zipped_node.nodes
-        if issubtype(formula_node.return_type, 'entity'):
+        if isinstance(formula_node, FormulaNode) and issubtype(formula_node.return_type, 'entity'):
             coords = match_parse.graph_parse.core_parse.evaluate(formula_node)
             if coords is not None:
+                coords = offset_coords(coords, tree_node.content.signature.return_type, offset)
                 entity = {"content": tree_node.content.serialized(), "coords": serialize_entity(coords),
                           "sentence_number": sentence_number}
                 entities.append(entity)
 
     return entities
+
+def offset_point(point, offset):
+    return point[0]+offset[0], point[1]+offset[1]
+
+def offset_coords(coords, type_, offset):
+    coords = list(coords)
+    if issubtype(type_, 'point'):
+        coords = offset_point(coords, offset)
+    elif issubtype(type_, "line"):
+        coords[0] = offset_point(coords[0], offset)
+        coords[1] = offset_point(coords[1], offset)
+    elif issubtype(type_, 'circle'):
+        coords[0] = offset_point(coords[0], offset)
+    elif issubtype(type_, 'arc') or issubtype(type_, 'sector'):
+        coords[0][0] = offset_point(coords[0][0], offset)
+        coords[1] = offset_point(coords[1], offset)
+        coords[2] = offset_point(coords[2], offset)
+    else:
+        coords = [offset_point(point, offset) for point in coords]
+    return coords
+
 
 def serialize_entity(entity):
     try:
@@ -206,11 +229,13 @@ def _full_unit_test(combined_model, question, label_data):
     optimized_path = os.path.join(base_path, 'optimized.json')
     entity_list_path = os.path.join(base_path, 'entity_map.json')
     diagram_path = os.path.join(base_path, 'diagram.png')
+    solution_path = os.path.join(base_path, 'solution.json')
     shutil.copy(question.diagram_path, diagram_path)
     text_parse_list = []
     diagram_parse_list = []
     optimized_list = []
     entity_list = []
+    solution = "";
     json.dump(question._asdict(), open(question_path, 'wb'))
 
     choice_formulas = get_choice_formulas(question)
@@ -253,7 +278,7 @@ def _full_unit_test(combined_model, question, label_data):
                 diagram_parse_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                            'score': diagram_score})
 
-            local_entities = semantic_tree_to_serialized_entities(match_parse, t, number)
+            local_entities = semantic_tree_to_serialized_entities(match_parse, t, number, value_expr_formulas)
             entity_list.extend(local_entities)
 
         for t in bool_semantic_trees:
@@ -282,15 +307,18 @@ def _full_unit_test(combined_model, question, label_data):
         else:
             score = None
             scores = None
+        solution += repr(reduced_formula) + '\n'
         print reduced_formula, score, scores
+    solution = solution.rstrip()
     # core_parse.display_points()
 
     json.dump(diagram_parse_list, open(diagram_parse_path, 'wb'))
     json.dump(optimized_list, open(optimized_path, 'wb'))
     json.dump(text_parse_list, open(text_parse_path, 'wb'))
     json.dump(entity_list, open(entity_list_path, 'wb'))
+    json.dump(solution, open(solution_path, 'wb'))
 
-    return SimpleResult(question.key, False, False, True) # Early termination
+    # return SimpleResult(question.key, False, False, True) # Early termination
 
     print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
@@ -407,8 +435,8 @@ def full_test():
     load = True
 
     tr_questions = geoserver_interface.download_questions('aaai')
-    te_questions = geoserver_interface.download_questions('emnlp')
-    te_keys = [968, 971, 973, 1018]
+    te_questions = geoserver_interface.download_questions('official')
+    te_keys = [993,995,1011,1020,1483,1037]#te_questions.keys() #[968, 971, 973, 1018]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
     te_ids = te_questions.keys()
