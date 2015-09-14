@@ -21,14 +21,14 @@ class Solution extends React.Component {
   }
   render() {
     return (
-      <div className="flex-column flex-grow">
-        <div className="flex-column flex-grow scrollable">
+      <div className="flex-column flex-grow not-scrollable">
+        <div className="flex-column flex-grow not-scrollable">
           <QuestionList
               questions={this.props.questions}
               dispatcher={this.props.dispatcher}
               selectedIndex={this.props.selectedIndex}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
-          <div className="formula-list-container padded">
+            <div className="formula-list-container padded scrollable">
             <h2>The Resulting Formula is used to Solve the Problem:</h2>
             <p>{this.props.solution.solutionFormula}</p>
           </div>

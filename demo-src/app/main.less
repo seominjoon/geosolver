@@ -262,9 +262,17 @@ button {
 .formula-list-container {
   h2 {
     margin: 0;
-    padding: @spacing-xsm;
     color: @gray;
     font-weight: 400;
+  }
+
+  h2,
+  p {
+    padding: @spacing-xsm;
+  }
+
+  p {
+    margin: 0;
   }
 }
 
@@ -303,6 +311,23 @@ button {
     position: absolute;
     left: 0;
     top: 0;
+
+
+    &.shape-0 {
+      stroke: @blue;
+    }
+
+    &.shape-1 {
+      stroke: @yellow;
+    }
+
+    &.shape-2 {
+      stroke: @orange;
+    }
+
+    &.shape-3 {
+      stroke: @red;
+    }
   }
 }
 

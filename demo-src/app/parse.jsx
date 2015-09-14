@@ -46,7 +46,7 @@ class Parse extends React.Component {
   render() {
     return (
       <div className="flex-column flex-grow not-scrollable">
-        <div className="flex-column flex-grow scrollable">
+        <div className="flex-column flex-grow not-scrollable">
           <QuestionList
               questions={this.props.questions}
               dispatcher={this.props.dispatcher}
@@ -54,7 +54,7 @@ class Parse extends React.Component {
               activeFormula={this.props.activeFormula}
               entityMap={this.props.solution.entityMap}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
-          <div className="parsed-formulas flex-row">
+          <div className="parsed-formulas flex-row scrollable">
             <div className="formula-list-container padded">
               <h2>Formulas Extracted from the Problem Text:</h2>
               {this.formulaList(this.props.solution.textFormulas)}

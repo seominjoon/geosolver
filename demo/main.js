@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/skone/Projects/geosolver/demo-src/app/actions.js":[function(require,module,exports){
 'use strict';
 
 var Actions = {
@@ -13,7 +13,7 @@ var Actions = {
 
 module.exports = Actions;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/api.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/app/api.js":[function(require,module,exports){
 'use strict';
 
 var _bind = Function.prototype.bind;
@@ -72,7 +72,7 @@ module.exports = {
   }
 };
 
-},{"./solution.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/solution.js","promise":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/index.js","superagent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/superagent/lib/client.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/loading.jsx":[function(require,module,exports){
+},{"./solution.js":"/Users/skone/Projects/geosolver/demo-src/app/solution.js","promise":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/index.js","superagent":"/Users/skone/Projects/geosolver/demo-src/node_modules/superagent/lib/client.js"}],"/Users/skone/Projects/geosolver/demo-src/app/loading.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -107,7 +107,7 @@ var LoadingIndicator = (function (_React$Component) {
 
 module.exports = LoadingIndicator;
 
-},{"react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/main.jsx":[function(require,module,exports){
+},{"react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/main.jsx":[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -241,7 +241,7 @@ var GeoSolverDemo = (function (_React$Component) {
 
 React.render(React.createElement(GeoSolverDemo, null), document.body);
 
-},{"./actions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./loading.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/loading.jsx","./optimized.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/optimized.jsx","./parse.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/parse.jsx","./question-store.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-store.js","./select-question.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/select-question.jsx","./solution.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/solution.jsx","./views.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/views.js","flux":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/flux/index.js","react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/optimized.jsx":[function(require,module,exports){
+},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./loading.jsx":"/Users/skone/Projects/geosolver/demo-src/app/loading.jsx","./optimized.jsx":"/Users/skone/Projects/geosolver/demo-src/app/optimized.jsx","./parse.jsx":"/Users/skone/Projects/geosolver/demo-src/app/parse.jsx","./question-store.js":"/Users/skone/Projects/geosolver/demo-src/app/question-store.js","./select-question.jsx":"/Users/skone/Projects/geosolver/demo-src/app/select-question.jsx","./solution.jsx":"/Users/skone/Projects/geosolver/demo-src/app/solution.jsx","./views.js":"/Users/skone/Projects/geosolver/demo-src/app/views.js","flux":"/Users/skone/Projects/geosolver/demo-src/node_modules/flux/index.js","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/optimized.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -332,19 +332,20 @@ var Optimized = (function (_React$Component) {
     value: function render() {
       return React.createElement(
         'div',
-        { className: 'flex-column flex-grow' },
+        { className: 'flex-column flex-grow not-scrollable' },
         React.createElement(
           'div',
-          { className: 'flex-column flex-grow scrollable' },
+          { className: 'flex-column flex-grow not-scrollable' },
           React.createElement(QuestionList, {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
             selectedIndex: this.props.selectedIndex,
             activeFormula: this.props.activeFormula,
+            entityMap: this.props.solution.entityMap,
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
-            { className: 'formula-list-container padded' },
+            { className: 'formula-list-container padded scrollable' },
             React.createElement(
               'h2',
               null,
@@ -381,7 +382,7 @@ var Optimized = (function (_React$Component) {
 
 module.exports = Optimized;
 
-},{"./actions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./question-list.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-list.jsx","./views.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/views.js","react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/parse.jsx":[function(require,module,exports){
+},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question-list.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx","./views.js":"/Users/skone/Projects/geosolver/demo-src/app/views.js","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/parse.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -467,7 +468,7 @@ var Parse = (function (_React$Component) {
         { className: 'flex-column flex-grow not-scrollable' },
         React.createElement(
           'div',
-          { className: 'flex-column flex-grow scrollable' },
+          { className: 'flex-column flex-grow not-scrollable' },
           React.createElement(QuestionList, {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
@@ -477,7 +478,7 @@ var Parse = (function (_React$Component) {
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
-            { className: 'parsed-formulas flex-row' },
+            { className: 'parsed-formulas flex-row scrollable' },
             React.createElement(
               'div',
               { className: 'formula-list-container padded' },
@@ -523,7 +524,7 @@ var Parse = (function (_React$Component) {
 
 module.exports = Parse;
 
-},{"./actions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./question-list.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-list.jsx","./views.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/views.js","react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-list.jsx":[function(require,module,exports){
+},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question-list.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx","./views.js":"/Users/skone/Projects/geosolver/demo-src/app/views.js","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -658,7 +659,7 @@ var QuestionList = (function (_React$Component2) {
 
 module.exports = QuestionList;
 
-},{"./actions":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./question.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question.jsx","./util.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/util.js","react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-store.js":[function(require,module,exports){
+},{"./actions":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question.jsx","./util.js":"/Users/skone/Projects/geosolver/demo-src/app/util.js","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/question-store.js":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -798,7 +799,7 @@ QuestionStore.Events = {
 
 module.exports = QuestionStore;
 
-},{"./actions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./api.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/api.js","./views.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/views.js","events":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/events/events.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question.jsx":[function(require,module,exports){
+},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./api.js":"/Users/skone/Projects/geosolver/demo-src/app/api.js","./views.js":"/Users/skone/Projects/geosolver/demo-src/app/views.js","events":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/events/events.js"}],"/Users/skone/Projects/geosolver/demo-src/app/question.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1002,13 +1003,18 @@ function getSvg(tagRule, coords) {
   var svg = undefined;
   if (tagRule.signature.return_type === "circle") {
     svg = React.createElement('circle', { cx: coords[0][0], cy: coords[0][1], r: coords[1] });
-  } else if (tagRule.signature.return_type == "line") {
+  } else if (tagRule.signature.return_type === "line") {
     svg = React.createElement('line', { x1: coords[0][0], y1: coords[0][1], x2: coords[1][0], y2: coords[1][1] });
-  } else if (tagRule.signature.return_type == "point") {
+  } else if (tagRule.signature.return_type === "point") {
     svg = React.createElement('circle', { cx: coords[0], cy: coords[1], r: '5' });
-  } else if (tagRule.signature.return_type == "angle") {
+  } else if (tagRule.signature.return_type === "angle") {
     // TODO: coords is a list of three points; how can i draw two lines only? (0 to 1, and 1 to 2)
-    svg = React.createElement('line', { x1: coords[0][0], y1: coords[0][1], x2: coords[1][0], y2: coords[1][1] });
+    svg = React.createElement(
+      'g',
+      null,
+      React.createElement('line', { x1: coords[0][0], y1: coords[0][1], x2: coords[1][0], y2: coords[1][1] }),
+      React.createElement('line', { x1: coords[0][0], y1: coords[0][1], x2: coords[2][0], y2: coords[2][1] })
+    );
   } else {
     var string = coords.map(function (point) {
       return point.join(",");
@@ -1017,9 +1023,6 @@ function getSvg(tagRule, coords) {
   }
   return svg;
 }
-
-var PATTERN_KEYWORDS = /\(([^()]+)\)/;
-var PATTERN_PARENS = /[()]/;
 
 var Question = (function (_React$Component2) {
   _inherits(Question, _React$Component2);
@@ -1067,21 +1070,27 @@ var Question = (function (_React$Component2) {
             if (tagRule.getKey() in entityMap) {
               return getSvg(tagRule, entityMap[tagRule.getKey()]);
             } else {
-              return "";
+              return null;
             }
           });
           var viewBox = '0 0 ' + _this.width + ' ' + _this.height;
-          svg = svgs.map(function (shape) {
+          svg = svgs.filter(function (s) {
+            return s !== null;
+          }).map(function (shape, i) {
+            var className = 'shape-' + i;
             return React.createElement(
               'svg',
-              { viewBox: viewBox, width: _this.width, height: _this.height },
+              { key: i,
+                viewBox: viewBox,
+                width: _this.width,
+                height: _this.height,
+                className: className },
               shape
             );
           });
-
-          var keywords = _this.props.activeFormula.simple.match(PATTERN_KEYWORDS).pop().replace(PATTERN_PARENS, '').split(',');
         })();
       }
+
       Object.keys(words).forEach(function (sentence_number) {
         var d = words[sentence_number];
         Object.keys(d).forEach(function (index) {
@@ -1089,7 +1098,9 @@ var Question = (function (_React$Component2) {
           if (word in sentence_expressions[sentence_number]) {
             word = sentence_expressions[sentence_number][word];
           }
-          if (word == "holds") return;
+          if (word === "holds") {
+            return;
+          }
           if (" . , ? ".indexOf(word) < 0) {
             text += " ";
           }
@@ -1125,7 +1136,7 @@ var Question = (function (_React$Component2) {
 
 module.exports = Question;
 
-},{"react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/select-question.jsx":[function(require,module,exports){
+},{"react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/select-question.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1193,7 +1204,7 @@ var SelectQuestion = (function (_React$Component) {
 
 module.exports = SelectQuestion;
 
-},{"./actions":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./question-list.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-list.jsx","react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/solution.js":[function(require,module,exports){
+},{"./actions":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question-list.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/solution.js":[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -1238,7 +1249,7 @@ var QuestionSolution = function QuestionSolution(question, entityMap, textFormul
 
 module.exports = QuestionSolution;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/solution.jsx":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/app/solution.jsx":[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1285,10 +1296,10 @@ var Solution = (function (_React$Component) {
     value: function render() {
       return React.createElement(
         'div',
-        { className: 'flex-column flex-grow' },
+        { className: 'flex-column flex-grow not-scrollable' },
         React.createElement(
           'div',
-          { className: 'flex-column flex-grow scrollable' },
+          { className: 'flex-column flex-grow not-scrollable' },
           React.createElement(QuestionList, {
             questions: this.props.questions,
             dispatcher: this.props.dispatcher,
@@ -1296,7 +1307,7 @@ var Solution = (function (_React$Component) {
             selectedAnswerKey: this.props.solution ? this.props.solution.answer : undefined }),
           React.createElement(
             'div',
-            { className: 'formula-list-container padded' },
+            { className: 'formula-list-container padded scrollable' },
             React.createElement(
               'h2',
               null,
@@ -1337,7 +1348,7 @@ var Solution = (function (_React$Component) {
 
 module.exports = Solution;
 
-},{"./actions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/actions.js","./question-list.jsx":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/question-list.jsx","./views.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/app/views.js","react":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/util.js":[function(require,module,exports){
+},{"./actions.js":"/Users/skone/Projects/geosolver/demo-src/app/actions.js","./question-list.jsx":"/Users/skone/Projects/geosolver/demo-src/app/question-list.jsx","./views.js":"/Users/skone/Projects/geosolver/demo-src/app/views.js","react":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js"}],"/Users/skone/Projects/geosolver/demo-src/app/util.js":[function(require,module,exports){
 'use strict';
 
 var prefixes = ['Moz', 'Webkit', 'Ms', 'O'];
@@ -1353,7 +1364,7 @@ module.exports = {
   }
 };
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/app/views.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/app/views.js":[function(require,module,exports){
 'use strict';
 
 var Views = {
@@ -1365,7 +1376,7 @@ var Views = {
 
 module.exports = Views;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/flux/index.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/flux/index.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1377,7 +1388,7 @@ module.exports = Views;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/flux/lib/Dispatcher.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
+},{"./lib/Dispatcher":"/Users/skone/Projects/geosolver/demo-src/node_modules/flux/lib/Dispatcher.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/flux/lib/Dispatcher.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -1612,7 +1623,7 @@ var Dispatcher = (function () {
 module.exports = Dispatcher;
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js","fbjs/lib/invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/flux/node_modules/fbjs/lib/invariant.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/flux/node_modules/fbjs/lib/invariant.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js","fbjs/lib/invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/flux/node_modules/fbjs/lib/invariant.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/flux/node_modules/fbjs/lib/invariant.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -1665,12 +1676,12 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/index.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/index.js":[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib')
 
-},{"./lib":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/index.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/core.js":[function(require,module,exports){
+},{"./lib":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/index.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/core.js":[function(require,module,exports){
 'use strict';
 
 var asap = require('asap/raw');
@@ -1856,7 +1867,7 @@ function doResolve(fn, promise) {
   }
 }
 
-},{"asap/raw":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/node_modules/asap/raw.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/done.js":[function(require,module,exports){
+},{"asap/raw":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/node_modules/asap/raw.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/done.js":[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -1871,7 +1882,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
   });
 };
 
-},{"./core.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/core.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/es6-extensions.js":[function(require,module,exports){
+},{"./core.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/core.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/es6-extensions.js":[function(require,module,exports){
 'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
@@ -1980,7 +1991,7 @@ Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
 };
 
-},{"./core.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/core.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/finally.js":[function(require,module,exports){
+},{"./core.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/core.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/finally.js":[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -1998,7 +2009,7 @@ Promise.prototype['finally'] = function (f) {
   });
 };
 
-},{"./core.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/core.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/index.js":[function(require,module,exports){
+},{"./core.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/core.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/index.js":[function(require,module,exports){
 'use strict';
 
 module.exports = require('./core.js');
@@ -2007,7 +2018,7 @@ require('./finally.js');
 require('./es6-extensions.js');
 require('./node-extensions.js');
 
-},{"./core.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/core.js","./done.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/done.js","./es6-extensions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/es6-extensions.js","./finally.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/finally.js","./node-extensions.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/node-extensions.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/node-extensions.js":[function(require,module,exports){
+},{"./core.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/core.js","./done.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/done.js","./es6-extensions.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/es6-extensions.js","./finally.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/finally.js","./node-extensions.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/node-extensions.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/node-extensions.js":[function(require,module,exports){
 'use strict';
 
 // This file contains then/promise specific extensions that are only useful
@@ -2080,7 +2091,7 @@ Promise.prototype.nodeify = function (callback, ctx) {
   });
 }
 
-},{"./core.js":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/lib/core.js","asap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/node_modules/asap/browser-asap.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/node_modules/asap/browser-asap.js":[function(require,module,exports){
+},{"./core.js":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/lib/core.js","asap":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/node_modules/asap/browser-asap.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/node_modules/asap/browser-asap.js":[function(require,module,exports){
 "use strict";
 
 // rawAsap provides everything we need except exception management.
@@ -2148,7 +2159,7 @@ RawTask.prototype.call = function () {
     }
 };
 
-},{"./raw":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/node_modules/asap/browser-raw.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/node_modules/asap/browser-raw.js":[function(require,module,exports){
+},{"./raw":"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/node_modules/asap/browser-raw.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/node_modules/asap/browser-raw.js":[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -2373,7 +2384,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/promise/node_modules/asap/raw.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/promise/node_modules/asap/raw.js":[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -2479,7 +2490,7 @@ function requestFlush() {
 
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js","domain":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/domain-browser/index.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js","domain":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/domain-browser/index.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -2506,7 +2517,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/focusNode.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/BeforeInputEventPlugin.js":[function(require,module,exports){
+},{"./focusNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/focusNode.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/BeforeInputEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -3001,7 +3012,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./FallbackCompositionState":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/FallbackCompositionState.js","./SyntheticCompositionEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticCompositionEvent.js","./SyntheticInputEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticInputEvent.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CSSProperty.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./FallbackCompositionState":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/FallbackCompositionState.js","./SyntheticCompositionEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticCompositionEvent.js","./SyntheticInputEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticInputEvent.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CSSProperty.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3126,7 +3137,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CSSPropertyOperations.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CSSPropertyOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3309,7 +3320,7 @@ module.exports = CSSPropertyOperations;
 
 }).call(this,require('_process'))
 
-},{"./CSSProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CSSProperty.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./camelizeStyleName":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/camelizeStyleName.js","./dangerousStyleValue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/dangerousStyleValue.js","./hyphenateStyleName":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/hyphenateStyleName.js","./memoizeStringOnly":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/memoizeStringOnly.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CallbackQueue.js":[function(require,module,exports){
+},{"./CSSProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CSSProperty.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./camelizeStyleName":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/camelizeStyleName.js","./dangerousStyleValue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/dangerousStyleValue.js","./hyphenateStyleName":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/hyphenateStyleName.js","./memoizeStringOnly":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/memoizeStringOnly.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CallbackQueue.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3410,7 +3421,7 @@ module.exports = CallbackQueue;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ChangeEventPlugin.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ChangeEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3792,7 +3803,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginHub.js","./EventPropagators":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js","./isEventSupported":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isEventSupported.js","./isTextInputElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ClientReactRootIndex.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginHub.js","./EventPropagators":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js","./isEventSupported":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isEventSupported.js","./isTextInputElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ClientReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -3817,7 +3828,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMChildrenOperations.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMChildrenOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -3956,7 +3967,7 @@ module.exports = DOMChildrenOperations;
 
 }).call(this,require('_process'))
 
-},{"./Danger":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Danger.js","./ReactMultiChildUpdateTypes":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./setTextContent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/setTextContent.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js":[function(require,module,exports){
+},{"./Danger":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Danger.js","./ReactMultiChildUpdateTypes":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./setTextContent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/setTextContent.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -4256,7 +4267,7 @@ module.exports = DOMProperty;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMPropertyOperations.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMPropertyOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -4449,7 +4460,7 @@ module.exports = DOMPropertyOperations;
 
 }).call(this,require('_process'))
 
-},{"./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js","./quoteAttributeValueForBrowser":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/quoteAttributeValueForBrowser.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Danger.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js","./quoteAttributeValueForBrowser":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/quoteAttributeValueForBrowser.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Danger.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -4637,7 +4648,7 @@ module.exports = Danger;
 
 }).call(this,require('_process'))
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./createNodesFromMarkup":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/createNodesFromMarkup.js","./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js","./getMarkupWrap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DefaultEventPluginOrder.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./createNodesFromMarkup":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/createNodesFromMarkup.js","./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js","./getMarkupWrap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DefaultEventPluginOrder.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4676,7 +4687,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EnterLeaveEventPlugin.js":[function(require,module,exports){
+},{"./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EnterLeaveEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4816,7 +4827,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPropagators.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./SyntheticMouseEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticMouseEvent.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPropagators.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./SyntheticMouseEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticMouseEvent.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -4888,7 +4899,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventListener.js":[function(require,module,exports){
+},{"./keyMirror":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventListener.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -4979,7 +4990,7 @@ module.exports = EventListener;
 
 }).call(this,require('_process'))
 
-},{"./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginHub.js":[function(require,module,exports){
+},{"./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginHub.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -5258,7 +5269,7 @@ module.exports = EventPluginHub;
 
 }).call(this,require('_process'))
 
-},{"./EventPluginRegistry":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginRegistry.js","./EventPluginUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginUtils.js","./accumulateInto":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginRegistry.js":[function(require,module,exports){
+},{"./EventPluginRegistry":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginRegistry.js","./EventPluginUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginUtils.js","./accumulateInto":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginRegistry.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -5539,7 +5550,7 @@ module.exports = EventPluginRegistry;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginUtils.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginUtils.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -5761,7 +5772,7 @@ module.exports = EventPluginUtils;
 
 }).call(this,require('_process'))
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPropagators.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPropagators.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -5904,7 +5915,7 @@ module.exports = EventPropagators;
 
 }).call(this,require('_process'))
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginHub.js","./accumulateInto":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/forEachAccumulated.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginHub.js","./accumulateInto":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/forEachAccumulated.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -5948,7 +5959,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/FallbackCompositionState.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/FallbackCompositionState.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -6039,7 +6050,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./getTextContentAccessor":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/HTMLDOMPropertyConfig.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./getTextContentAccessor":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/HTMLDOMPropertyConfig.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -6250,7 +6261,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LinkedValueUtils.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LinkedValueUtils.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -6407,7 +6418,7 @@ module.exports = LinkedValueUtils;
 
 }).call(this,require('_process'))
 
-},{"./ReactPropTypes":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypes.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LocalEventTrapMixin.js":[function(require,module,exports){
+},{"./ReactPropTypes":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypes.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LocalEventTrapMixin.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -6465,7 +6476,7 @@ module.exports = LocalEventTrapMixin;
 
 }).call(this,require('_process'))
 
-},{"./ReactBrowserEventEmitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./accumulateInto":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/MobileSafariClickEventPlugin.js":[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./accumulateInto":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/MobileSafariClickEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -6523,7 +6534,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -6572,7 +6583,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -6689,7 +6700,7 @@ module.exports = PooledClass;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/React.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/React.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -6842,7 +6853,7 @@ module.exports = React;
 
 }).call(this,require('_process'))
 
-},{"./EventPluginUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginUtils.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactChildren":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactChildren.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponent.js","./ReactContext":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactDOM":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOM.js","./ReactDOMTextComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDefaultInjection":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultInjection.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceHandles":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./ReactPropTypes":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypes.js","./ReactReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js","./ReactServerRendering":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactServerRendering.js","./findDOMNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/findDOMNode.js","./onlyChild":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/onlyChild.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js":[function(require,module,exports){
+},{"./EventPluginUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginUtils.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactChildren":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactChildren.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponent.js","./ReactContext":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactDOM":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOM.js","./ReactDOMTextComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDefaultInjection":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultInjection.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceHandles":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./ReactPropTypes":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypes.js","./ReactReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js","./ReactServerRendering":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactServerRendering.js","./findDOMNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/findDOMNode.js","./onlyChild":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/onlyChild.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -6873,7 +6884,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 
-},{"./findDOMNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/findDOMNode.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js":[function(require,module,exports){
+},{"./findDOMNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/findDOMNode.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -7226,7 +7237,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginHub.js","./EventPluginRegistry":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginRegistry.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactEventEmitterMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEventEmitterMixin.js","./ViewportMetrics":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ViewportMetrics.js","./isEventSupported":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isEventSupported.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactChildReconciler.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginHub.js","./EventPluginRegistry":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginRegistry.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactEventEmitterMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEventEmitterMixin.js","./ViewportMetrics":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ViewportMetrics.js","./isEventSupported":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isEventSupported.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactChildReconciler.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -7353,7 +7364,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 
-},{"./ReactReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js","./flattenChildren":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/flattenChildren.js","./instantiateReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/instantiateReactComponent.js","./shouldUpdateReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactChildren.js":[function(require,module,exports){
+},{"./ReactReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js","./flattenChildren":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/flattenChildren.js","./instantiateReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/instantiateReactComponent.js","./shouldUpdateReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -7507,7 +7518,7 @@ module.exports = ReactChildren;
 
 }).call(this,require('_process'))
 
-},{"./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./ReactFragment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactFragment.js","./traverseAllChildren":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js":[function(require,module,exports){
+},{"./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./ReactFragment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactFragment.js","./traverseAllChildren":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -8454,7 +8465,7 @@ module.exports = ReactClass;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponent.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactErrorUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactErrorUtils.js","./ReactInstanceMap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactLifeCycle.js","./ReactPropTypeLocationNames":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocations.js","./ReactUpdateQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./keyMirror":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyMirror.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponent.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponent.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactErrorUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactErrorUtils.js","./ReactInstanceMap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactLifeCycle.js","./ReactPropTypeLocationNames":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocations.js","./ReactUpdateQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./keyMirror":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyMirror.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -8609,7 +8620,7 @@ module.exports = ReactComponent;
 
 }).call(this,require('_process'))
 
-},{"./ReactUpdateQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js":[function(require,module,exports){
+},{"./ReactUpdateQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -8656,7 +8667,7 @@ var ReactComponentBrowserEnvironment = {
 
 module.exports = ReactComponentBrowserEnvironment;
 
-},{"./ReactDOMIDOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMIDOperations.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentEnvironment.js":[function(require,module,exports){
+},{"./ReactDOMIDOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMIDOperations.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentEnvironment.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -8718,7 +8729,7 @@ module.exports = ReactComponentEnvironment;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCompositeComponent.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCompositeComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -9632,7 +9643,7 @@ module.exports = ReactCompositeComponent;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactComponentEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentEnvironment.js","./ReactContext":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceMap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactLifeCycle.js","./ReactNativeComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./ReactPropTypeLocationNames":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocations.js","./ReactReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./emptyObject":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyObject.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./shouldUpdateReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactContext.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactComponentEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentEnvironment.js","./ReactContext":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceMap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactLifeCycle.js","./ReactNativeComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./ReactPropTypeLocationNames":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocations.js","./ReactReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./emptyObject":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyObject.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./shouldUpdateReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactContext.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -9711,7 +9722,7 @@ module.exports = ReactContext;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./emptyObject":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyObject.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./emptyObject":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyObject.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -9745,7 +9756,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOM.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOM.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -9925,7 +9936,7 @@ module.exports = ReactDOM;
 
 }).call(this,require('_process'))
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElementValidator.js","./mapObject":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/mapObject.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMButton.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElementValidator.js","./mapObject":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/mapObject.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMButton.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -9989,7 +10000,7 @@ var ReactDOMButton = ReactClass.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/AutoFocusMixin.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./keyMirror":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMComponent.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/AutoFocusMixin.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./keyMirror":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -10500,7 +10511,7 @@ module.exports = ReactDOMComponent;
 
 }).call(this,require('_process'))
 
-},{"./CSSPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CSSPropertyOperations.js","./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js","./DOMPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserEventEmitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactComponentBrowserEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactMultiChild":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMultiChild.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./escapeTextContentForBrowser":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./isEventSupported":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isEventSupported.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMForm.js":[function(require,module,exports){
+},{"./CSSPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CSSPropertyOperations.js","./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js","./DOMPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserEventEmitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactComponentBrowserEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactMultiChild":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMultiChild.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./escapeTextContentForBrowser":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./isEventSupported":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isEventSupported.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMForm.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -10549,7 +10560,7 @@ var ReactDOMForm = ReactClass.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMIDOperations.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMIDOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -10718,7 +10729,7 @@ module.exports = ReactDOMIDOperations;
 
 }).call(this,require('_process'))
 
-},{"./CSSPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CSSPropertyOperations.js","./DOMChildrenOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMChildrenOperations.js","./DOMPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/setInnerHTML.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMIframe.js":[function(require,module,exports){
+},{"./CSSPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CSSPropertyOperations.js","./DOMChildrenOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMChildrenOperations.js","./DOMPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/setInnerHTML.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMIframe.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -10763,7 +10774,7 @@ var ReactDOMIframe = ReactClass.createClass({
 
 module.exports = ReactDOMIframe;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMImg.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMImg.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -10809,7 +10820,7 @@ var ReactDOMImg = ReactClass.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMInput.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMInput.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -10987,7 +10998,7 @@ module.exports = ReactDOMInput;
 
 }).call(this,require('_process'))
 
-},{"./AutoFocusMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMOption.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMOption.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11040,7 +11051,7 @@ module.exports = ReactDOMOption;
 
 }).call(this,require('_process'))
 
-},{"./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMSelect.js":[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMSelect.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11218,7 +11229,7 @@ var ReactDOMSelect = ReactClass.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/AutoFocusMixin.js","./LinkedValueUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMSelection.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/AutoFocusMixin.js","./LinkedValueUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMSelection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11431,7 +11442,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./getNodeForCharacterOffset":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getNodeForCharacterOffset.js","./getTextContentAccessor":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMTextComponent.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./getNodeForCharacterOffset":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getNodeForCharacterOffset.js","./getTextContentAccessor":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMTextComponent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11548,7 +11559,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 
-},{"./DOMPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactComponentBrowserEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMComponent.js","./escapeTextContentForBrowser":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMTextarea.js":[function(require,module,exports){
+},{"./DOMPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactComponentBrowserEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMComponent.js","./escapeTextContentForBrowser":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMTextarea.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11689,7 +11700,7 @@ module.exports = ReactDOMTextarea;
 
 }).call(this,require('_process'))
 
-},{"./AutoFocusMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultBatchingStrategy.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultBatchingStrategy.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11762,7 +11773,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./Transaction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultInjection.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./Transaction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultInjection.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -11922,7 +11933,7 @@ module.exports = {
 
 }).call(this,require('_process'))
 
-},{"./BeforeInputEventPlugin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/BeforeInputEventPlugin.js","./ChangeEventPlugin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ChangeEventPlugin.js","./ClientReactRootIndex":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ClientReactRootIndex.js","./DefaultEventPluginOrder":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DefaultEventPluginOrder.js","./EnterLeaveEventPlugin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EnterLeaveEventPlugin.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./HTMLDOMPropertyConfig":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/HTMLDOMPropertyConfig.js","./MobileSafariClickEventPlugin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/MobileSafariClickEventPlugin.js","./ReactBrowserComponentMixin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactComponentBrowserEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMButton":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMButton.js","./ReactDOMComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMComponent.js","./ReactDOMForm":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMForm.js","./ReactDOMIDOperations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMIDOperations.js","./ReactDOMIframe":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMIframe.js","./ReactDOMImg":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMImg.js","./ReactDOMInput":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMInput.js","./ReactDOMOption":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMOption.js","./ReactDOMSelect":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMSelect.js","./ReactDOMTextComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDOMTextarea":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMTextarea.js","./ReactDefaultBatchingStrategy":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultBatchingStrategy.js","./ReactDefaultPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultPerf.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactEventListener":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEventListener.js","./ReactInjection":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInjection.js","./ReactInstanceHandles":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactReconcileTransaction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconcileTransaction.js","./SVGDOMPropertyConfig":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SVGDOMPropertyConfig.js","./SelectEventPlugin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SelectEventPlugin.js","./ServerReactRootIndex":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ServerReactRootIndex.js","./SimpleEventPlugin":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SimpleEventPlugin.js","./createFullPageComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/createFullPageComponent.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultPerf.js":[function(require,module,exports){
+},{"./BeforeInputEventPlugin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/BeforeInputEventPlugin.js","./ChangeEventPlugin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ChangeEventPlugin.js","./ClientReactRootIndex":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ClientReactRootIndex.js","./DefaultEventPluginOrder":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DefaultEventPluginOrder.js","./EnterLeaveEventPlugin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EnterLeaveEventPlugin.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./HTMLDOMPropertyConfig":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/HTMLDOMPropertyConfig.js","./MobileSafariClickEventPlugin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/MobileSafariClickEventPlugin.js","./ReactBrowserComponentMixin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactComponentBrowserEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMButton":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMButton.js","./ReactDOMComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMComponent.js","./ReactDOMForm":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMForm.js","./ReactDOMIDOperations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMIDOperations.js","./ReactDOMIframe":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMIframe.js","./ReactDOMImg":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMImg.js","./ReactDOMInput":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMInput.js","./ReactDOMOption":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMOption.js","./ReactDOMSelect":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMSelect.js","./ReactDOMTextComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDOMTextarea":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMTextarea.js","./ReactDefaultBatchingStrategy":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultBatchingStrategy.js","./ReactDefaultPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultPerf.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactEventListener":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEventListener.js","./ReactInjection":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInjection.js","./ReactInstanceHandles":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactReconcileTransaction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconcileTransaction.js","./SVGDOMPropertyConfig":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SVGDOMPropertyConfig.js","./SelectEventPlugin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SelectEventPlugin.js","./ServerReactRootIndex":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ServerReactRootIndex.js","./SimpleEventPlugin":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SimpleEventPlugin.js","./createFullPageComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/createFullPageComponent.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultPerf.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12188,7 +12199,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js","./ReactDefaultPerfAnalysis":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultPerfAnalysis.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./performanceNow":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/performanceNow.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDefaultPerfAnalysis.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js","./ReactDefaultPerfAnalysis":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultPerfAnalysis.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./performanceNow":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/performanceNow.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDefaultPerfAnalysis.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12394,7 +12405,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -12703,7 +12714,7 @@ module.exports = ReactElement;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactContext":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElementValidator.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactContext":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElementValidator.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -13169,7 +13180,7 @@ module.exports = ReactElementValidator;
 
 }).call(this,require('_process'))
 
-},{"./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactFragment.js","./ReactNativeComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactNativeComponent.js","./ReactPropTypeLocationNames":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocations.js","./getIteratorFn":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEmptyComponent.js":[function(require,module,exports){
+},{"./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactFragment.js","./ReactNativeComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactNativeComponent.js","./ReactPropTypeLocationNames":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocations.js","./getIteratorFn":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEmptyComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -13265,7 +13276,7 @@ module.exports = ReactEmptyComponent;
 
 }).call(this,require('_process'))
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactErrorUtils.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactErrorUtils.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13297,7 +13308,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEventEmitterMixin.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEventEmitterMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13347,7 +13358,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginHub.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEventListener.js":[function(require,module,exports){
+},{"./EventPluginHub":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginHub.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEventListener.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13530,7 +13541,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventListener.js","./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./ReactInstanceHandles":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./getEventTarget":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventTarget.js","./getUnboundedScrollPosition":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getUnboundedScrollPosition.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactFragment.js":[function(require,module,exports){
+},{"./EventListener":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventListener.js","./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./ReactInstanceHandles":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./getEventTarget":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventTarget.js","./getUnboundedScrollPosition":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getUnboundedScrollPosition.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactFragment.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -13716,7 +13727,7 @@ module.exports = ReactFragment;
 
 }).call(this,require('_process'))
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInjection.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInjection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13758,7 +13769,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js","./EventPluginHub":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginHub.js","./ReactBrowserEventEmitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactComponentEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentEnvironment.js","./ReactDOMComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMComponent.js","./ReactEmptyComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./ReactRootIndex":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactRootIndex.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInputSelection.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js","./EventPluginHub":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginHub.js","./ReactBrowserEventEmitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactComponentEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentEnvironment.js","./ReactDOMComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMComponent.js","./ReactEmptyComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./ReactRootIndex":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactRootIndex.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInputSelection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13893,7 +13904,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactDOMSelection.js","./containsNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/containsNode.js","./focusNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/focusNode.js","./getActiveElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getActiveElement.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js":[function(require,module,exports){
+},{"./ReactDOMSelection":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactDOMSelection.js","./containsNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/containsNode.js","./focusNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/focusNode.js","./getActiveElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getActiveElement.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14230,7 +14241,7 @@ module.exports = ReactInstanceHandles;
 
 }).call(this,require('_process'))
 
-},{"./ReactRootIndex":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactRootIndex.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js":[function(require,module,exports){
+},{"./ReactRootIndex":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactRootIndex.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14279,7 +14290,7 @@ var ReactInstanceMap = {
 
 module.exports = ReactInstanceMap;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactLifeCycle.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactLifeCycle.js":[function(require,module,exports){
 /**
  * Copyright 2015, Facebook, Inc.
  * All rights reserved.
@@ -14316,7 +14327,7 @@ var ReactLifeCycle = {
 
 module.exports = ReactLifeCycle;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMarkupChecksum.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMarkupChecksum.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14364,7 +14375,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/adler32.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js":[function(require,module,exports){
+},{"./adler32":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/adler32.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15256,7 +15267,7 @@ module.exports = ReactMount;
 
 }).call(this,require('_process'))
 
-},{"./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js","./ReactBrowserEventEmitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactEmptyComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEmptyComponent.js","./ReactInstanceHandles":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactInstanceMap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactMarkupChecksum":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMarkupChecksum.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js","./ReactUpdateQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdateQueue.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./containsNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/containsNode.js","./emptyObject":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyObject.js","./getReactRootElementInContainer":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getReactRootElementInContainer.js","./instantiateReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/setInnerHTML.js","./shouldUpdateReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMultiChild.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js","./ReactBrowserEventEmitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactEmptyComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEmptyComponent.js","./ReactInstanceHandles":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactInstanceMap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactMarkupChecksum":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMarkupChecksum.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js","./ReactUpdateQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdateQueue.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./containsNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/containsNode.js","./emptyObject":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyObject.js","./getReactRootElementInContainer":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getReactRootElementInContainer.js","./instantiateReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/setInnerHTML.js","./shouldUpdateReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMultiChild.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15686,7 +15697,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactChildReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactChildReconciler.js","./ReactComponentEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactComponentEnvironment.js","./ReactMultiChildUpdateTypes":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./ReactReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMultiChildUpdateTypes.js":[function(require,module,exports){
+},{"./ReactChildReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactChildReconciler.js","./ReactComponentEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactComponentEnvironment.js","./ReactMultiChildUpdateTypes":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./ReactReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMultiChildUpdateTypes.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15719,7 +15730,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactNativeComponent.js":[function(require,module,exports){
+},{"./keyMirror":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactNativeComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -15827,7 +15838,7 @@ module.exports = ReactNativeComponent;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactOwner.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactOwner.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15940,7 +15951,7 @@ module.exports = ReactOwner;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16045,7 +16056,7 @@ module.exports = ReactPerf;
 
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16074,7 +16085,7 @@ module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocations.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocations.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16098,7 +16109,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypes.js":[function(require,module,exports){
+},{"./keyMirror":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyMirror.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypes.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16447,7 +16458,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactFragment.js","./ReactPropTypeLocationNames":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPutListenerQueue.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactFragment.js","./ReactPropTypeLocationNames":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPropTypeLocationNames.js","./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPutListenerQueue.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16503,7 +16514,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconcileTransaction.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconcileTransaction.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16679,7 +16690,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactInputSelection":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInputSelection.js","./ReactPutListenerQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Transaction.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js":[function(require,module,exports){
+},{"./CallbackQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactInputSelection":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInputSelection.js","./ReactPutListenerQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Transaction.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16804,7 +16815,7 @@ module.exports = ReactReconciler;
 
 }).call(this,require('_process'))
 
-},{"./ReactElementValidator":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactRef":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactRef.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactRef.js":[function(require,module,exports){
+},{"./ReactElementValidator":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElementValidator.js","./ReactRef":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactRef.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactRef.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16875,7 +16886,7 @@ ReactRef.detachRefs = function(instance, element) {
 
 module.exports = ReactRef;
 
-},{"./ReactOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactOwner.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactRootIndex.js":[function(require,module,exports){
+},{"./ReactOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactOwner.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16906,7 +16917,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactServerRendering.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactServerRendering.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16989,7 +17000,7 @@ module.exports = {
 
 }).call(this,require('_process'))
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactInstanceHandles":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMarkupChecksum":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMarkupChecksum.js","./ReactServerRenderingTransaction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactServerRenderingTransaction.js","./emptyObject":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyObject.js","./instantiateReactComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactServerRenderingTransaction.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactInstanceHandles":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./ReactMarkupChecksum":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMarkupChecksum.js","./ReactServerRenderingTransaction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactServerRenderingTransaction.js","./emptyObject":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyObject.js","./instantiateReactComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactServerRenderingTransaction.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -17102,7 +17113,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./ReactPutListenerQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdateQueue.js":[function(require,module,exports){
+},{"./CallbackQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./ReactPutListenerQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdateQueue.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -17402,7 +17413,7 @@ module.exports = ReactUpdateQueue;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactLifeCycle.js","./ReactUpdates":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactUpdates.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactLifeCycle.js","./ReactUpdates":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactUpdates.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17685,7 +17696,7 @@ module.exports = ReactUpdates;
 
 }).call(this,require('_process'))
 
-},{"./CallbackQueue":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactPerf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactReconciler.js","./Transaction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Transaction.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SVGDOMPropertyConfig.js":[function(require,module,exports){
+},{"./CallbackQueue":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactPerf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactReconciler.js","./Transaction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Transaction.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SVGDOMPropertyConfig.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17779,7 +17790,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/DOMProperty.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SelectEventPlugin.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/DOMProperty.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SelectEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17974,7 +17985,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPropagators.js","./ReactInputSelection":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInputSelection.js","./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js","./getActiveElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getActiveElement.js","./isTextInputElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js","./shallowEqual":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/shallowEqual.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ServerReactRootIndex.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPropagators.js","./ReactInputSelection":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInputSelection.js","./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js","./getActiveElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getActiveElement.js","./isTextInputElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js","./shallowEqual":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/shallowEqual.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ServerReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18005,7 +18016,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SimpleEventPlugin.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SimpleEventPlugin.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18434,7 +18445,7 @@ module.exports = SimpleEventPlugin;
 
 }).call(this,require('_process'))
 
-},{"./EventConstants":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginUtils":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPluginUtils.js","./EventPropagators":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/EventPropagators.js","./SyntheticClipboardEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticClipboardEvent.js","./SyntheticDragEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticDragEvent.js","./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js","./SyntheticFocusEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticFocusEvent.js","./SyntheticKeyboardEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticKeyboardEvent.js","./SyntheticMouseEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticMouseEvent.js","./SyntheticTouchEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticTouchEvent.js","./SyntheticUIEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./SyntheticWheelEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticWheelEvent.js","./getEventCharCode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventCharCode.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./keyOf":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticClipboardEvent.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventConstants.js","./EventPluginUtils":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPluginUtils.js","./EventPropagators":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/EventPropagators.js","./SyntheticClipboardEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticClipboardEvent.js","./SyntheticDragEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticDragEvent.js","./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js","./SyntheticFocusEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticFocusEvent.js","./SyntheticKeyboardEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticKeyboardEvent.js","./SyntheticMouseEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticMouseEvent.js","./SyntheticTouchEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticTouchEvent.js","./SyntheticUIEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./SyntheticWheelEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticWheelEvent.js","./getEventCharCode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventCharCode.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./keyOf":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticClipboardEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18479,7 +18490,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
 
-},{"./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticCompositionEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticCompositionEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18524,7 +18535,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticCompositionEvent;
 
-},{"./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticDragEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticDragEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18563,7 +18574,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js":[function(require,module,exports){
+},{"./SyntheticMouseEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18729,7 +18740,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/PooledClass.js","./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js","./getEventTarget":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventTarget.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticFocusEvent.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/PooledClass.js","./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js","./getEventTarget":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventTarget.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticFocusEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18768,7 +18779,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticUIEvent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticInputEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticUIEvent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticInputEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18814,7 +18825,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticInputEvent;
 
-},{"./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticKeyboardEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticKeyboardEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18901,7 +18912,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./getEventCharCode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventCharCode.js","./getEventKey":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventKey.js","./getEventModifierState":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventModifierState.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticMouseEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./getEventCharCode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventCharCode.js","./getEventKey":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventKey.js","./getEventModifierState":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventModifierState.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticMouseEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18982,7 +18993,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./ViewportMetrics":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ViewportMetrics.js","./getEventModifierState":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventModifierState.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticTouchEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./ViewportMetrics":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ViewportMetrics.js","./getEventModifierState":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventModifierState.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticTouchEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19030,7 +19041,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./getEventModifierState":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventModifierState.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticUIEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticUIEvent.js","./getEventModifierState":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventModifierState.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticUIEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19092,7 +19103,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticEvent.js","./getEventTarget":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventTarget.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticWheelEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticEvent.js","./getEventTarget":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventTarget.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticWheelEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19153,7 +19164,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Transaction.js":[function(require,module,exports){
+},{"./SyntheticMouseEvent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Transaction.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19395,7 +19406,7 @@ module.exports = Transaction;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ViewportMetrics.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ViewportMetrics.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19424,7 +19435,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/accumulateInto.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/accumulateInto.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -19491,7 +19502,7 @@ module.exports = accumulateInto;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/adler32.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/adler32.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19525,7 +19536,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/camelize.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/camelize.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19557,7 +19568,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/camelizeStyleName.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/camelizeStyleName.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -19599,7 +19610,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/camelize.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/containsNode.js":[function(require,module,exports){
+},{"./camelize":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/camelize.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/containsNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19643,7 +19654,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isTextNode.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/createArrayFromMixed.js":[function(require,module,exports){
+},{"./isTextNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isTextNode.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/createArrayFromMixed.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19729,7 +19740,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 
-},{"./toArray":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/toArray.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/createFullPageComponent.js":[function(require,module,exports){
+},{"./toArray":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/toArray.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/createFullPageComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19792,7 +19803,7 @@ module.exports = createFullPageComponent;
 
 }).call(this,require('_process'))
 
-},{"./ReactClass":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/createNodesFromMarkup.js":[function(require,module,exports){
+},{"./ReactClass":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/createNodesFromMarkup.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19883,7 +19894,7 @@ module.exports = createNodesFromMarkup;
 
 }).call(this,require('_process'))
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./createArrayFromMixed":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/createArrayFromMixed.js","./getMarkupWrap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/dangerousStyleValue.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./createArrayFromMixed":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/createArrayFromMixed.js","./getMarkupWrap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/dangerousStyleValue.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19941,7 +19952,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/CSSProperty.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js":[function(require,module,exports){
+},{"./CSSProperty":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/CSSProperty.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19975,7 +19986,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyObject.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyObject.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20000,7 +20011,7 @@ module.exports = emptyObject;
 
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20040,7 +20051,7 @@ function escapeTextContentForBrowser(text) {
 
 module.exports = escapeTextContentForBrowser;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/findDOMNode.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/findDOMNode.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20114,7 +20125,7 @@ module.exports = findDOMNode;
 
 }).call(this,require('_process'))
 
-},{"./ReactCurrentOwner":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactInstanceMap":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactMount":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactMount.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./isNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isNode.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/flattenChildren.js":[function(require,module,exports){
+},{"./ReactCurrentOwner":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCurrentOwner.js","./ReactInstanceMap":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceMap.js","./ReactMount":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactMount.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./isNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isNode.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/flattenChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20173,7 +20184,7 @@ module.exports = flattenChildren;
 
 }).call(this,require('_process'))
 
-},{"./traverseAllChildren":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/focusNode.js":[function(require,module,exports){
+},{"./traverseAllChildren":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/focusNode.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -20202,7 +20213,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/forEachAccumulated.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/forEachAccumulated.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20233,7 +20244,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getActiveElement.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getActiveElement.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20262,7 +20273,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventCharCode.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventCharCode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20314,7 +20325,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventKey.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventKey.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20419,7 +20430,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventCharCode.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventModifierState.js":[function(require,module,exports){
+},{"./getEventCharCode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventCharCode.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventModifierState.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20466,7 +20477,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getEventTarget.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getEventTarget.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20497,7 +20508,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getIteratorFn.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getIteratorFn.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20541,7 +20552,7 @@ function getIteratorFn(maybeIterable) {
 
 module.exports = getIteratorFn;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getMarkupWrap.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getMarkupWrap.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20661,7 +20672,7 @@ module.exports = getMarkupWrap;
 
 }).call(this,require('_process'))
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getNodeForCharacterOffset.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getNodeForCharacterOffset.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20736,7 +20747,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getReactRootElementInContainer.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getReactRootElementInContainer.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20771,7 +20782,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getTextContentAccessor.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getTextContentAccessor.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20808,7 +20819,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getUnboundedScrollPosition.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getUnboundedScrollPosition.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20848,7 +20859,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/hyphenate.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/hyphenate.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20881,7 +20892,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/hyphenateStyleName.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/hyphenateStyleName.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20922,7 +20933,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/hyphenate.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/instantiateReactComponent.js":[function(require,module,exports){
+},{"./hyphenate":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/hyphenate.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/instantiateReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21061,7 +21072,7 @@ module.exports = instantiateReactComponent;
 
 }).call(this,require('_process'))
 
-},{"./Object.assign":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/Object.assign.js","./ReactCompositeComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactCompositeComponent.js","./ReactEmptyComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactNativeComponent.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/Object.assign.js","./ReactCompositeComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactCompositeComponent.js","./ReactEmptyComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactNativeComponent.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21119,7 +21130,7 @@ module.exports = invariant;
 
 }).call(this,require('_process'))
 
-},{"_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isEventSupported.js":[function(require,module,exports){
+},{"_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isEventSupported.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21184,7 +21195,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isNode.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21211,7 +21222,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isTextInputElement.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isTextInputElement.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21254,7 +21265,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isTextNode.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isTextNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21279,7 +21290,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/isNode.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyMirror.js":[function(require,module,exports){
+},{"./isNode":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/isNode.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyMirror.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21335,7 +21346,7 @@ module.exports = keyMirror;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/keyOf.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/keyOf.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21371,7 +21382,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/mapObject.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/mapObject.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21424,7 +21435,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/memoizeStringOnly.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/memoizeStringOnly.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21457,7 +21468,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/onlyChild.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/onlyChild.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21498,7 +21509,7 @@ module.exports = onlyChild;
 
 }).call(this,require('_process'))
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/performance.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/performance.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21526,7 +21537,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/performanceNow.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/performanceNow.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21554,7 +21565,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/performance.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/quoteAttributeValueForBrowser.js":[function(require,module,exports){
+},{"./performance":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/performance.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/quoteAttributeValueForBrowser.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21582,7 +21593,7 @@ function quoteAttributeValueForBrowser(value) {
 
 module.exports = quoteAttributeValueForBrowser;
 
-},{"./escapeTextContentForBrowser":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/setInnerHTML.js":[function(require,module,exports){
+},{"./escapeTextContentForBrowser":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/setInnerHTML.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21671,7 +21682,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/setTextContent.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/setTextContent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21713,7 +21724,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setTextContent;
 
-},{"./ExecutionEnvironment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./escapeTextContentForBrowser":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js","./setInnerHTML":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/setInnerHTML.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/shallowEqual.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ExecutionEnvironment.js","./escapeTextContentForBrowser":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/escapeTextContentForBrowser.js","./setInnerHTML":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/setInnerHTML.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/shallowEqual.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21757,7 +21768,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/shouldUpdateReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21862,7 +21873,7 @@ module.exports = shouldUpdateReactComponent;
 
 }).call(this,require('_process'))
 
-},{"./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/toArray.js":[function(require,module,exports){
+},{"./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/toArray.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -21935,7 +21946,7 @@ module.exports = toArray;
 
 }).call(this,require('_process'))
 
-},{"./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/traverseAllChildren.js":[function(require,module,exports){
+},{"./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/traverseAllChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22189,7 +22200,7 @@ module.exports = traverseAllChildren;
 
 }).call(this,require('_process'))
 
-},{"./ReactElement":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactFragment.js","./ReactInstanceHandles":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./getIteratorFn":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/warning.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactFragment.js","./ReactInstanceHandles":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/ReactInstanceHandles.js","./getIteratorFn":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/invariant.js","./warning":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/warning.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22253,10 +22264,10 @@ module.exports = warning;
 
 }).call(this,require('_process'))
 
-},{"./emptyFunction":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/emptyFunction.js","_process":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/react.js":[function(require,module,exports){
+},{"./emptyFunction":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/emptyFunction.js","_process":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/react/react.js":[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/react/lib/React.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/superagent/lib/client.js":[function(require,module,exports){
+},{"./lib/React":"/Users/skone/Projects/geosolver/demo-src/node_modules/react/lib/React.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/superagent/lib/client.js":[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -23396,7 +23407,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/superagent/node_modules/component-emitter/index.js","reduce":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/superagent/node_modules/reduce-component/index.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/superagent/node_modules/component-emitter/index.js":[function(require,module,exports){
+},{"emitter":"/Users/skone/Projects/geosolver/demo-src/node_modules/superagent/node_modules/component-emitter/index.js","reduce":"/Users/skone/Projects/geosolver/demo-src/node_modules/superagent/node_modules/reduce-component/index.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/superagent/node_modules/component-emitter/index.js":[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -23562,7 +23573,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/superagent/node_modules/reduce-component/index.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/superagent/node_modules/reduce-component/index.js":[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -23587,7 +23598,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/domain-browser/index.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/domain-browser/index.js":[function(require,module,exports){
 /*global define:false require:false */
 module.exports = (function(){
 	// Import Events
@@ -23655,7 +23666,7 @@ module.exports = (function(){
 	};
 	return domain
 }).call(this)
-},{"events":"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/events/events.js"}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
+},{"events":"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/events/events.js"}],"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -23958,7 +23969,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],"/Users/minjoon/workspace/geosolver-pages/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
+},{}],"/Users/skone/Projects/geosolver/demo-src/node_modules/syrup/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -24018,7 +24029,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},["/Users/minjoon/workspace/geosolver-pages/demo-src/app/main.jsx"])
+},{}]},{},["/Users/skone/Projects/geosolver/demo-src/app/main.jsx"])
 
 
 //# sourceMappingURL=main.js.map

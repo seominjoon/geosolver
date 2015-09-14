@@ -142,19 +142,22 @@ function getSvg(tagRule, coords) {
     svg = (
         <circle cx={coords[0][0]} cy={coords[0][1]} r={coords[1]} />
     );
-  } else if (tagRule.signature.return_type == "line"){
+  } else if (tagRule.signature.return_type === "line"){
     svg = (
         <line x1={coords[0][0]} y1={coords[0][1]} x2={coords[1][0]} y2={coords[1][1]} />
     );
-  } else if (tagRule.signature.return_type == "point") {
+  } else if (tagRule.signature.return_type === "point") {
     svg = (
         <circle cx={coords[0]} cy={coords[1]} r="5"/>
     );
-  } else if (tagRule.signature.return_type == "angle") {
+  } else if (tagRule.signature.return_type === "angle") {
     // TODO: coords is a list of three points; how can i draw two lines only? (0 to 1, and 1 to 2)
     svg = (
+      <g>
         <line x1={coords[0][0]} y1={coords[0][1]} x2={coords[1][0]} y2={coords[1][1]} />
-    )
+        <line x1={coords[0][0]} y1={coords[0][1]} x2={coords[2][0]} y2={coords[2][1]} />
+      </g>
+    );
   } else {
     const string = coords.map(function(point) {
       return point.join(",");
@@ -165,9 +168,6 @@ function getSvg(tagRule, coords) {
   }
   return svg;
 }
-
-const PATTERN_KEYWORDS = /\(([^()]+)\)/;
-const PATTERN_PARENS = /[()]/;
 
 class Question extends React.Component {
 
@@ -197,25 +197,24 @@ class Question extends React.Component {
         if (tagRule.getKey() in entityMap) {
           return getSvg(tagRule, entityMap[tagRule.getKey()]);
         } else {
-          return "";
+          return null;
         }
       });
       const viewBox = `0 0 ${this.width} ${this.height}`;
-      svg = svgs.map(shape => {
+      svg = svgs.filter(s => s !== null).map((shape, i) => {
+        const className = `shape-${i}`;
         return (
-          <svg viewBox={viewBox} width={this.width} height={this.height}>
+          <svg key={i}
+              viewBox={viewBox}
+              width={this.width}
+              height={this.height}
+              className={className}>
             {shape}
           </svg>
         );
       });
-
-      const keywords =
-        this.props.activeFormula.simple.match(PATTERN_KEYWORDS)
-            .pop()
-            .replace(PATTERN_PARENS, '')
-            .split(',');
-
     }
+
     Object.keys(words).forEach(function(sentence_number) {
       let d = words[sentence_number];
       Object.keys(d).forEach(function(index) {
@@ -223,7 +222,9 @@ class Question extends React.Component {
         if (word in sentence_expressions[sentence_number]) {
           word = sentence_expressions[sentence_number][word];
         }
-        if (word == "holds") return;
+        if (word === "holds") {
+          return;
+        }
         if (" . , ? ".indexOf(word) < 0) {
           text += " ";
         }
