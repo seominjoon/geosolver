@@ -29,14 +29,14 @@ class Solution extends React.Component {
               selectedIndex={this.props.selectedIndex}
               selectedAnswerKey={this.props.solution ? this.props.solution.answer : undefined} />
           <div className="formula-list-container padded">
-            <h2>The Resulting Formula is used to Solve the Question:</h2>
+            <h2>The Resulting Formula is used to Solve the Problem:</h2>
             <p>{this.props.solution.solutionFormula}</p>
           </div>
         </div>
         <footer className="flex-row padded">
           <button className="btn-prev" onClick={this.goBack.bind(this)}>Previous</button>
-          <div className="instructions">The optimized formulas are converted into the formula above and used to solve the question.</div>
-          <button className="flex-right" onClick={this.reset.bind(this)}>Ask Another Question</button>
+          <div className="instructions">The optimized formulas are converted into the formula above and used to solve the problem.</div>
+          <button className="flex-right" onClick={this.reset.bind(this)}>Ask Another Problem</button>
         </footer>
       </div>
     );

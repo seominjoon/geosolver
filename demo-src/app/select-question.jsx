@@ -25,7 +25,7 @@ class SelectQuestion extends React.Component {
             <button
                 onClick={this.solveSelectedQuestion.bind(this)}
                 disabled={this.props.isSolving}>
-              {this.props.isSolving ? 'Solving...' : 'Solve Question'}
+              {this.props.isSolving ? 'Solving...' : 'Solve Problem'}
             </button>
           </div>
         </div>

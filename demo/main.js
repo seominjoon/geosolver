@@ -484,7 +484,7 @@ var Parse = (function (_React$Component) {
               React.createElement(
                 'h2',
                 null,
-                'Formulas Extracted from the Question Text:'
+                'Formulas Extracted from the Problem Text:'
               ),
               this.formulaList(this.props.solution.textFormulas)
             ),
@@ -1180,7 +1180,7 @@ var SelectQuestion = (function (_React$Component) {
               {
                 onClick: this.solveSelectedQuestion.bind(this),
                 disabled: this.props.isSolving },
-              this.props.isSolving ? 'Solving...' : 'Solve Question'
+              this.props.isSolving ? 'Solving...' : 'Solve Problem'
             )
           )
         )
@@ -1300,7 +1300,7 @@ var Solution = (function (_React$Component) {
             React.createElement(
               'h2',
               null,
-              'The Resulting Formula is used to Solve the Question:'
+              'The Resulting Formula is used to Solve the Problem:'
             ),
             React.createElement(
               'p',
@@ -1320,12 +1320,12 @@ var Solution = (function (_React$Component) {
           React.createElement(
             'div',
             { className: 'instructions' },
-            'The optimized formulas are converted into the formula above and used to solve the question.'
+            'The optimized formulas are converted into the formula above and used to solve the problem.'
           ),
           React.createElement(
             'button',
             { className: 'flex-right', onClick: this.reset.bind(this) },
-            'Ask Another Question'
+            'Ask Another Problem'
           )
         )
       );
