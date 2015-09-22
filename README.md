@@ -1,5 +1,6 @@
 # geosolver
 NOTE: SOME SECTIONS OF THIS README FILE ARE OUT OF DATE! I WILL UPDATE IT AS SOON AS POSSIBLE. THANK YOU!
+
 geosolver is an end-to-end system that solves high school geometry questions.
 That is, its input is question text in natural language and diagram in raster graphics,
 and its output is the answer to the question.
