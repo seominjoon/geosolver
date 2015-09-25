@@ -21,8 +21,10 @@ from geosolver.ontology.ontology_semantics import evaluate, Equals
 from geosolver.solver.solve import solve
 from geosolver.text.augment_formulas import augment_formulas
 from geosolver.text.opt_model import TextGreedyOptModel, GreedyOptModel, FullGreedyOptModel
+from geosolver.text.rule import TagRule
 from geosolver.text.rule_model import CombinedModel
 from geosolver.text.run_text import train_semantic_model, questions_to_syntax_parses, train_tag_model
+from geosolver.text.semantic_tree import SemanticTreeNode
 from geosolver.text.semantic_trees_to_text_formula_parse import semantic_trees_to_text_formula_parse
 from geosolver.text.annotation_to_semantic_tree import annotation_to_semantic_tree, is_valid_annotation
 from geosolver.text.complete_formulas import complete_formulas
@@ -211,8 +213,18 @@ def serialize_entity(entity):
     except:
         return float("%.2f" % entity)
 
-
-
+def formula_to_semantic_tree(formula, syntax_parse, span):
+    """
+    Create dummy semantic tree where each tag's syntax Parse and span is given
+    :param formula:
+    :param index:
+    :return:
+    """
+    assert isinstance(formula, FormulaNode)
+    tag_rule = TagRule(syntax_parse, span, formula.signature)
+    children = [formula_to_semantic_tree(child, syntax_parse, span) for child in formula.children]
+    semantic_tree = SemanticTreeNode(tag_rule, children)
+    return semantic_tree
 
 
 demo_path = "../temp/demo"
@@ -235,7 +247,7 @@ def _full_unit_test(combined_model, question, label_data):
     diagram_parse_list = []
     optimized_list = []
     entity_list = []
-    solution = "";
+    solution = ""
     json.dump(question._asdict(), open(question_path, 'wb'))
 
     choice_formulas = get_choice_formulas(question)
@@ -285,6 +297,15 @@ def _full_unit_test(combined_model, question, label_data):
             optimized_list.append({'simple': t.simple_repr(), 'tree': t.serialized(), 'sentence_number': number,
                                     'score': opt_model.get_magic_score(t, cc_trees)})
 
+        for key, f in expr_formulas.iteritems():
+            if key.startswith("v"):
+                pass
+            index = (i for i, word in sentence_words.iteritems() if word == key).next()
+            tree = formula_to_semantic_tree(f, syntax_parse, (index, index+1))
+            text_parse_list.append({'simple': f.simple_repr(), 'tree': tree.serialized(), 'sentence_number': number, 'score': 1.0})
+            optimized_list.append({'simple': f.simple_repr(), 'tree': tree.serialized(), 'sentence_number': number, 'score': 1.0})
+
+
 
         core_formulas = set(t.to_formula() for t in bool_semantic_trees)
         cc_formulas = set(t.to_formula() for t in cc_trees)
@@ -318,7 +339,7 @@ def _full_unit_test(combined_model, question, label_data):
     json.dump(entity_list, open(entity_list_path, 'wb'))
     json.dump(solution, open(solution_path, 'wb'))
 
-    # return SimpleResult(question.key, False, False, True) # Early termination
+    return SimpleResult(question.key, False, False, True) # Early termination
 
     print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
@@ -435,8 +456,8 @@ def full_test():
     load = True
 
     tr_questions = geoserver_interface.download_questions('aaai')
-    te_questions = geoserver_interface.download_questions('official')
-    te_keys = [993,995,1011,1020,1483,1037]#te_questions.keys() #[968, 971, 973, 1018]
+    te_questions = geoserver_interface.download_questions('emnlp')
+    te_keys = [968, 971, 973, 1018]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
     te_ids = te_questions.keys()

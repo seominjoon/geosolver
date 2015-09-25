@@ -45,3 +45,5 @@ if __name__ == "__main__":
     # test_geoserver_interface()
     # test_zip_diagrams()
     save_questions('aaai')
+    save_questions('practice')
+    save_questions('official')
