@@ -183,7 +183,28 @@ def semantic_tree_to_serialized_entities(match_parse, semantic_tree, sentence_nu
                 entity = {"content": tree_node.content.serialized(), "coords": serialize_entity(coords),
                           "sentence_number": sentence_number}
                 entities.append(entity)
+    return entities
 
+def formula_to_serialized_entities(match_parse, formula, tree, sentence_number):
+    offset = match_parse.graph_parse.core_parse.image_segment_parse.diagram_image_segment.offset
+    grounded_formula = ground_formulas(match_parse, [formula])[0]
+    entities = []
+    zipped_formula = grounded_formula.zip(tree)
+    for zipped_node in zipped_formula:
+        formula_node, tree_node = zipped_node.nodes
+        if not isinstance(formula_node, FormulaNode):
+            continue
+        if len(formula_node.children) == 1 and not issubtype(formula_node.return_type, 'entity'):
+            formula_node = formula_node.children[0]
+        if issubtype(formula_node.return_type, 'entity'):
+            coords = match_parse.graph_parse.core_parse.evaluate(formula_node)
+            if coords is not None:
+                coords = offset_coords(coords, formula_node.return_type, offset)
+                content = tree_node.content.serialized()
+                content['signature']['return_type'] = formula_node.return_type
+                entity = {"content": content, "coords": serialize_entity(coords),
+                          "sentence_number": sentence_number}
+                entities.append(entity)
     return entities
 
 def offset_point(point, offset):
@@ -221,6 +242,10 @@ def formula_to_semantic_tree(formula, syntax_parse, span):
     :return:
     """
     assert isinstance(formula, FormulaNode)
+    if issubtype(formula.signature.return_type, 'entity'):
+        new_sig = VariableSignature(formula.signature.id, formula.signature.return_type, name='temp')
+        tag_rule = TagRule(syntax_parse, span, new_sig)
+        return SemanticTreeNode(tag_rule, [])
     tag_rule = TagRule(syntax_parse, span, formula.signature)
     children = [formula_to_semantic_tree(child, syntax_parse, span) for child in formula.children]
     semantic_tree = SemanticTreeNode(tag_rule, children)
@@ -302,8 +327,13 @@ def _full_unit_test(combined_model, question, label_data):
                 pass
             index = (i for i, word in sentence_words.iteritems() if word == key).next()
             tree = formula_to_semantic_tree(f, syntax_parse, (index, index+1))
+            print "f and t:", f, tree
             text_parse_list.append({'simple': f.simple_repr(), 'tree': tree.serialized(), 'sentence_number': number, 'score': 1.0})
             optimized_list.append({'simple': f.simple_repr(), 'tree': tree.serialized(), 'sentence_number': number, 'score': 1.0})
+
+            local_entities = formula_to_serialized_entities(match_parse, f, tree, number)
+            print "local entities:", local_entities
+            entity_list.extend(local_entities)
 
 
 
