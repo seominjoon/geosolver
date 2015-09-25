@@ -151,7 +151,6 @@ function getSvg(tagRule, coords) {
         <circle cx={coords[0]} cy={coords[1]} r="5"/>
     );
   } else if (tagRule.signature.return_type === "angle") {
-    // TODO: coords is a list of three points; how can i draw two lines only? (0 to 1, and 1 to 2)
     svg = (
       <g>
         <line x1={coords[0][0]} y1={coords[0][1]} x2={coords[1][0]} y2={coords[1][1]} />
@@ -219,6 +218,7 @@ class Question extends React.Component {
       let d = words[sentence_number];
       Object.keys(d).forEach(function(index) {
         let word = d[index];
+        // Replacement
         if (word in sentence_expressions[sentence_number]) {
           word = sentence_expressions[sentence_number][word];
         }
