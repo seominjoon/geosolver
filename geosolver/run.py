@@ -130,7 +130,7 @@ def _annotated_unit_test(query):
     else:
         attempted = True
         c = max(ans.iteritems(), key=lambda pair: pair[1].conf)[0]
-        if c == int(question.answer):
+        if c == int(float(question.answer)):
             correct = True
         else:
             correct = False
@@ -385,7 +385,7 @@ def _full_unit_test(combined_model, question, label_data):
     else:
         idx, tv = max(ans.iteritems(), key=lambda pair: pair[1].conf)
         if tv.conf > 0.98:
-            if idx == int(question.answer):
+            if idx == int(float((question.answer)):
                 correct = True
                 penalized = False
             else:
