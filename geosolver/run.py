@@ -483,7 +483,7 @@ def full_test():
     te_ids = ids1+ids2+ids3
     te_ids = ids4+ids6
 
-    load = True
+    load = False
 
     tr_questions = geoserver_interface.download_questions('aaai')
     te_questions = geoserver_interface.download_questions('emnlp')
