@@ -369,7 +369,7 @@ def _full_unit_test(combined_model, question, label_data):
     json.dump(entity_list, open(entity_list_path, 'wb'))
     json.dump(solution, open(solution_path, 'wb'))
 
-    return SimpleResult(question.key, False, False, True) # Early termination
+    # return SimpleResult(question.key, False, False, True) # Early termination
 
     print "Solving..."
     ans = solve(reduced_formulas, choice_formulas, assignment=None)#core_parse.variable_assignment)
@@ -486,7 +486,7 @@ def full_test():
     load = False
 
     tr_questions = geoserver_interface.download_questions('aaai')
-    te_questions = geoserver_interface.download_questions('emnlp')
+    te_questions = geoserver_interface.download_questions('official')
     te_keys = te_questions.keys() # [968, 971, 973, 1018]
     all_questions = dict(tr_questions.items() + te_questions.items())
     tr_ids = tr_questions.keys()
