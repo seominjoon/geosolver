@@ -385,7 +385,7 @@ def _full_unit_test(combined_model, question, label_data):
     else:
         idx, tv = max(ans.iteritems(), key=lambda pair: pair[1].conf)
         if tv.conf > 0.98:
-            if idx == int(float((question.answer)):
+            if idx == int(float(question.answer)):
                 correct = True
                 penalized = False
             else:
